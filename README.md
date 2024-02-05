@@ -30,7 +30,7 @@ also divided into two sides.
 - collision detection
 - AI tanks
 
-**Paper Prototype Link**
+**Paper Prototype Link**<br>
 https://youtu.be/0xlvFs2NJCI
 
 ## Multiplayer Pac-Man
