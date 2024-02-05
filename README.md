@@ -30,6 +30,9 @@ also divided into two sides.
 - collision detection
 - AI tanks
 
+**Paper Prototype Link**
+https://youtu.be/0xlvFs2NJCI
+
 ## Multiplayer Pac-Man
 
 Experience the thrill of navigating a cute yellow character through a maze filled with snacks and four pursuing ghosts. The objective is simple: consume all the snacks to advance to the next level while avoiding or temporarily turning the tables on the ghosts by consuming power-up snacks.
