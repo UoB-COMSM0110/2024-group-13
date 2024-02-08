@@ -154,7 +154,7 @@ Let me be a TANK MAN!” So a mighty power growed inside
 Packie and he became powerful Tankie, with some
 destructive strength.
 
-### Pickaxe Pac
+### Pac-miner
 
 After years of evading ghosts on arcades, Pac realises the
 only safe place really might just be underground!
@@ -171,3 +171,5 @@ Join us in this reimagined Pac-man adventure, where
 strategy, agility, and a bit of luck will determine the
 victor. Are you ready to break through walls and
 claim victory?
+
+![Pac-miner](resources/pac-miner.png)
