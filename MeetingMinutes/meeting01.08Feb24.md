@@ -1,18 +1,19 @@
 # Minutes
 
-## Things Done
+## Things Done during Meeting
 
 - Paper prototype re-recorded for the multiplayer
   pacman game.
 - Discussing various ideas about how to make the game
   more interesting.
-- Draft the game story.
+- Write the game story.
 - Discussing ideas on game architecture
 
-## Engineering procedures:
-  - agile cycle
-  - UML documenting?
-  - Development with git branching
+## Engineering procedures
+
+- agile cycle
+- UML documenting?
+- Development with git branching
 
 ## Ideas
 

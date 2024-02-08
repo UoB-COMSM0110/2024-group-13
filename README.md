@@ -25,12 +25,13 @@ Two players battle against each other and AI tanks are
 also divided into two sides.
 
 **Challenges:**
+
 - network communication
 - collision detection
 - AI tanks
 
-**Paper Prototype Link**<br>
-https://youtu.be/0xlvFs2NJCI
+**Paper Prototype Link**
+<https://youtu.be/0xlvFs2NJCI>
 
 ## Game idea 2 : Multiplayer Pac-Man
 
@@ -97,7 +98,8 @@ on yourself or your opponents:
 - **Ghost Repellent**: Repel ghosts with a temporary barrier
   around your character.
 
-**Challenges**
+**Challenges:**
+
 - AI ghosts
 - Online multiplayer
 - Generated terrains
@@ -145,7 +147,7 @@ trying to outscore your opponent.
 
 Little Packie lived a happy life in his candy palace, until
 one day … Some powerful ghosts invaded his palace and
-created a mirror image of him, eating his precious candies! 
+created a mirror image of him, eating his precious candies!
 
 “Oh no! I’m gonna destroy you with all my abilities!
 Let me be a TANK MAN!” So a mighty power growed inside
@@ -157,7 +159,7 @@ destructive strength.
 After years of evading ghosts on arcades, Pac realises the
 only safe place really might just be underground!
 He ventures into the caves, only to find another Pac-man
-with the same idea. 
+with the same idea.
 
 As they compete for resources, they discover that the
 ghosts have followed them below. Armed with their pickaxes
