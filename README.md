@@ -76,3 +76,33 @@ Enhance your gameplay with power-ups that can be activated on yourself or your o
 - Online multiplayer
 - Generated terrains
 - Game mode tutorial
+
+# Final choice: Pac-man but it's an online multiplayer game!
+
+## Overview
+Welcome to Multiplayer Pac-man, a thrilling game that pits two players against each other on a traditional Pac-man map with an exciting twist: the ability to break through walls. Dive into a head-to-head competition to collect as many points as possible while navigating through a maze filled with challenges and surprises.
+
+## Gameplay
+
+### Description
+Players aim to gather as many points as possible by collecting coins scattered throughout the map. Each player starts with 3 lives, and the goal is to avoid ghosts while trying to outscore your opponent.
+
+### Key Features
+- **Dynamic Maze:** Navigate through a classic Pac-man maze, enhanced with the ability to temporarily destroy barriers and ghosts.
+- **Ghostly Opposition:** Avoid ghosts that chase you through the maze, trying to deplete your lives. If caught, players respawn at their original position, adding a strategic layer to the gameplay.
+- **Transform into a Ghost:** In a twist of fate, if a player loses all their lives, they reappear as a ghost, aiming to chase down the opposing player and limit their score.
+- **Power-ups:** Collect uniquely colored coins to gain one-off abilities, adding depth and strategy to the game.
+
+## Storyline
+
+### Tank-man
+Little Packie lived a happy life in his candy palace, until one day … Some powerful ghosts invaded his palace and created a mirror image of him, eating his precious candies! 
+
+“Oh no! I’m gonna destroy you with all my abilities! Let me be a TANK MAN!” So a mighty power growed inside Packie and he became powerful Tankie, with some destructive strength.
+
+### Pickaxe Pac
+After years of evading ghosts on arcades, Pac realises the only safe place really might just be underground! He ventures into the caves, only to find another Pac-man with the same idea. 
+
+As they compete for resources, they discover that the ghosts have followed them below. Armed with their pickaxes and a torch illuminating their surroundings the two pacmen must find a way to survive this subterranean nightmare... for as long as they can.
+
+Join us in this reimagined Pac-man adventure, where strategy, agility, and a bit of luck will determine the victor. Are you ready to break through walls and claim victory?
