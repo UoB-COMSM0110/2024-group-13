@@ -77,12 +77,12 @@ Enhance your gameplay with power-ups that can be activated on yourself or your o
 - Generated terrains
 - Game mode tutorial
 
-# Final choice: Pac-man but it's an online multiplayer game!
+## Final choice: Pac-man but it's an online multiplayer game
 
-## Overview
+### Overview
 Welcome to Multiplayer Pac-man, a thrilling game that pits two players against each other on a traditional Pac-man map with an exciting twist: the ability to break through walls. Dive into a head-to-head competition to collect as many points as possible while navigating through a maze filled with challenges and surprises.
 
-## Gameplay
+### Gameplay
 
 ### Description
 Players aim to gather as many points as possible by collecting coins scattered throughout the map. Each player starts with 3 lives, and the goal is to avoid ghosts while trying to outscore your opponent.
@@ -93,7 +93,7 @@ Players aim to gather as many points as possible by collecting coins scattered t
 - **Transform into a Ghost:** In a twist of fate, if a player loses all their lives, they reappear as a ghost, aiming to chase down the opposing player and limit their score.
 - **Power-ups:** Collect uniquely colored coins to gain one-off abilities, adding depth and strategy to the game.
 
-## Storyline
+### Storyline
 
 ### Tank-man
 Little Packie lived a happy life in his candy palace, until one day … Some powerful ghosts invaded his palace and created a mirror image of him, eating his precious candies! 
