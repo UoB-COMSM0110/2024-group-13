@@ -8,7 +8,7 @@ Daniel Parschau,
 Yunpeng Yang,
 Chao Gao
 
-![Group Members](group13-members-photo.jpg)
+![Group Members](resources/group13-members-photo.jpg)
 
 ## Game idea 1 : Battle of the Tanks
 
@@ -17,7 +17,7 @@ protect the eagle against AI-controlled enemy tanks.
 The map contains different kinds of walls and floors.
 And there are various kinds of sporadic buffs.
 
-![Battle of the Tanks](battle-of-tanks.jpg)
+![Battle of the Tanks](resources/battle-of-tanks.jpg)
 
 **Twist:**
 We can change it into a network versus game.
@@ -41,7 +41,7 @@ The objective is simple: consume all the snacks to advance
 to the next level while avoiding or temporarily turning the
 tables on the ghosts by consuming power-up snacks.
 
-![Multiplayer Pacman](pacman.jpg)
+![Multiplayer Pacman](resources/pacman.jpg)
 
 ### Unique Twist
 
