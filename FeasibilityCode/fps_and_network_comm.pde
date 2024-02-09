@@ -1,19 +1,38 @@
 import processing.net.*;
+import java.util.concurrent.TimeUnit;
 
 Server server;
 
 Client client;
-int s_port = 2048;
-String s_ip = "137.222.135.228";
+int s_port = 2024;
+// String s_ip = "137.222.135.228";
 // String s_ip = "137.222.135.231";
+// String s_ip = "137.222.135.189";
+String s_ip = "137.222.135.4";
 
 int numFrames = 0;
 int ts = 20;
 
+Process p;
+String lchost = "localhost";
+int f_port = 2023;
+
 void setup() {
   server = new Server(this, s_port);
   println("Server created.");
-  client = new Client(this, s_ip, s_port);
+  
+  try {
+    p = exec("/usr/bin/ssh",
+        "-L", f_port + ":" + lchost + ":" + s_port,
+        s_ip,
+        "sleep 10");
+    p.waitFor(2, TimeUnit.SECONDS);
+    // p.waitFor();
+  } catch (Exception e) {
+    e.printStackTrace();
+  }   
+  client = new Client(this, lchost, f_port);
+  // client = new Client(this, s_ip, s_port);
   println("Client created.");
 
   size(800, 600);
@@ -21,7 +40,7 @@ void setup() {
 }
 
 void draw() {
-  background(205);
+  background(180);
   numFrames += 1;
   textSize(ts);
   text(hour() + ":" + minute() + ":" + second(), ts, ts);
