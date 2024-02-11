@@ -105,6 +105,9 @@ on yourself or your opponents:
 - Generated terrains
 - Game mode tutorial
 
+**Paper Prototype Link**
+
+
 ## Final choice: Pac-man but it's an online multiplayer game
 
 ### Overview
