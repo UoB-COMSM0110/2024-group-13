@@ -176,3 +176,9 @@ victor. Are you ready to break through walls and
 claim victory?
 
 ![Pac-miner](resources/pac-miner.png)
+
+Alternatively, complete dark mode:
+
+![Pac-miner dark mode](resources/pac-miner black out.png)
+
+
