@@ -179,6 +179,6 @@ claim victory?
 
 Alternatively, complete dark mode:
 
-![Pac-miner dark mode](resources/pac-miner black out.png)
+![Pac-miner dark mode](resources/pac-miner-blackout.png)
 
 
