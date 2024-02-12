@@ -181,4 +181,44 @@ Alternatively, complete dark mode:
 
 ![Pac-miner dark mode](resources/pac-miner-blackout.png)
 
+## Game Requirements:
+### Stakeholders:
+- player
+- lecturers (markers)
+- developer
+- customers
+- negative stakeholders: school
 
+### 2. user stories
+- as a player, I want to play against someone else so that
+I can spend time with my friend.
+- as a player, I want to get the highest score so that I 
+can win.
+- as a player, I want to have directions on the game so I 
+know how to play.
+- as a developer, I want to know how to work together with
+a team so that we can code together.
+- as a lecturer, I want to be able to learn and play the 
+game in five minutes so that I have a good understanding 
+of the game
+
+### Use case specification
+User story: as a player, I want to play against someone 
+else so that I can spend time with my friend.
+1. the user (1st player) clicks the button which creates 
+the game to get a room number.
+2. the 1st player shares the room number with their 
+friend (2nd player).
+3. 2nd player enters number in the box on their computer 
+to join the game
+4. the 2nd computer sends message through internet to 
+first computer to connect game.
+5. 1st player chooses the mode and press start.
+6. now both users are playing on the same game.
+7. the screen updates when players collect points and 
+power ups.
+8. when the first player dies, the game updates and turns 
+the player into a ghost.
+9. when the second player dies, the leaderboard comes up 
+and shows the final points.
+10. there is an option to start a new game.
