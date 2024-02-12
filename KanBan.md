@@ -4,6 +4,8 @@
 
 - base architecture of the game
 - network protocol
+- use case diagram
+- reflection paragraph
 
 ## In-Progress
 
