@@ -181,15 +181,15 @@ Alternatively, complete dark mode:
 
 ![Pac-miner dark mode](resources/pac-miner-blackout.png)
 
-## Game Requirements:
-### Stakeholders:
+## Game Requirements
+### Stakeholders
 - player
 - lecturers (markers)
 - developer
 - customers
 - negative stakeholders: school
 
-### 2. user stories
+### User stories
 - as a player, I want to play against someone else so that
 I can spend time with my friend.
 - as a player, I want to get the highest score so that I 
@@ -200,7 +200,7 @@ know how to play.
 a team so that we can code together.
 - as a lecturer, I want to be able to learn and play the 
 game in five minutes so that I have a good understanding 
-of the game
+of the game.
 
 ### Use case specification
 User story: as a player, I want to play against someone 
