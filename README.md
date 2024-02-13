@@ -8,7 +8,8 @@ Daniel Parschau,
 Yunpeng Yang,
 Chao Gao
 
-![Group Members](resources/group13-members-photo.jpg)
+[<img src="resources/group13-members-photo.jpg"
+alt="Group Members" width="70%">]
 
 ## Game idea 1 : Battle of the Tanks
 
@@ -17,7 +18,8 @@ protect the eagle against AI-controlled enemy tanks.
 The map contains different kinds of walls and floors.
 And there are various kinds of sporadic buffs.
 
-![Battle of the Tanks](resources/battle-of-tanks.jpg)
+[<img src="resources/battle-of-tanks.jpg"
+alt="Battle of the Tanks" width="50%">]
 
 **Twist:**
 We can change it into a network versus game.
@@ -31,8 +33,10 @@ also divided into two sides.
 - AI tanks
 
 **Paper Prototype**
-[<img src="https://i.ytimg.com/vi/0xlvFs2NJCI/hqdefault.jpg" width="50%">]
-(https://www.youtube.com/watch?v=0xlvFs2NJCI "Game Idea: Tank")
+
+[<img src="https://i.ytimg.com/vi/0xlvFs2NJCI/hqdefault.jpg"
+width="70%">](https://www.youtube.com/watch?v=0xlvFs2NJCI
+"Game Idea: Tank")
 
 ## Game idea 2 : Multiplayer Pac-Man
 
@@ -42,7 +46,8 @@ The objective is simple: consume all the snacks to advance
 to the next level while avoiding or temporarily turning the
 tables on the ghosts by consuming power-up snacks.
 
-![Multiplayer Pacman](resources/pacman.jpg)
+[<img src="resources/pacman.jpg"
+alt="Multiplayer Pacman" width="50%">]
 
 ### Unique Twist
 
@@ -109,7 +114,7 @@ on yourself or your opponents:
 **Paper Prototype**
 
 [<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
-width="50%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
+width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 "Game Idea: Pacman")
 
 ## Final choice: Pac-man but it's an online multiplayer game
