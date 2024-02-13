@@ -30,8 +30,9 @@ also divided into two sides.
 - collision detection
 - AI tanks
 
-**Paper Prototype Link**
-<https://youtu.be/0xlvFs2NJCI>
+**Paper Prototype**
+[<img src="https://i.ytimg.com/vi/0xlvFs2NJCI/hqdefault.jpg" width="50%">]
+(https://www.youtube.com/watch?v=0xlvFs2NJCI "Game Idea: Tank")
 
 ## Game idea 2 : Multiplayer Pac-Man
 
@@ -105,8 +106,9 @@ on yourself or your opponents:
 - Generated terrains
 - Game mode tutorial
 
-**Paper Prototype Link**
-https://youtu.be/RZP7WlMi2Jo
+**Paper Prototype**
+[<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg" width="50%">]
+(https://www.youtube.com/watch?v=RZP7WlMi2Jo "Game Idea: Pacman")
 
 ## Final choice: Pac-man but it's an online multiplayer game
 
