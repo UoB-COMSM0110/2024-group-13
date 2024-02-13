@@ -107,8 +107,10 @@ on yourself or your opponents:
 - Game mode tutorial
 
 **Paper Prototype**
-[<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg" width="50%">]
-(https://www.youtube.com/watch?v=RZP7WlMi2Jo "Game Idea: Pacman")
+
+[<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
+width="50%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
+"Game Idea: Pacman")
 
 ## Final choice: Pac-man but it's an online multiplayer game
 
