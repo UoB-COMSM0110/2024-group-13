@@ -11,6 +11,10 @@ Chao Gao
 <img src="resources/group13-members-photo.jpg"
 alt="Group Members" width="70%">
 
+## Project Kanban Board
+
+[Kanban](https://github.com/orgs/UoB-COMSM0110/projects/62)
+
 ## Game idea 1 : Battle of the Tanks
 
 In this game, one or two players manipulate their tanks to
@@ -191,7 +195,9 @@ Alternatively, complete dark mode:
 ![Pac-miner dark mode](resources/pac-miner-blackout.png)
 
 ## Game Requirements
+
 ### Stakeholders
+
 - player
 - lecturers (markers)
 - developer
@@ -199,6 +205,7 @@ Alternatively, complete dark mode:
 - negative stakeholders: school
 
 ### User stories
+
 - as a player, I want to play against someone else so that
 I can spend time with my friend.
 - as a player, I want to get the highest score so that I 
@@ -212,6 +219,7 @@ game in five minutes so that I have a good understanding
 of the game.
 
 ### Use case specification
+
 User story: as a player, I want to play against someone 
 else so that I can spend time with my friend.
 1. the user (1st player) clicks the button which creates 
