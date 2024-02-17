@@ -239,3 +239,9 @@ the player into a ghost.
 9. when the second player dies, the leaderboard comes up 
 and shows the final points.
 10. there is an option to start a new game.
+
+### Use case diagram
+
+<img src="resources/GameUseCaseDiagram.png"
+alt="Use case diagram" width="70%">
+
