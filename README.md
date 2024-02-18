@@ -245,3 +245,8 @@ and shows the final points.
 <img src="resources/GameUseCaseDiagram.png"
 alt="Use case diagram" width="70%">
 
+### Use case reflection
+
+Making a use case specification and diagram enabled the group to look at the project from a different perspective, allowing us to identify the scope of our Pack Man game. We were able to streamline our ideas for the game into a protocol that will enable us to implement the structure of the game. When creating the diagram, we could focus on specific elements of the game and how they interact with each other. For example, when users play the game, we will need to implement features to move the character, collect gold, collect power-ups, display current points and power-ups, etc. Additionally, this process also made us begin to think about how to implement the multiplayer aspect of our game, in terms of how the two actors (players one and two) interact to create an online multiplayer game. Creating a use case also helps us start to understand how we need to think about the architecture of the game and how we will programme it.
+
+
