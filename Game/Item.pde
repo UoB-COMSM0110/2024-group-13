@@ -19,14 +19,27 @@ public class Item {
     this.h = h;
   }
 
+  public PImage getImage() {
+    return null;
+  }
+
+  public void display(float offset_x, float offset_y) {
+    if (isDiscarded()) { return; }
+    PImage img = getImage();
+    if (img == null) { return; }
+    image(img, w, y, w, h);
+  }
+  
   public void display() {
     display(0, 0);
   }
   
-  public void display(float offset_x, float offset_y) {}
-  
   public void discard() {
     this.discarded = true;
+  }
+
+  public void isDiscarded() {
+    return discarded;
   }
   
   public float getTop() {
