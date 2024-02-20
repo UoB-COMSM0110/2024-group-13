@@ -1,24 +1,16 @@
 public class MovableItem extends Item {
   float speed;
   float direction;
-  boolean isMoving;
+  private boolean isMoving;
   
-  public MovableItem(String name, int x, int y) {
-    super(name, x, y);
+  public Item(String name, float x, float y, float w, float h) {
+    super(name, x, y, w, h);
   }
   
-  public void move(float moveX, float moveY) {
-    this.x += moveX;
-    this.y += moveY;
-    
-    if (moveX > 0) {
-      this.facing = RIGHT_FACING;
-    } else if (moveX < 0) {
-      this.facing = LEFT_FACING;
-    } else if (moveY > 0) {
-      this.facing = UP_FACING;
-    } else if (moveY < 0){
-      this.facing = DOWN_FACING;
-    }  
+  public void startMoving() { isMoving = true; }
+  public void stopMoving() { isMoving = false; }
+
+  public void progress(Game g) {
+    if (isMoving) {}
   }
 }
