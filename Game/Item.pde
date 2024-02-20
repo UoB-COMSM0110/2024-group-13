@@ -19,20 +19,20 @@ public class Item {
     this.h = h;
   }
 
-  public PImage getImage() {
-    return null;
-  }
+  public PImage getImage() { return null; }
 
   public void display(float offset_x, float offset_y) {
     if (isDiscarded()) { return; }
     PImage img = getImage();
     if (img == null) { return; }
-    image(img, w, y, w, h);
+    image(img, offset_x + x, offset_y + y, w, h);
   }
   
   public void display() {
     display(0, 0);
   }
+
+  public void onCollisionWith(Context ctx, Item item) {}
   
   public void discard() {
     this.discarded = true;

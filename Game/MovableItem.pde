@@ -1,14 +1,10 @@
-public class Moveable extends Object {
-  int facing;
+public class MovableItem extends Item {
+  float speed;
+  float direction;
+  boolean isMoving;
   
-  public Moveable(String filename, int x, int y, int facing) {
-    super(filename, x, y);
-    this.facing = facing;
-  }
-  
-  public Moveable(String filename, int x, int y) {
-    super(filename, x, y);
-    this.facing = UP_FACING;
+  public MovableItem(String name, int x, int y) {
+    super(name, x, y);
   }
   
   public void move(float moveX, float moveY) {
@@ -25,8 +21,4 @@ public class Moveable extends Object {
       this.facing = DOWN_FACING;
     }  
   }
-  
-  
-  
-  
 }
