@@ -249,7 +249,7 @@ alt="Use case diagram" width="70%">
 
 Making a use case specification and diagram enabled the
 group to look at the project from a different perspective, 
-allowing us to identify the scope of our Pack Man game. We 
+allowing us to identify the scope of our Pac Man game. We 
 were able to streamline our ideas for the game into a protocol 
 that will enable us to implement the structure of the game. 
 When creating the diagram, we could focus on specific elements 
