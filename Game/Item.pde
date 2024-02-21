@@ -1,47 +1,71 @@
-static final int UP_FACING = 0;
-static final int RIGHT_FACING = 1;
-static final int DOWN_FACING = 2;
-static final int LEFT_FACING = 3;
+static final int UPWARD = 0;
+static final int RIGHTWARD = 90;
+static final int DOWNWARD = 180;
+static final int LEFTWARD = 270;
+
 
 public class Item {
   private String name;
-  private float x, y; // Position of the item's top-left corner.
+  private float x, y; // Position of item top-left corner
   private float w, h;
+  private boolean elliptic;
   private int facing;
-  private int layer; // [-2, 2]
+  private int layer;
   private boolean discarded;
 
-  public Item(String name, float x, float y, float w, float h) {
+  public Item(String name, float x, float y) {
     this.name = name;
     this.x = x;
     this.y = y;
-    this.w = w;
-    this.h = h;
   }
 
-  public float getTop() { return y; }
-  public float getBottom() { return y + h; }
-  public float getLeft() { return x; }
-  public float getRight() { return x + w; }
+  public void onEvents(GameInfo gInfo, ArrayList<Event> events) {}
 
-  public void step(Game g) {}
+  public void update(GameInfo gInfo, Page page) {}
 
-  public void onCollision(Game g, Item item) {}
-
-  public void discard() { discarded = true; }
-  
-  public String serialize() { return ""; }
-  
   public PImage getImage() { return null; }
 
-  public void display(float offset_x, float offset_y) {
-    if (discarded) { return; }
+  public void draw(float offset_x, float offset_y) {
     PImage img = getImage();
     if (img == null) { return; }
     image(img, offset_x + x, offset_y + y, w, h);
   }
-  
-  public void display() {
-    display(0, 0);
+}
+
+
+public class LocalItem extends Item {
+  public LocalItem(String name, float x, float y) {
+    super(name, x, y);
   }
+  
+  public void draw() {
+    draw(0.0, 0.0);
+  }
+}
+
+
+public class SynchronizedItem extends Item {
+  public SynchronizedItem(String name, float x, float y) {
+    super(name, x, y);
+  }
+
+  public void evolve(GameInfo gInfo) {}
+
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {}
+
+  public String serialize() { return ""; }
+}
+
+
+public class MovableItem extends SynchronizedItem {
+  private float speed;
+  private int direction;
+  private boolean moving;
+  
+  public Item(String name, float x, float y, float w, float h) {
+    super(name, x, y, w, h);
+  }
+  
+  public void startMoving() { moving = true; }
+  public void stopMoving() { moving = false; }
 }
