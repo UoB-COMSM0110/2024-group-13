@@ -1,3 +1,5 @@
+import java.util.Comparator;
+
 static final int UPWARD = 0;
 static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
@@ -18,6 +20,18 @@ public class Item {
     this.x = x;
     this.y = y;
   }
+  
+  public Item setW(float w) { this.w = w; return this; }
+  public Item setH(float h) { this.h = h; return this; }
+  
+  public float getX() { return x; }
+  public float getY() { return y; }
+  public float getW() { return w; }
+  public float getH() { return h; }
+
+  public String getName() { return name; }
+
+  public int getLayer() { return layer; }
 
   public void onEvents(GameInfo gInfo, ArrayList<Event> events) {}
 
@@ -25,21 +39,22 @@ public class Item {
 
   public PImage getImage() { return null; }
 
-  public void draw(float offset_x, float offset_y) {
+  public void draw(GameInfo gInfo) {
     PImage img = getImage();
     if (img == null) { return; }
-    image(img, offset_x + x, offset_y + y, w, h);
+    image(img, x, y, w, h);
   }
+}
+
+
+public class ItemLayerComparator implements Comparator<Item> {
+  public int compare(Item i1, Item i2) { return  i1.getLayer() - i2.getLayer(); }
 }
 
 
 public class LocalItem extends Item {
   public LocalItem(String name, float x, float y) {
     super(name, x, y);
-  }
-  
-  public void draw() {
-    draw(0.0, 0.0);
   }
 }
 
@@ -54,6 +69,17 @@ public class SynchronizedItem extends Item {
   public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {}
 
   public String serialize() { return ""; }
+
+  @Override
+  public void draw(GameInfo gInfo) {
+    PImage img = getImage();
+    if (img == null) { return; }
+    float actualX = getX() * gInfo.getSyncCoordScaleX() + gInfo.getSyncCoordOffsetX();
+    float actualY = getY() * gInfo.getSyncCoordScaleY() + gInfo.getSyncCoordOffsetY();
+    float actualW = getW() * gInfo.getSyncCoordScaleX();
+    float actualH = getH() * gInfo.getSyncCoordScaleY();
+    image(img, actualX, actualY, actualW, actualH);
+  }
 }
 
 
@@ -62,8 +88,8 @@ public class MovableItem extends SynchronizedItem {
   private int direction;
   private boolean moving;
   
-  public Item(String name, float x, float y, float w, float h) {
-    super(name, x, y, w, h);
+  public MovableItem(String name, float x, float y) {
+    super(name, x, y);
   }
   
   public void startMoving() { moving = true; }
