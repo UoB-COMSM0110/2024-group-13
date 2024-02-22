@@ -264,3 +264,6 @@ game. Creating a use case also helped us start to understand how
 we need to think about the architecture of the game and how we 
 will programme it.
 
+### Class diagram
+<img src="resources/PacUML.png"
+alt="ClassDiagram" width="70%">
