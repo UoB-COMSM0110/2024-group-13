@@ -265,5 +265,5 @@ we need to think about the architecture of the game and how we
 will programme it.
 
 ### Class diagram
-<img src="resources/PacUML.png"
+<img src="resources/PacUML.jpg"
 alt="ClassDiagram" width="70%">
