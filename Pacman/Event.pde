@@ -3,6 +3,18 @@ public class Event {
 }
 
 
+public class KeyboardEvent extends Event {
+  private char key;
+
+  public KeyboardEvent(char key) {
+    super();
+    this.key = key;
+  }
+
+  public float getKey() { return key; }
+}
+
+
 public class MouseEvent extends Event {
   private float x;
   private float y;

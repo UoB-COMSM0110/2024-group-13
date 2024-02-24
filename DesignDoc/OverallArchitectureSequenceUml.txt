@@ -1,0 +1,50 @@
+@startuml
+
+== initialization : setup() ==
+
+== repetition : draw() ==
+
+loop
+  Game -> Game ++ : updatePage()
+    Game -> Page ++ : isObsolete()
+    return obsolete
+    alt obsolete
+      Game -> Page ++ : getNextPage()
+      return nextPage
+      Game -> EventRecorder : clearEvents()
+    end
+    Game -> Page ++ : update()
+      Page -> Page ++ : evolveSyncItems()
+        Page -> SynchronizedItem ++ #Blue : onEvents()
+        return
+        Page -> SynchronizedItem ++ #Blue : evolve()
+        return
+        Page -> CollisionEngine ++ : solveCollisions()
+          CollisionEngine -> SynchronizedItem ++ #Blue : onCollisionWith()
+          return
+        return
+      return
+      Page -> Page ++ : dispatchEventsToLocalItems()
+        Page -> LocalItem ++ #Red : onEvents()
+        return
+      return
+      Page -> Page ++ : updateItems()
+        Page -> SynchronizedItem ++ #Yellow : update()
+        return
+        Page -> LocalItem ++ #Yellow : update()
+        return
+      return
+    return
+    Game -> EventRecorder : clearEvents()
+  return
+  Game -> Game ++ : drawPage()
+    Game -> Page ++ : draw()
+      Page -> SynchronizedItem ++ : draw()
+      return
+      Page -> LocalItem ++ : draw()
+      return
+    return
+  return
+end
+
+@enduml
