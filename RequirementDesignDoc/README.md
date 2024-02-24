@@ -4,4 +4,5 @@ Documents for each game feature:
 requirements pecifications,
 designs,
 UML diagrams,
-considerations.
+considerations,
+etc.
