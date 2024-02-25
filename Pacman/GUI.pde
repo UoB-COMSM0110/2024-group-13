@@ -16,14 +16,12 @@ public class Button extends LocalItem {
   }
 
   @Override
-  void onEvents(GameInfo gInfo, ArrayList<Event> events) {
-    for (Event e : events) {
-      if (!(e instanceof MouseEvent) || !isMouseEventRelative((MouseEvent)e)) {
-        continue;
-      }
-      if (e instanceof MouseClickedEvent) {
-        onMouseClickedEvent(gInfo);
-      }
+  void onMouseEvent(GameInfo gInfo, MouseEvent e) {
+    if (!isMouseEventRelative(e)) {
+      return;
+    }
+    if (e instanceof MouseClickedEvent) {
+      onMouseClickedEvent(gInfo, (MouseClickedEvent)e);
     }
   }
 
@@ -32,7 +30,7 @@ public class Button extends LocalItem {
       && getY() < e.getY() && e.getY() < getY() + getH();
   }
 
-  void onMouseClickedEvent(GameInfo gInfo) {
+  void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
     if (text != "Hello") {
       text = "Hello";
     } else {

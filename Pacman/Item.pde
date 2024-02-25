@@ -33,7 +33,22 @@ public class Item {
 
   public int getLayer() { return layer; }
 
-  public void onEvents(GameInfo gInfo, ArrayList<Event> events) {}
+  public void onEvents(GameInfo gInfo, ArrayList<Event> events) {
+    events.forEach((e) -> { onEvent(gInfo, e); });
+  }
+
+  public void onEvent(GameInfo gInfo, Event e) {
+    if (e instanceof MouseEvent) {
+      onMouseEvent(gInfo, (MouseEvent)e);
+    } else if (e instanceof KeyboardEvent) {
+      onKeyboardEvent(gInfo, (KeyboardEvent)e);
+    } else {
+    }
+  }
+
+  public void onMouseEvent(GameInfo gInfo, MouseEvent e) {}
+
+  public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {}
 
   public void update(GameInfo gInfo, Page page) {}
 
