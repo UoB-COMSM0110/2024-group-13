@@ -1,0 +1,51 @@
+@startuml
+
+class Game {
+ +updatePage()
+ +drawPage()
+}
+
+class GameInfo {
+ --Game settings/configurations--
+}
+
+class EventRecorder {
+ -events : ArrayList<Event>
+ +getEvents()
+ +clearEvents()
+}
+EventRecorder "1" o-- "0..*" Event
+
+class Event {
+ --Represent user inputs--
+}
+
+class MouseEvent {}
+Event <|-- MouseEvent
+
+class KeyboardEvent {}
+Event <|-- KeyboardEvent
+
+class Page {
+ -syncItems : HashMap<String, SynchronizedItem>
+ -localItems : HashMap<String, LocalItem>
+ +update()
+ +isObsolete()
+ +getNextPage()
+ +evolveSyncItems()
+ +dispatchEventsToLocalItems()
+ +updateItems()
+ +draw()
+}
+
+Game "1" *-- "1" GameInfo
+Game "1" *-- "1" Page
+Game "1" *-- "1" EventRecorder
+
+class Item {
+ --Base class for everything in the game--
+}
+
+Page "1" o-- "0..*" Item
+
+@enduml
