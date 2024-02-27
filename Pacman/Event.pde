@@ -1,10 +1,13 @@
+// Base class for all events.
+// Event is mainly used for dealing with user inputs.
 public class Event {
   public Event() {}
 }
 
 
+// Base class for all keyboard events.
 public class KeyboardEvent extends Event {
-  private char key;
+  private char key; // The key with which the event is associated.
 
   public KeyboardEvent(char key) {
     super();
@@ -15,8 +18,10 @@ public class KeyboardEvent extends Event {
 }
 
 
+// Base class for all mouse events.
+// TODO: To distinguish between left button and right button.
 public class MouseEvent extends Event {
-  private float x;
+  private float x; // The mouse cursor position when the event occurs.
   private float y;
 
   public MouseEvent(float x, float y) {
@@ -37,6 +42,8 @@ public class MouseClickedEvent extends MouseEvent {
 }
 
 
+// EventRecorder is used to store all the events between two game frames.
+// These events are processed when the frame refreshes.
 public class EventRecorder {
   ArrayList<Event> events;
 

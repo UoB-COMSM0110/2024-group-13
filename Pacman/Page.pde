@@ -1,9 +1,12 @@
 import java.util.Collections;
 
+// Page is somewhat to the player the window of the game.
+// Page holds all the items in the window,
+// and is responsible for updating and drawing them.
 public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
-  private Page previousPage;
+  private Page previousPage; // With this attribute, we can form a page stack.
 
   public Page(GameInfo gInfo, Page previousPage) {
     syncItems = new HashMap<String, SynchronizedItem>();
@@ -15,6 +18,7 @@ public class Page {
     localItems.put(item.getName(), item);
   }
 
+  // Update all the items, including sync ones and local ones.
   public void update(GameInfo gInfo, ArrayList<Event> events) {
     evolveSyncItems(gInfo, events);
     dispatchEventsToLocalItems(gInfo, events);
@@ -46,6 +50,7 @@ public class Page {
     localItems.forEach((name, item) -> { item.update(gInfo, this); });
   }
 
+  // Draw all the items, including sync ones and local ones.
   public void draw(GameInfo gInfo) {
     background(255);
     ArrayList<Item> items = new ArrayList<Item>();
@@ -55,7 +60,9 @@ public class Page {
     items.forEach((item) -> { item.draw(gInfo); });
   }
 
+  // Whether the page should be replaced with next one.
   public boolean isObsolete() { return false; }
 
+  // Generate the next page.
   public Page getNextPage(GameInfo gInfo) { return this; }
 }

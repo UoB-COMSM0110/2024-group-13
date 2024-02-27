@@ -1,18 +1,20 @@
 import java.util.Comparator;
 
+// Using degree to represent the facing of an item.
 static final int UPWARD = 0;
 static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
 static final int LEFTWARD = 270;
 
 
+// Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public class Item {
   private String name;
-  private float x, y; // Position of item top-left corner
-  private float w, h;
+  private float x, y; // Position of item top-left corner.
+  private float w, h; // Item size.
   private boolean elliptic;
   private int facing;
-  private int layer;
+  private int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
   public Item(String name, float x, float y) {
@@ -37,6 +39,7 @@ public class Item {
     events.forEach((e) -> { onEvent(gInfo, e); });
   }
 
+  // Deals with events.
   public void onEvent(GameInfo gInfo, Event e) {
     if (e instanceof MouseEvent) {
       onMouseEvent(gInfo, (MouseEvent)e);
@@ -50,6 +53,10 @@ public class Item {
 
   public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {}
 
+  // Update status for each game frame.
+  // Generally the update here won't affect game logic,
+  // but only visual effects, human-game interactions, etc.
+  // This method can interact with other items.
   public void update(GameInfo gInfo, Page page) {}
 
   public PImage getImage() { return null; }
@@ -62,11 +69,15 @@ public class Item {
 }
 
 
+// Compare items based on its layer.
+// Used when deciding drawing order of items.
 public class ItemLayerComparator implements Comparator<Item> {
   public int compare(Item i1, Item i2) { return  i1.getLayer() - i2.getLayer(); }
 }
 
 
+// Local items don't need synchronize between two players.
+// For example: buttons, labels, etc.
 public class LocalItem extends Item {
   public LocalItem(String name, float x, float y) {
     super(name, x, y);
@@ -74,17 +85,25 @@ public class LocalItem extends Item {
 }
 
 
+// Synchronized items need synchronize between two players.
+// For example: figures, bricks, bullets, etc.
 public class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float x, float y) {
     super(name, x, y);
   }
 
+  // Additional method for sync items to update status.
+  // Mainly update status which affects game logic, e.g., movement of figures.
   public void evolve(GameInfo gInfo) {}
 
+  // Called when two sync items collide with each other.
   public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {}
 
+  // Serialize item status for transmission through network.
   public String serialize() { return ""; }
 
+  // Sync items use sync coordiantes.
+  // Need to transform sync coordinates into local coordinates before drawing.
   @Override
   public void draw(GameInfo gInfo) {
     PImage img = getImage();
@@ -98,10 +117,11 @@ public class SynchronizedItem extends Item {
 }
 
 
+// Sync items that can move in the map, e.g., bullets, figures, etc.
 public class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
-  private boolean moving;
+  private boolean moving; // Whether the item is moving between two frames.
   
   public MovableItem(String name, float x, float y) {
     super(name, x, y);
