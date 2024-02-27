@@ -5,6 +5,7 @@ void setup(){
   size(800, 600); // Use `windowResize` to resize window
   frameRate(60);
 
+  // Create the Game object.
   GameInfo gInfo = new GameInfo();
   StartPage startPage = new StartPage(gInfo, null);
   game = new Game(gInfo, startPage);
@@ -17,6 +18,8 @@ void draw() {
 }
 
 
+// Game holds the GameInfo, an EventRecorder and the current page.
+// It updates and draws the page, and replace it with next page when necessary.
 public class Game {
   private GameInfo gInfo;
   private Page page;
@@ -30,6 +33,7 @@ public class Game {
 
   public EventRecorder getEventRecorder() { return eventRecorder; }
 
+  // Update the current page. Replace it when necessary.
   public void updatePage() {
     if (page.isObsolete()) {
       page = page.getNextPage(gInfo);
@@ -39,6 +43,7 @@ public class Game {
     eventRecorder.clearEvents();
   }
 
+  // Draw the current page.
   public void drawPage() {
     page.draw(gInfo);
   }

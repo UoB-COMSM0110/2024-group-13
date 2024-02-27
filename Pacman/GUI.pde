@@ -25,11 +25,13 @@ public class Button extends LocalItem {
     }
   }
 
+  // Whether the mouse cursor is over the button when the event happened.
   private boolean isMouseEventRelative(MouseEvent e) {
     return getX() < e.getX() && e.getX() < getX() + getW()
       && getY() < e.getY() && e.getY() < getY() + getH();
   }
 
+  // Called when mouse clicks on the button.
   void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
     if (text != "Hello") {
       text = "Hello";

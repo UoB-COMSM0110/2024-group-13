@@ -1,4 +1,7 @@
+// GameInfo holds some housekeeping information.
+// For example, the size of the window, the ip/port of the other player, etc.
 public class GameInfo {
+  // Coefficients used to transform sync-coordinates to local-coordinates.
   private float syncCoordScaleX;
   private float syncCoordScaleY;
   private float syncCoordOffsetX;

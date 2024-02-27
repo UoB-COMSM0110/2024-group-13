@@ -1,3 +1,4 @@
+// The first page of the game.
 public class StartPage extends Page {
   public StartPage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
