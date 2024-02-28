@@ -12,7 +12,7 @@ public class Button extends LocalItem {
     this.text = text;
     this.textColor = color(100, 20, 20);
     this.textSize = 20;
-    this.textFont = createFont("Minecraft", this.textSize);
+    this.textFont = createFont("data/Minecraft.ttf", this.textSize);
   }
 
   @Override
