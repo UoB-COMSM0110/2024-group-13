@@ -1,12 +1,12 @@
 
-final static float SCALE = 10.0/128;
+final static float SCALE = 10.0/300;
 
-public class BreakableWall extends Item {
+public class BreakableWall extends SynchronizedItem {
     public int strength;
     PImage image = loadImage("data/GUI/BigMudBrick.png");
 
-    public BreakableWall(float setX, float setY) {
-      super("breakableWall", setX, setY);
+    public BreakableWall(String name, float setX, float setY) {
+        super(name, setX, setY);
         strength = 3;
         super.layer = 4;
         super.w = image.width * SCALE;

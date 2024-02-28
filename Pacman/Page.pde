@@ -18,6 +18,10 @@ public class Page {
     localItems.put(item.getName(), item);
   }
 
+  public void addSyncItem(SynchronizedItem item) {
+    syncItems.put(item.getName(), item);
+  }
+
   // Update all the items, including sync ones and local ones.
   public void update(GameInfo gInfo, ArrayList<Event> events) {
     evolveSyncItems(gInfo, events);

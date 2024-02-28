@@ -11,10 +11,10 @@ static final int LEFTWARD = 270;
 public class Item {
   private String name;
   private float x, y; // Position of item top-left corner.
-  private float w, h; // Item size.
+  public float w, h; // Item size.
   private boolean elliptic;
   private int facing;
-  private int layer; // Item layer decides its drawing order.
+  public int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
   public Item(String name, float x, float y) {

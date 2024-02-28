@@ -20,15 +20,19 @@ public class GamePage extends Page {
   }
 
   void createPlatforms(String filename){
+    int itemCounter = 0;
+
     String[] lines = loadStrings(filename);
     for (int row = 0; row <lines.length; row++) {
       String[] values = split(lines[row], ",");
       for (int col = 0; col < values.length; col++) {
         if (values[col].equals("1")) {
           float x = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
-          float y = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
-
-          Item breakableWall = new BreakableWall(x, y);
+          float y = CHARACTER_SIZE/2 + row * CHARACTER_SIZE;
+          itemCounter++;
+          String name = "breakableWall" + itemCounter;
+          Item breakableWall = new BreakableWall(name, x, y);
+          addSyncItem((SynchronizedItem)breakableWall);
         }
       }
     }
