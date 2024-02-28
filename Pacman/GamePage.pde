@@ -26,6 +26,7 @@ public class GamePage extends Page {
     for (int row = 0; row <lines.length; row++) {
       String[] values = split(lines[row], ",");
       for (int col = 0; col < values.length; col++) {
+        //destructable walls
         if (values[col].equals("1")) {
           float x = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
           float y = CHARACTER_SIZE/2 + row * CHARACTER_SIZE;
@@ -33,6 +34,33 @@ public class GamePage extends Page {
           String name = "breakableWall" + itemCounter;
           Item breakableWall = new BreakableWall(name, x, y);
           addSyncItem((SynchronizedItem)breakableWall);
+        }
+        //indestructable walls
+        else if (values[col].equals("2")) {
+          float x = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
+          float y = CHARACTER_SIZE/2 + row * CHARACTER_SIZE;
+          itemCounter++;
+          String name = "indestructableWall" + itemCounter;
+          Item indestructableWall = new IndestructableWall(name, x, y);
+          addLocalItem((LocalItem)indestructableWall);
+        }
+        //coin
+        else if (values[col].equals("3")) {
+          float x = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
+          float y = CHARACTER_SIZE/2 + row * CHARACTER_SIZE;
+          itemCounter++;
+          String name = "coin" + itemCounter;
+          Item coin = new Coin(name, x, y);
+          addSyncItem((SynchronizedItem)coin);
+        }
+        //indestructable walls
+        else if (values[col].equals("4")) {
+          float x = CHARACTER_SIZE/2 + col * CHARACTER_SIZE;
+          float y = CHARACTER_SIZE/2 + row * CHARACTER_SIZE;
+          itemCounter++;
+          String name = "powerUp" + itemCounter;
+          Item powerUp = new PowerUp(name, x, y);
+          addSyncItem((SynchronizedItem)powerUp);
         }
       }
     }
