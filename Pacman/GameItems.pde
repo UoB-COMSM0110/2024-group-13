@@ -52,7 +52,7 @@ public class Coin extends SynchronizedItem {
 }
 
 public class PowerUp extends SynchronizedItem {
-    PImage image = loadImage("data/GUI/PowerUp.jpg");
+    PImage image = loadImage("data/GUI/PowerUp.png");
 
     public PowerUp(String name, float setX, float setY) {
         super(name, setX, setY);
