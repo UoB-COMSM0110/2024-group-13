@@ -13,17 +13,15 @@ public class KeyboardEvent extends Event {
     super();
     this.key = key;
   }
-
-  public float getKey() { return key; }
+  // corrected to return a char
+  public char getKey() { return key; }
 }
 
 
 // Base class for all mouse events.
-// TODO: To distinguish between left button and right button.
 public class MouseEvent extends Event {
   private float x; // The mouse cursor position when the event occurs.
   private float y;
-
   public MouseEvent(float x, float y) {
     super();
     this.x = x;
