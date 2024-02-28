@@ -4,7 +4,7 @@ public class GamePage extends Page {
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
 
-    Button backButton = new Button("Back", 300, 350, "Back");
+    Button backButton = new Button("Back", 20, 10, "Back");
     backButton.setW(200).setH(40);
     addLocalItem(backButton);
 
