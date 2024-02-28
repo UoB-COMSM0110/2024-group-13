@@ -1,5 +1,5 @@
 
-final static float SCALE = 10.0/300;
+final static float SCALE = 10.0/700;
 
 public class BreakableWall extends SynchronizedItem {
     public int strength;
