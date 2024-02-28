@@ -6,7 +6,7 @@ import java.util.Collections;
 public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
-  private Page previousPage; // With this attribute, we can form a page stack.
+  public Page previousPage; // With this attribute, we can form a page stack.
 
   public Page(GameInfo gInfo, Page previousPage) {
     syncItems = new HashMap<String, SynchronizedItem>();
@@ -16,6 +16,10 @@ public class Page {
 
   public void addLocalItem(LocalItem item) {
     localItems.put(item.getName(), item);
+  }
+
+  public void addSyncItem(SynchronizedItem item) {
+    syncItems.put(item.getName(), item);
   }
 
   // Update all the items, including sync ones and local ones.
@@ -52,7 +56,6 @@ public class Page {
 
   // Draw all the items, including sync ones and local ones.
   public void draw(GameInfo gInfo) {
-    background(255);
     ArrayList<Item> items = new ArrayList<Item>();
     syncItems.forEach((name, item) -> { items.add(item); });
     localItems.forEach((name, item) -> { items.add(item); });
