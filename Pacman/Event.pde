@@ -13,8 +13,8 @@ public class KeyboardEvent extends Event {
     super();
     this.key = key;
   }
-
-  public float getKey() { return key; }
+  // corrected to return a char
+  public char getKey() { return key; }
 }
 
 
@@ -23,6 +23,8 @@ public class KeyboardEvent extends Event {
 public class MouseEvent extends Event {
   private float x; // The mouse cursor position when the event occurs.
   private float y;
+  // To distinguish between left button and right button, 1 for left, 2 for right.
+  private int button;
 
   public MouseEvent(float x, float y) {
     super();
