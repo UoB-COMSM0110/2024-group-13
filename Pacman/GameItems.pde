@@ -3,7 +3,7 @@ final static float SCALE = 10.0/300;
 
 public class BreakableWall extends SynchronizedItem {
     public int strength;
-    PImage image = loadImage("data/GUI/BigMudBrick.png");
+    PImage image = loadImage("data/GUI/BreakableBrick.png");
 
     public BreakableWall(String name, float setX, float setY) {
         super(name, setX, setY);
@@ -20,7 +20,7 @@ public class BreakableWall extends SynchronizedItem {
 }
 
 public class IndestructableWall extends LocalItem {
-    PImage image = loadImage("data/GUI/BigStoneBrick.png");
+    PImage image = loadImage("data/GUI/IndestructableBrick.png");
 
     public IndestructableWall(String name, float setX, float setY) {
         super(name, setX, setY);
@@ -36,7 +36,7 @@ public class IndestructableWall extends LocalItem {
 }
 
 public class Coin extends SynchronizedItem {
-    PImage image = loadImage("data/GUI/coin.jpg");
+    PImage image = loadImage("data/GUI/Coin.png");
 
     public Coin(String name, float setX, float setY) {
         super(name, setX, setY);
