@@ -164,5 +164,6 @@ public class MovableItem extends SynchronizedItem {
       }
     } else {
       return;
+    }
   }
 }
