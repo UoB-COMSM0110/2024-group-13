@@ -267,3 +267,10 @@ will programme it.
 ## Class diagram
 <img src="resources/PacClassDiagram.jpg"
 alt="ClassDiagram" width="70%">
+
+## Communication diagram
+<img src="resources/PacCommunicationDiagram.jpg"
+alt="CommunicationDiagram" width="70%">
+
+
+
