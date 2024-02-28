@@ -9,7 +9,6 @@ public class GamePage extends Page {
     addLocalItem(backButton);
 
     createPlatforms("data/GUI/map.csv");
-
   }
 
   @Override
