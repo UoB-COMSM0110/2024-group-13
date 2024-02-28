@@ -139,31 +139,30 @@ public class MovableItem extends SynchronizedItem {
   public boolean getMoving() { return moving; }
   
   public void move() {
-    if (moving) {
-      switch(direction) {
-        case UPWARD: {
-          float newY = getY() - speed;
-          setY(newY);
-          break;
-        }
-        case RIGHTWARD: {
-          float newX = getX() + speed;
-          setX(newX);
-          break;
-        }
-        case DOWNWARD: {
-          float newY = getY() + speed;
-          setY(newY);
-          break;
-        }
-        case LEFTWARD: {
-          float newX = getX() - speed;
-          setX(newX);
-          break;
-        }
-      }
-    } else {
+    if (!moving) {
       return;
+    }
+    switch (direction) {
+      case UPWARD: {
+        float newY = getY() - speed;
+        setY(newY);
+        break;
+      }
+      case RIGHTWARD: {
+        float newX = getX() + speed;
+        setX(newX);
+        break;
+      }
+      case DOWNWARD: {
+        float newY = getY() + speed;
+        setY(newY);
+        break;
+      }
+      case LEFTWARD: {
+        float newX = getX() - speed;
+        setX(newX);
+        break;
+      }
     }
   }
 }
