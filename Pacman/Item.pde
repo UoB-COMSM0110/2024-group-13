@@ -26,13 +26,15 @@ public class Item {
   public Item setW(float w) { this.w = w; return this; }
   public Item setH(float h) { this.h = h; return this; }
   
+  public void setX(float x) { this.x = x; }
+  public void setY(float y) { this.y = y; }
+  
   public float getX() { return x; }
   public float getY() { return y; }
   public float getW() { return w; }
   public float getH() { return h; }
-
+  public int getFacing() { return facing; }
   public String getName() { return name; }
-
   public int getLayer() { return layer; }
 
   public void onEvents(GameInfo gInfo, ArrayList<Event> events) {
@@ -121,12 +123,47 @@ public class SynchronizedItem extends Item {
 public class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
-  private boolean moving; // Whether the item is moving between two frames.
+  private boolean moving;// Whether the item is moving between two frames.
   
   public MovableItem(String name, float x, float y) {
     super(name, x, y);
   }
   
+  public void setSpeed(float speed) { this.speed = speed; }
+  public void setDirection(int direction) { this.direction = direction; }
   public void startMoving() { moving = true; }
   public void stopMoving() { moving = false; }
+  
+  public float getSpeed() { return speed; }
+  public int getDirection() { return direction; }
+  public boolean getMoving() { return moving; }
+  
+  public void move() {
+    if (moving) {
+      switch(direction) {
+        case UPWARD: {
+          float newY = getY() - speed;
+          setY(newY);
+          break;
+        }
+        case RIGHTWARD: {
+          float newX = getX() + speed;
+          setX(newX);
+          break;
+        }
+        case DOWNWARD: {
+          float newY = getY() + speed;
+          setY(newY);
+          break;
+        }
+        case LEFTWARD: {
+          float newX = getX() - speed;
+          setX(newX);
+          break;
+        }
+      }
+    } else {
+      return;
+  }
+}
 }
