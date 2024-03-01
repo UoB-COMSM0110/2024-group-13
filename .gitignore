@@ -1,2 +1,4 @@
 *.swp
+*.autosave
+.~lock.*
 .DS_Store
