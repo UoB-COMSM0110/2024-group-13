@@ -1,5 +1,5 @@
 // Class for detecting and solving collisions between items.
-public class CollisionEngine {
+public static class CollisionEngine {
   public static void solveCollisions(GameInfo gInfo,
       ArrayList<SynchronizedItem> items) {
     SimpleCollisionEngine.solveCollisions(gInfo, items);
@@ -11,14 +11,14 @@ public class CollisionEngine {
 // Very primal position correction.
 // No passing-through detection.
 // No collision order calculation.
-public class SimpleCollisionEngine {
+public static class SimpleCollisionEngine {
   // Solve all collisions between items.
   public static void solveCollisions(GameInfo gInfo,
       ArrayList<SynchronizedItem> items) {
     ArrayList<MovableItem> movableItems = new ArrayList<MovableItem>();
     for (SynchronizedItem item : items) {
       if (item instanceof MovableItem) {
-        movableItems.add(item);
+        movableItems.add((MovableItem)item);
       }
     }
     movableItems.forEach((item) -> { solveCollisionsForItem(gInfo, item, items); });
