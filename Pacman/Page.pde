@@ -35,14 +35,12 @@ public class Page {
     //   receiveItems();
     // } else { // isServer
     //   receiveEvents();
-    //   dispatchEventsToSyncItems();
-    //   for (SynchronizedItem item : allSyncItems) {
-    //     item.evolve(gInfo);
-    //   }
-    //   CollisionEngine.solveCollisions(gInfo, allSyncItems);
+    syncItems.forEach((name, item) -> { item.onEvents(gInfo, events); });
+    syncItems.forEach((name, item) -> { item.evolve(gInfo); });
+    CollisionEngine.solveCollisions(gInfo,
+        new ArrayList<SynchronizedItem>(syncItems.values()));
     //   sendItems();
     // }
-    syncItems.forEach((name, item) -> { item.evolve(gInfo); });
   }
 
   void dispatchEventsToLocalItems(GameInfo gInfo, ArrayList<Event> events) {
