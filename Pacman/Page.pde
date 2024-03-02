@@ -37,7 +37,8 @@ public class Page {
     //   receiveEvents();
     syncItems.forEach((name, item) -> { item.onEvents(gInfo, events); });
     syncItems.forEach((name, item) -> { item.evolve(gInfo); });
-    CollisionEngine.solveCollisions(gInfo, allSyncItems);
+    CollisionEngine.solveCollisions(gInfo,
+        new ArrayList<SynchronizedItem>(syncItems.values()));
     //   sendItems();
     // }
   }
