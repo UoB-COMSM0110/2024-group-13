@@ -21,6 +21,11 @@ public class GamePage extends Page {
   void createPlatforms(String filename){
     int itemCounter = 0;
 
+    PacmanFigure fig1 = new PacmanFigure("player1", 0, 0);
+    fig1.setW(100);
+    fig1.setH(100);
+    addSyncItem(fig1);
+
     String[] lines = loadStrings(filename);
     for (int row = 0; row <lines.length; row++) {
       String[] values = split(lines[row], ",");
@@ -41,7 +46,7 @@ public class GamePage extends Page {
           itemCounter++;
           String name = "indestructableWall" + itemCounter;
           Item indestructableWall = new IndestructableWall(name, x, y);
-          addLocalItem((LocalItem)indestructableWall);
+          addSyncItem((SynchronizedItem)indestructableWall);
         }
         //coin
         else if (values[col].equals("3")) {

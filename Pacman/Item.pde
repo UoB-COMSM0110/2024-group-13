@@ -132,16 +132,20 @@ public class MovableItem extends SynchronizedItem {
   public void setSpeed(float speed) { this.speed = speed; }
   public void setDirection(int direction) { this.direction = direction; }
   public void startMoving() { moving = true; }
+  public void startMovingUp() { direction = UPWARD; moving = true; }
+  public void startMovingRight() { direction = RIGHTWARD; moving = true; }
+  public void startMovingDown() { direction = DOWNWARD; moving = true; }
+  public void startMovingLeft() { direction = LEFTWARD; moving = true; }
   public void stopMoving() { moving = false; }
   
   public float getSpeed() { return speed; }
   public int getDirection() { return direction; }
   public boolean getMoving() { return moving; }
   
+  public void evolve(GameInfo gInfo) { move(); }
+
   public void move() {
-    if (!moving) {
-      return;
-    }
+    if (!moving) { return; }
     switch (direction) {
       case UPWARD: {
         float newY = getY() - speed;

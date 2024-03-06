@@ -52,14 +52,14 @@ public class Game {
 }
 
 
-// void keyPressed() {
-//   game.getEventRecorder().recordKeyPressed();
-// }
-// 
-// void keyReleased() {
-//   game.getEventRecorder().recordKeyReleased();
-// }
-// 
+void keyPressed() {
+  game.getEventRecorder().recordKeyPressed();
+}
+
+void keyReleased() {
+  game.getEventRecorder().recordKeyReleased();
+}
+
 // void keyTyped() {
 //   game.getEventRecorder().recordKeyTyped();
 // }

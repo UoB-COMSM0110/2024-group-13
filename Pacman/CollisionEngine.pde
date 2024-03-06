@@ -31,6 +31,9 @@ public static class SimpleCollisionEngine {
       if (item == target) {
         continue;
       }
+      if (item.getLayer() != target.getLayer()) {
+        continue;
+      }
       if (areOverlap(item, target)) {
         correctPosition(item, target);
         item.onCollisionWith(gInfo, target);

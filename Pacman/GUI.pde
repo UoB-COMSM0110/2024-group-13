@@ -1,5 +1,5 @@
-String buttonImagePath = "data/GUI/BlankButton.png";
-PImage buttonImage;
+String imagePathButton = "data/GUI/BlankButton.png";
+PImage imageButton;
   
 public class Button extends LocalItem {
   String text;
@@ -34,8 +34,8 @@ public class Button extends LocalItem {
   // Called when mouse clicks on the button.
   void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
     if(text == "Play"){
-      PlayerPage playerPage = new PlayerPage(gInfo, game.page);
-      game.page = playerPage;
+      GamePage gamingPage = new GamePage(gInfo, game.page);
+      game.page = gamingPage;
     }
     else if (text == "Help"){
       HelpPage helpPage = new HelpPage(gInfo, game.page);
@@ -52,8 +52,8 @@ public class Button extends LocalItem {
 
   @Override
   public PImage getImage() {
-    if (buttonImage == null) { buttonImage = loadImage(buttonImagePath); }
-    return buttonImage;
+    if (imageButton == null) { imageButton = loadImage(imagePathButton); }
+    return imageButton;
   }
 
   @Override
