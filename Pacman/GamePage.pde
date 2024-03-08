@@ -1,8 +1,15 @@
 final static float CHARACTER_SIZE = 10;
 
+String imagePathGamePageBackground = "data/GUI/SimpleBackground.png";
+PImage imageGamePageBackground;
+
 public class GamePage extends Page {
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
+    
+    if (imageGamePageBackground == null) {
+      imageGamePageBackground = loadImage(imagePathGamePageBackground);
+    }
 
     Button backButton = new Button("Back", 20, 10, "Back");
     backButton.setW(200).setH(40);
@@ -13,8 +20,7 @@ public class GamePage extends Page {
 
   @Override
   public void draw(GameInfo gInfo) {
-    PImage backgroundImage = loadImage("data/GUI/SimpleBackground.png");
-    image(backgroundImage, 0, 0, 800, 600);
+    image(imageGamePageBackground, 0, 0, 800, 600);
     super.draw(gInfo);
   }
 

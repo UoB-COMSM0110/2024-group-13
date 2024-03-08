@@ -13,8 +13,12 @@ void setup(){
 }
 
 void draw() {
+  long t1 = System.currentTimeMillis();
   game.updatePage();
+  long t2 = System.currentTimeMillis();
   game.drawPage();
+  long t3 = System.currentTimeMillis();
+  System.out.println("update " + (t2 - t1) + "ms; draw " + (t3 - t2) + "ms");
 }
 
 
@@ -45,9 +49,7 @@ public class Game {
 
   // Draw the current page.
   public void drawPage() {
-
     page.draw(gInfo);
-    
   }
 }
 

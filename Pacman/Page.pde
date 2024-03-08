@@ -20,7 +20,6 @@ public class Page {
 
   public void addSyncItem(SynchronizedItem item) {
     syncItems.put(item.getName(), item);
-    System.out.println(item.getName());
   }
 
   // Update all the items, including sync ones and local ones.
