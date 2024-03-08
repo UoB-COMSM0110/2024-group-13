@@ -82,8 +82,11 @@ String imagePathPacmanFigure = "data/Coin.png";
 PImage imagePacmanFigure;
 
 public class PacmanFigure extends MovableItem {
+  private int playerId;
+
   public PacmanFigure(int playerId, float w, float h) {
     super(itemTypePacmanFigure + playerId, w, h);
+    this.playerId = playerId;
   }
 
   public PImage getImage() {
