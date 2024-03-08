@@ -142,28 +142,29 @@ public class MovableItem extends SynchronizedItem {
   public int getDirection() { return direction; }
   public boolean getMoving() { return moving; }
   
-  public void evolve(GameInfo gInfo) { move(); }
+  public void evolve(GameInfo gInfo) { move(gInfo); }
 
-  public void move() {
+  public void move(GameInfo gInfo) {
     if (!moving) { return; }
+    float distance = speed * gInfo.getLastFrameIntervalMs() / 1000.0;
     switch (direction) {
       case UPWARD: {
-        float newY = getY() - speed;
+        float newY = getY() - distance;
         setY(newY);
         break;
       }
       case RIGHTWARD: {
-        float newX = getX() + speed;
+        float newX = getX() + distance;
         setX(newX);
         break;
       }
       case DOWNWARD: {
-        float newY = getY() + speed;
+        float newY = getY() + distance;
         setY(newY);
         break;
       }
       case LEFTWARD: {
-        float newX = getX() - speed;
+        float newX = getX() - distance;
         setX(newX);
         break;
       }

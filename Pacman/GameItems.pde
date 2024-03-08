@@ -92,7 +92,7 @@ public class PacmanFigure extends MovableItem {
   public PacmanFigure(String name, float x, float y) {
     super(name, x, y);
     super.layer = 1;
-    setSpeed(10);
+    setSpeed(200);
   }
 
   public PImage getImage() {

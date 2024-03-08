@@ -3,22 +3,19 @@ Game game;
 
 void setup(){
   size(800, 600); // Use `windowResize` to resize window
-  frameRate(60);
-
 
   // Create the Game object.
   GameInfo gInfo = new GameInfo();
+  frameRate(gInfo.getFrameRateConfig());
+
   StartPage startPage = new StartPage(gInfo, null);
   game = new Game(gInfo, startPage);
 }
 
 void draw() {
-  long t1 = System.currentTimeMillis();
+  game.updateInfo();
   game.updatePage();
-  long t2 = System.currentTimeMillis();
   game.drawPage();
-  long t3 = System.currentTimeMillis();
-  System.out.println("update " + (t2 - t1) + "ms; draw " + (t3 - t2) + "ms");
 }
 
 
@@ -36,6 +33,12 @@ public class Game {
   }
 
   public EventRecorder getEventRecorder() { return eventRecorder; }
+  
+  // Update GameInfo.
+  public void updateInfo() {
+    gInfo.update();
+    System.out.println("frame interval: " + gInfo.getLastFrameIntervalMs());
+  }
 
   // Update the current page. Replace it when necessary.
   public void updatePage() {
