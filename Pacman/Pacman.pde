@@ -52,6 +52,7 @@ public class Game {
 
   // Draw the current page.
   public void drawPage() {
+    background(0);
     page.draw(gInfo);
   }
 }

@@ -1,22 +1,17 @@
-
-final static float SCALE = 10.0/700;
-
-
-String imagePathBreakableWall = "data/GUI/BreakableBrick.png";
+final String itemTypeBreakableWall = "BreakableWall";
+int itemCountBreakableWall;
+String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
 
 public class BreakableWall extends SynchronizedItem {
   public int strength;
 
-  public BreakableWall(String name, float x, float y) {
-    super(name, x, y);
+  public BreakableWall(float w, float h) {
+    super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
     strength = 3;
-    super.layer = 4;
     if (imageBreakableWall == null ) {
       imageBreakableWall = loadImage(imagePathBreakableWall);
     }
-    super.w = imageBreakableWall.width * SCALE;
-    super.h = imageBreakableWall.height * SCALE;
   }
 
   public PImage getImage() {
@@ -25,18 +20,17 @@ public class BreakableWall extends SynchronizedItem {
 }
 
 
-String imagePathIndestructableWall = "data/GUI/IndestructableBrick.png";
+final String itemTypeIndestructableWall = "IndestructableWall";
+int itemCountIndestructableWall;
+String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
 
 public class IndestructableWall extends SynchronizedItem {
-  public IndestructableWall(String name, float x, float y) {
-    super(name, x, y);
-    super.layer = 4;
+  public IndestructableWall(float w, float h) {
+    super(itemTypeIndestructableWall + itemCountIndestructableWall++, w, h);
     if (imageIndestructableWall == null ) {
       imageIndestructableWall = loadImage(imagePathIndestructableWall);
     }
-    super.w = imageIndestructableWall.width * SCALE;
-    super.h = imageIndestructableWall.height * SCALE;
   }
 
   public PImage getImage() {
@@ -45,18 +39,17 @@ public class IndestructableWall extends SynchronizedItem {
 }
 
 
-String imagePathCoin = "data/GUI/Coin.png";
+final String itemTypeCoin = "Coin";
+int itemCountCoin;
+String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
 
 public class Coin extends SynchronizedItem {
-  public Coin(String name, float x, float y) {
-    super(name, x, y);
-    super.layer = 1;
+  public Coin(float w, float h) {
+    super(itemTypeCoin + itemCountCoin++, w, h);
     if (imageCoin == null ) {
       imageCoin = loadImage(imagePathCoin);
     }
-    super.w = imageCoin.width * SCALE;
-    super.h = imageCoin.height * SCALE;
   }
 
   public PImage getImage() {
@@ -65,18 +58,17 @@ public class Coin extends SynchronizedItem {
 }
 
 
-String imagePathPowerUp = "data/GUI/PowerUp.png";
+final String itemTypePowerUp = "PowerUp";
+int itemCountPowerUp;
+String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
 
 public class PowerUp extends SynchronizedItem {
-  public PowerUp(String name, float x, float y) {
-    super(name, x, y);
-    super.layer = 1;
+  public PowerUp(float w, float h) {
+    super(itemTypePowerUp + itemCountPowerUp++, w, h);
     if (imagePowerUp == null ) {
       imagePowerUp = loadImage(imagePathPowerUp);
     }
-    super.w = imagePowerUp.width * SCALE;
-    super.h = imagePowerUp.height * SCALE;
   }
 
   public PImage getImage() {
@@ -85,14 +77,13 @@ public class PowerUp extends SynchronizedItem {
 }
 
 
-String imagePathPacmanFigure = "data/GUI/Coin.png";
+final String itemTypePacmanFigure = "PacmanFigure";
+String imagePathPacmanFigure = "data/Coin.png";
 PImage imagePacmanFigure;
 
 public class PacmanFigure extends MovableItem {
-  public PacmanFigure(String name, float x, float y) {
-    super(name, x, y);
-    super.layer = 1;
-    setSpeed(200);
+  public PacmanFigure(int playerId, float w, float h) {
+    super(itemTypePacmanFigure + playerId, w, h);
   }
 
   public PImage getImage() {
@@ -112,12 +103,6 @@ public class PacmanFigure extends MovableItem {
   }
 
   public void onKeyPressedEvent(GameInfo gInfo, KeyPressedEvent e) {
-    switch (e.getKey()) {
-      case 'w': case 'W': { startMovingUp(); break; }
-      case 'a': case 'A': { startMovingLeft(); break; }
-      case 's': case 'S': { startMovingDown(); break; }
-      case 'd': case 'D': { startMovingRight(); break; }
-    }
     if (e.getKey() == CODED) {
       switch (e.getKeyCode()) {
         case UP: { startMovingUp(); break; }
@@ -125,18 +110,47 @@ public class PacmanFigure extends MovableItem {
         case DOWN: { startMovingDown(); break; }
         case RIGHT: { startMovingRight(); break; }
       }
+      return;
+    }
+    switch (e.getKey()) {
+      case 'w': case 'W': { startMovingUp(); break; }
+      case 'a': case 'A': { startMovingLeft(); break; }
+      case 's': case 'S': { startMovingDown(); break; }
+      case 'd': case 'D': { startMovingRight(); break; }
     }
   }
 
   public void onKeyReleasedEvent(GameInfo gInfo, KeyReleasedEvent e) {
-    switch (e.getKey()) {
-      case 'w': case 'W': case 'a': case 'A':
-      case 's': case 'S': case 'd': case 'D': { stopMoving(); break; }
-    }
     if (e.getKey() == CODED) {
       switch (e.getKeyCode()) {
         case UP: case LEFT: case DOWN: case RIGHT: { stopMoving(); break; }
       }
+      return;
     }
+    switch (e.getKey()) {
+      case 'w': case 'W': case 'a': case 'A':
+      case 's': case 'S': case 'd': case 'D': { stopMoving(); break; }
+    }
+  }
+
+  public void startMovingUp() {
+    setFacing(UPWARD);
+    setDirection(UPWARD);
+    startMoving();
+  }
+  public void startMovingRight() {
+    setFacing(RIGHTWARD);
+    setDirection(RIGHTWARD);
+    startMoving();
+  }
+  public void startMovingDown() {
+    setFacing(DOWNWARD);
+    setDirection(DOWNWARD);
+    startMoving();
+  }
+  public void startMovingLeft() {
+    setFacing(LEFTWARD);
+    setDirection(LEFTWARD);
+    startMoving();
   }
 }

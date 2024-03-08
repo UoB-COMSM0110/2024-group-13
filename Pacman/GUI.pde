@@ -1,5 +1,9 @@
-String imagePathButton = "data/GUI/BlankButton.png";
+String imagePathButton = "data/Button.png";
 PImage imageButton;
+
+int fontSizeMinecraft = 20;
+String fontPathMinecraft = "data/Minecraft.ttf";
+PFont fontMinecraft;
   
 public class Button extends LocalItem {
   String text;
@@ -7,12 +11,15 @@ public class Button extends LocalItem {
   int textSize;
   PFont textFont;
   
-  public Button(String name, float x, float y, String text) {
-    super(name, x, y);
+  public Button(String name, float w, float h, String text) {
+    super(name, w, h);
     this.text = text;
     this.textColor = color(100, 20, 20);
-    this.textSize = 20;
-    this.textFont = createFont("data/Minecraft.ttf", this.textSize);
+    this.textSize = fontSizeMinecraft;
+    if (fontMinecraft == null) {
+      fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
+    }
+    this.textFont = fontMinecraft;
   }
 
   @Override
