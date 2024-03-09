@@ -1,5 +1,9 @@
-String buttonImagePath = "data/GUI/BlankButton.png";
-PImage buttonImage;
+String imagePathButton = "data/Button.png";
+PImage imageButton;
+
+int fontSizeMinecraft = 20;
+String fontPathMinecraft = "data/Minecraft.ttf";
+PFont fontMinecraft;
   
 public class Button extends LocalItem {
   String text;
@@ -7,12 +11,15 @@ public class Button extends LocalItem {
   int textSize;
   PFont textFont;
   
-  public Button(String name, float x, float y, String text) {
-    super(name, x, y);
+  public Button(String name, float w, float h, String text) {
+    super(name, w, h);
     this.text = text;
     this.textColor = color(100, 20, 20);
-    this.textSize = 20;
-    this.textFont = createFont("data/Minecraft.ttf", this.textSize);
+    this.textSize = fontSizeMinecraft;
+    if (fontMinecraft == null) {
+      fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
+    }
+    this.textFont = fontMinecraft;
   }
 
   @Override
@@ -34,8 +41,8 @@ public class Button extends LocalItem {
   // Called when mouse clicks on the button.
   void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
     if(text == "Play"){
-      PlayerPage playerPage = new PlayerPage(gInfo, game.page);
-      game.page = playerPage;
+      GamePage gamePage = new GamePage(gInfo, game.page);
+      game.page = gamePage;
     }
     else if (text == "Help"){
       HelpPage helpPage = new HelpPage(gInfo, game.page);
@@ -52,8 +59,8 @@ public class Button extends LocalItem {
 
   @Override
   public PImage getImage() {
-    if (buttonImage == null) { buttonImage = loadImage(buttonImagePath); }
-    return buttonImage;
+    if (imageButton == null) { imageButton = loadImage(imagePathButton); }
+    return imageButton;
   }
 
   @Override

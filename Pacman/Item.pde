@@ -10,24 +10,25 @@ static final int LEFTWARD = 270;
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public class Item {
   private String name;
+  private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
-  public float w, h; // Item size.
   private boolean elliptic;
   private int facing;
-  public int layer; // Item layer decides its drawing order.
+  private int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
-  public Item(String name, float x, float y) {
+  public Item(String name, float w, float h) {
     this.name = name;
-    this.x = x;
-    this.y = y;
+    this.w = w;
+    this.h = h;
   }
   
   public Item setW(float w) { this.w = w; return this; }
   public Item setH(float h) { this.h = h; return this; }
-  
-  public void setX(float x) { this.x = x; }
-  public void setY(float y) { this.y = y; }
+  public Item setX(float x) { this.x = x; return this; }
+  public Item setY(float y) { this.y = y; return this; }
+  public Item setFacing(int facing) { this.facing = facing; return this; }
+  public Item setLayer(int layer) { this.layer = layer; return this; }
   
   public float getX() { return x; }
   public float getY() { return y; }
@@ -81,8 +82,8 @@ public class ItemLayerComparator implements Comparator<Item> {
 // Local items don't need synchronize between two players.
 // For example: buttons, labels, etc.
 public class LocalItem extends Item {
-  public LocalItem(String name, float x, float y) {
-    super(name, x, y);
+  public LocalItem(String name, float w, float h) {
+    super(name, w, h);
   }
 }
 
@@ -90,8 +91,8 @@ public class LocalItem extends Item {
 // Synchronized items need synchronize between two players.
 // For example: figures, bricks, bullets, etc.
 public class SynchronizedItem extends Item {
-  public SynchronizedItem(String name, float x, float y) {
-    super(name, x, y);
+  public SynchronizedItem(String name, float w, float h) {
+    super(name, w, h);
   }
 
   // Additional method for sync items to update status.
@@ -125,41 +126,49 @@ public class MovableItem extends SynchronizedItem {
   private int direction;
   private boolean moving;// Whether the item is moving between two frames.
   
-  public MovableItem(String name, float x, float y) {
-    super(name, x, y);
+  public MovableItem(String name, float w, float h) {
+    super(name, w, h);
+    speed = 100.0;
   }
   
-  public void setSpeed(float speed) { this.speed = speed; }
-  public void setDirection(int direction) { this.direction = direction; }
-  public void startMoving() { moving = true; }
-  public void stopMoving() { moving = false; }
+  public MovableItem setSpeed(float speed) {
+    this.speed = speed;
+    return this;
+  }
+  public MovableItem setDirection(int direction) {
+    this.direction = direction;
+    return this;
+  }
+  public MovableItem startMoving() { moving = true; return this; }
+  public MovableItem stopMoving() { moving = false; return this; }
   
   public float getSpeed() { return speed; }
   public int getDirection() { return direction; }
   public boolean getMoving() { return moving; }
   
-  public void move() {
-    if (!moving) {
-      return;
-    }
+  public void evolve(GameInfo gInfo) { move(gInfo); }
+
+  public void move(GameInfo gInfo) {
+    if (!moving) { return; }
+    float distance = speed * gInfo.getLastFrameIntervalMs() / 1000.0;
     switch (direction) {
       case UPWARD: {
-        float newY = getY() - speed;
+        float newY = getY() - distance;
         setY(newY);
         break;
       }
       case RIGHTWARD: {
-        float newX = getX() + speed;
+        float newX = getX() + distance;
         setX(newX);
         break;
       }
       case DOWNWARD: {
-        float newY = getY() + speed;
+        float newY = getY() + distance;
         setY(newY);
         break;
       }
       case LEFTWARD: {
-        float newX = getX() - speed;
+        float newX = getX() - distance;
         setX(newX);
         break;
       }

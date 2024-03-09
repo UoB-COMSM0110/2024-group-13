@@ -13,8 +13,7 @@ public class HelpPage extends Page {
   
   @Override
   public void draw(GameInfo gInfo) {
-    PImage backgroundImage = loadImage("data/GUI/BackgroundEarthImage.png");
-    image(backgroundImage, 0, 0, 800, 600);
+    image(imageStartPageBackground, 0, 0, 800, 600);
     super.draw(gInfo);
   }
 }
