@@ -6,6 +6,8 @@ PImage imageGamePageBackground;
 String mapPath = "data/map.csv";
 
 public class GamePage extends Page {
+  private PacmanFigure pac1;
+
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
     
@@ -18,15 +20,19 @@ public class GamePage extends Page {
     addLocalItem(backButton);
 
     loadMap(mapPath);
-    PacmanFigure pac = new PacmanFigure(0, 20, 20);
-    pac.setX(400).setY(300);
-    addSyncItem(pac);
+    pac1 = new PacmanFigure(0, 20, 20);
+    pac1.setX(400).setY(300);
+    addSyncItem(pac1);
   }
 
   @Override
   public void draw(GameInfo gInfo) {
     image(imageGamePageBackground, 0, 0, 800, 600);
     super.draw(gInfo);
+    
+    textSize(20);
+    text("Score: " + pac1.getScore(), 700, 40);
+    
   }
 
   void loadMap(String mapPath) {
