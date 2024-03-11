@@ -6,7 +6,7 @@ import java.util.Collections;
 public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
-  private Page previousPage; // With this attribute, we can form a page stack.
+  public Page previousPage; // With this attribute, we can form a page stack.
 
   public Page(GameInfo gInfo, Page previousPage) {
     syncItems = new HashMap<String, SynchronizedItem>();
@@ -16,6 +16,10 @@ public class Page {
 
   public void addLocalItem(LocalItem item) {
     localItems.put(item.getName(), item);
+  }
+
+  public void addSyncItem(SynchronizedItem item) {
+    syncItems.put(item.getName(), item);
   }
 
   // Update all the items, including sync ones and local ones.
@@ -31,14 +35,12 @@ public class Page {
     //   receiveItems();
     // } else { // isServer
     //   receiveEvents();
-    //   dispatchEventsToSyncItems();
-    //   for (SynchronizedItem item : allSyncItems) {
-    //     item.evolve(gInfo);
-    //   }
-    //   CollisionEngine.solveCollisions(gInfo, allSyncItems);
+    syncItems.forEach((name, item) -> { item.onEvents(gInfo, events); });
+    syncItems.forEach((name, item) -> { item.evolve(gInfo); });
+    CollisionEngine.solveCollisions(gInfo,
+        new ArrayList<SynchronizedItem>(syncItems.values()));
     //   sendItems();
     // }
-    syncItems.forEach((name, item) -> { item.evolve(gInfo); });
   }
 
   void dispatchEventsToLocalItems(GameInfo gInfo, ArrayList<Event> events) {
@@ -52,7 +54,6 @@ public class Page {
 
   // Draw all the items, including sync ones and local ones.
   public void draw(GameInfo gInfo) {
-    background(255);
     ArrayList<Item> items = new ArrayList<Item>();
     syncItems.forEach((name, item) -> { items.add(item); });
     localItems.forEach((name, item) -> { items.add(item); });
