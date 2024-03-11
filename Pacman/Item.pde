@@ -69,6 +69,9 @@ public class Item {
     if (img == null) { return; }
     image(img, x, y, w, h);
   }
+  
+  //add discard method
+  
 }
 
 

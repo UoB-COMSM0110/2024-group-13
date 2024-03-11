@@ -52,6 +52,10 @@ public class Coin extends SynchronizedItem {
     }
   }
 
+public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+//   this.discarded = true;
+}
+
   public PImage getImage() {
     return imageCoin;
   }
