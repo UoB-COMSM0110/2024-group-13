@@ -1,7 +1,9 @@
+import java.util.Random;
+
 final String itemTypeGhost = "Ghost";
 String ghostImagePath = "data/ghost.jpg";
 PImage ghostImage;
-import java.util.Random;
+
 
 // Ghost class
 public class Ghost extends MovableItem {
@@ -9,8 +11,8 @@ public class Ghost extends MovableItem {
     private int ghostLife;
     
     // Constructor
-    public Ghost(String name, float x, float y) {
-        super(name, x, y);
+    public Ghost(String name, float w, float h) {
+        super(name, w, h);
         ghostLife = 3;
         setSpeed(30.0); // set Ghost speed
         randomizeDirection(); // Start by a random direction
@@ -25,7 +27,7 @@ public class Ghost extends MovableItem {
         }
         
         // keep moving
-        move(gInfo);
+        super.evolve(gInfo);
     }
     
     private void randomizeDirection() {
