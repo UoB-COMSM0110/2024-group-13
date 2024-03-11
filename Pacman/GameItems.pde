@@ -53,7 +53,9 @@ public class Coin extends SynchronizedItem {
   }
 
 public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
-//   this.discarded = true;
+  if(item instanceof PacmanFigure){
+    setDiscarded();
+  }
 }
 
   public PImage getImage() {

@@ -21,6 +21,7 @@ public class Item {
     this.name = name;
     this.w = w;
     this.h = h;
+    discarded = false;
   }
   
   public Item setW(float w) { this.w = w; return this; }
@@ -65,12 +66,16 @@ public class Item {
   public PImage getImage() { return null; }
 
   public void draw(GameInfo gInfo) {
-    PImage img = getImage();
-    if (img == null) { return; }
-    image(img, x, y, w, h);
+    if(discarded != true){
+      PImage img = getImage();
+      if (img == null) { return; }
+      image(img, x, y, w, h);
+    }
   }
   
-  //add discard method
+  public void setDiscarded(){
+    this.discarded = true;
+  }
   
 }
 
