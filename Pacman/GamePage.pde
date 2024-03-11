@@ -21,7 +21,7 @@ public class GamePage extends Page {
 
     loadMap(mapPath);
     pac1 = new PacmanFigure(0, 20, 20);
-    pac1.setX(400).setY(300);
+    pac1.setX(360).setY(350);
     addSyncItem(pac1);
   }
 

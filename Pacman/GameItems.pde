@@ -51,12 +51,12 @@ public class Coin extends SynchronizedItem {
     }
   }
 
-public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
-  if(item instanceof PacmanFigure){
-    setDiscarded();
-    item.setScore(1);
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+      item.setScore(1);
+    }
   }
-}
 
   public PImage getImage() {
     return imageCoin;
@@ -76,6 +76,12 @@ public class PowerUp extends SynchronizedItem {
       imagePowerUp = loadImage(imagePathPowerUp);
     }
   }
+
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+    }
+  }  
 
   public PImage getImage() {
     return imagePowerUp;
