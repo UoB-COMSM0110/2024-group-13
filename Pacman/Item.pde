@@ -15,7 +15,7 @@ public class Item {
   private boolean elliptic;
   private int facing;
   private int layer; // Item layer decides its drawing order.
-  private boolean discarded;
+  public boolean discarded;
 
   public Item(String name, float w, float h) {
     this.name = name;
@@ -66,11 +66,11 @@ public class Item {
   public PImage getImage() { return null; }
 
   public void draw(GameInfo gInfo) {
-    if(discarded != true){
+    //if(discarded != true){
       PImage img = getImage();
       if (img == null) { return; }
       image(img, x, y, w, h);
-    }
+    //}
   }
   
   public void setDiscarded(){
