@@ -58,7 +58,7 @@ public class Page {
     syncItems.forEach((name, item) -> { items.add(item); });
     localItems.forEach((name, item) -> { items.add(item); });
     Collections.sort(items, new ItemLayerComparator());
-    items.forEach((item) -> { item.draw(gInfo); });
+    items.forEach((item) -> { if(item.discarded != true){item.draw(gInfo); }});
   }
 
   // Whether the page should be replaced with next one.

@@ -4,7 +4,7 @@ String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
 
 public class BreakableWall extends SynchronizedItem {
-  public int strength;
+  private int strength;
 
   public BreakableWall(float w, float h) {
     super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
@@ -12,6 +12,15 @@ public class BreakableWall extends SynchronizedItem {
     if (imageBreakableWall == null ) {
       imageBreakableWall = loadImage(imagePathBreakableWall);
     }
+  }
+  
+  public int getStrength() {
+    return this.strength;
+  }
+  
+  public BreakableWall setStrength(int strength) {
+    this.strength = strength;
+    return this;
   }
 
   public PImage getImage() {
@@ -52,6 +61,13 @@ public class Coin extends SynchronizedItem {
     }
   }
 
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+      item.setScore(1);
+    }
+  }
+
   public PImage getImage() {
     return imageCoin;
   }
@@ -70,7 +86,13 @@ public class PowerUp extends SynchronizedItem {
       imagePowerUp = loadImage(imagePathPowerUp);
     }
   }
-
+  
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+    }
+  }  
+  
   public PImage getImage() {
     return imagePowerUp;
   }
@@ -83,7 +105,8 @@ PImage imagePacmanFigure;
 
 public class PacmanFigure extends MovableItem {
   private int playerId;
-
+  private int score;
+  
   public PacmanFigure(int playerId, float w, float h) {
     super(itemTypePacmanFigure + playerId, w, h);
     this.playerId = playerId;
@@ -95,7 +118,15 @@ public class PacmanFigure extends MovableItem {
     }
     return imagePacmanFigure;
   }
+  
+  public int getScore(){
+    return this.score; 
+  }
 
+  public void setScore(int increment){
+    this.score += increment;
+  }
+  
   public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {
     System.out.println("player key event");
     if (e instanceof KeyPressedEvent) {
@@ -155,5 +186,55 @@ public class PacmanFigure extends MovableItem {
     setFacing(LEFTWARD);
     setDirection(LEFTWARD);
     startMoving();
+  }
+}
+
+final String itemTypeBullet = "Bullet";
+int itemCountBullet;
+String imagePathBullet = "data/Bullet.JPG";
+PImage imageBullet;
+
+public class Bullet extends MovableItem {
+  
+  public Bullet(float w, float h) {
+    super(itemTypeBullet + itemCountBullet++, w, h);
+    if (imageBullet == null ) {
+      imageBullet = loadImage(imagePathBullet);
+    }
+  }
+  
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    
+    if(item instanceof IndestructableWall){
+      this.setDiscarded();
+    }
+    
+    if(item instanceof BreakableWall) {
+      BreakableWall breakableWall = (BreakableWall)item;
+      if (breakableWall.getStrength() == 1) {
+        breakableWall.setStrength(0);
+        breakableWall.setDiscarded();
+        this.setDiscarded();
+      } else {
+        breakableWall.setStrength(breakableWall.getStrength() - 1);
+        this.setDiscarded();
+      }
+    }
+    
+    if (item instanceof Ghost) {
+      Ghost ghost = (Ghost)item;
+      if (ghost.getGhostLife() == 1) {
+        ghost.setGhostLife(0);
+        ghost.setDiscarded();
+        this.setDiscarded();
+      } else {
+        ghost.setGhostLife(ghost.getGhostLife() - 1);
+        this.setDiscarded();
+      }
+    }
+  }  
+  
+  public PImage getImage() {
+    return imageBullet;
   }
 }

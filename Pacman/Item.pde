@@ -21,6 +21,7 @@ public class Item {
     this.name = name;
     this.w = w;
     this.h = h;
+    this.discarded = false;
   }
   
   public Item setW(float w) { this.w = w; return this; }
@@ -69,6 +70,12 @@ public class Item {
     if (img == null) { return; }
     image(img, x, y, w, h);
   }
+  
+  public void setDiscarded(){
+    this.discarded = true;
+  }
+
+  public void setScore(int increment){}
 }
 
 
@@ -105,6 +112,8 @@ public class SynchronizedItem extends Item {
   // Serialize item status for transmission through network.
   public String serialize() { return ""; }
 
+  public void setScore(int increment){}
+  
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override
@@ -145,6 +154,7 @@ public class MovableItem extends SynchronizedItem {
   public float getSpeed() { return speed; }
   public int getDirection() { return direction; }
   public boolean getMoving() { return moving; }
+  public void setScore(int increment){}
   
   public void evolve(GameInfo gInfo) { move(gInfo); }
 
