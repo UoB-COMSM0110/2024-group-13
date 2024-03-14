@@ -20,9 +20,14 @@ public class GamePage extends Page {
     addLocalItem(backButton);
 
     loadMap(mapPath);
+
     pac1 = new PacmanFigure(0, 20, 20);
     pac1.setX(360).setY(350);
     addSyncItem(pac1);
+    
+    Ghost goo = new Ghost("goo", 20, 20);
+    goo.setX(30).setY(100);
+    addSyncItem(goo);
   }
 
   @Override
@@ -49,6 +54,7 @@ public class GamePage extends Page {
           breakableWall.setX(x).setY(y);
           addSyncItem(breakableWall);
         }
+        
         //indestructable walls
         else if (values[col].equals("2")) {
           IndestructableWall indestructableWall =
