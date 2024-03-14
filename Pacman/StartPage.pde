@@ -24,8 +24,6 @@ public class StartPage extends Page {
     addLocalItem(helpButton);
   }
 
-
-
   @Override
   public void draw(GameInfo gInfo) {
     image(imageStartPageBackground, 0, 0, 800, 600);

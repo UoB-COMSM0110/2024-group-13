@@ -47,7 +47,6 @@ public class IndestructableWall extends SynchronizedItem {
   }
 }
 
-
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
 String imagePathCoin = "data/Coin.png";
@@ -86,13 +85,13 @@ public class PowerUp extends SynchronizedItem {
       imagePowerUp = loadImage(imagePathPowerUp);
     }
   }
-  
+
   public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
     if(item instanceof PacmanFigure){
       setDiscarded();
     }
   }  
-  
+
   public PImage getImage() {
     return imagePowerUp;
   }
@@ -106,7 +105,7 @@ PImage imagePacmanFigure;
 public class PacmanFigure extends MovableItem {
   private int playerId;
   private int score;
-  
+
   public PacmanFigure(int playerId, float w, float h) {
     super(itemTypePacmanFigure + playerId, w, h);
     this.playerId = playerId;

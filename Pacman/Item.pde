@@ -15,7 +15,7 @@ public class Item {
   private boolean elliptic;
   private int facing;
   private int layer; // Item layer decides its drawing order.
-  private boolean discarded;
+  public boolean discarded;
 
   public Item(String name, float w, float h) {
     this.name = name;
@@ -66,16 +66,16 @@ public class Item {
   public PImage getImage() { return null; }
 
   public void draw(GameInfo gInfo) {
-    PImage img = getImage();
-    if (img == null) { return; }
-    image(img, x, y, w, h);
+      PImage img = getImage();
+      if (img == null) { return; }
+      image(img, x, y, w, h);
   }
   
   public void setDiscarded(){
     this.discarded = true;
   }
 
-  public void setScore(int increment){}
+  public void setScore(int increment) {}
 }
 
 
@@ -113,7 +113,7 @@ public class SynchronizedItem extends Item {
   public String serialize() { return ""; }
 
   public void setScore(int increment){}
-  
+
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override

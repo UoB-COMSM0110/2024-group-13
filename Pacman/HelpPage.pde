@@ -8,12 +8,22 @@ public class HelpPage extends Page {
     addLocalItem(backButton);
 
   }
+  
 
+  string imagePathOverlay = "data/GamePageOverlay.png";
+  PImage imagePathOverlay;
+
+  if (imageOverlay == null) {
+      imageOverlay = loadImage(imagePathOverlay);
+  }
+
+  
 
   
   @Override
   public void draw(GameInfo gInfo) {
     image(imageStartPageBackground, 0, 0, 800, 600);
+    image(imageOverlay, 0, 0, 800, 600);
     super.draw(gInfo);
   }
 }

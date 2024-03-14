@@ -27,7 +27,6 @@ public class Ghost extends MovableItem {
       return this;
     }
     
-
     @Override
     public void evolve(GameInfo gInfo) {
         //  Randomly change direction

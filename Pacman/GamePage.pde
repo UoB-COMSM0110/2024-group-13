@@ -6,9 +6,8 @@ PImage imageGamePageBackground;
 String mapPath = "data/map.csv";
 
 public class GamePage extends Page {
-  
   private PacmanFigure pac1;  
-  
+
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
     
@@ -21,6 +20,7 @@ public class GamePage extends Page {
     addLocalItem(backButton);
 
     loadMap(mapPath);
+
     pac1 = new PacmanFigure(0, 20, 20);
     pac1.setX(360).setY(350);
     addSyncItem(pac1);
@@ -53,6 +53,7 @@ public class GamePage extends Page {
           breakableWall.setX(x).setY(y);
           addSyncItem(breakableWall);
         }
+        
         //indestructable walls
         else if (values[col].equals("2")) {
           IndestructableWall indestructableWall =
