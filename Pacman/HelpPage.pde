@@ -8,22 +8,23 @@ public class HelpPage extends Page {
     addLocalItem(backButton);
 
   }
-  
 
-  string imagePathOverlay = "data/GamePageOverlay.png";
-  PImage imagePathOverlay;
+  String imagePathOverlay = "data/GamePageOverlay.png";
+  PImage imageOverlay;
+  String imagePathInstructionSet = "data/instructionSet.png";
+  PImage imageInstructionSet;
 
-  if (imageOverlay == null) {
-      imageOverlay = loadImage(imagePathOverlay);
-  }
-
-  
-
-  
   @Override
   public void draw(GameInfo gInfo) {
     image(imageStartPageBackground, 0, 0, 800, 600);
+    if (imageOverlay == null) {
+        imageOverlay = loadImage(imagePathOverlay);
+    }
     image(imageOverlay, 0, 0, 800, 600);
+    if (imageInstructionSet == null) {
+        imageInstructionSet = loadImage(imagePathInstructionSet);
+    }
+    image(imageInstructionSet, 10, 100, 780, 390);
     super.draw(gInfo);
   }
 }

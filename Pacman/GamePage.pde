@@ -6,7 +6,7 @@ PImage imageGamePageBackground;
 String mapPath = "data/map.csv";
 
 public class GamePage extends Page {
-  private PacmanFigure pac1;
+  private PacmanFigure pac1;  
 
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
@@ -37,7 +37,6 @@ public class GamePage extends Page {
     
     textSize(20);
     text("Score: " + pac1.getScore(), 700, 40);
-    
   }
 
   void loadMap(String mapPath) {

@@ -21,7 +21,7 @@ public class Item {
     this.name = name;
     this.w = w;
     this.h = h;
-    discarded = false;
+    this.discarded = false;
   }
   
   public Item setW(float w) { this.w = w; return this; }
@@ -75,8 +75,7 @@ public class Item {
     this.discarded = true;
   }
 
-  public void setScore(int increment){}
-  
+  public void setScore(int increment) {}
 }
 
 

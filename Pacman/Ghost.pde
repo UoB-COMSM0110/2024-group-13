@@ -17,7 +17,16 @@ public class Ghost extends MovableItem {
         setSpeed(30.0); // set Ghost speed
         randomizeDirection(); // Start by a random direction
     }
-
+    
+    public int getGhostLife() {
+      return ghostLife;
+    }
+    
+    public Ghost setGhostLife(int ghostLife) {
+      this.ghostLife = ghostLife;
+      return this;
+    }
+    
     @Override
     public void evolve(GameInfo gInfo) {
         //  Randomly change direction
