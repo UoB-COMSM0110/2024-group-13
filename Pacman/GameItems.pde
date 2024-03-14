@@ -38,7 +38,6 @@ public class IndestructableWall extends SynchronizedItem {
   }
 }
 
-
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
 String imagePathCoin = "data/Coin.png";
@@ -49,6 +48,13 @@ public class Coin extends SynchronizedItem {
     super(itemTypeCoin + itemCountCoin++, w, h);
     if (imageCoin == null ) {
       imageCoin = loadImage(imagePathCoin);
+    }
+  }
+
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+      item.setScore(1);
     }
   }
 
@@ -71,6 +77,12 @@ public class PowerUp extends SynchronizedItem {
     }
   }
 
+  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+    if(item instanceof PacmanFigure){
+      setDiscarded();
+    }
+  }  
+
   public PImage getImage() {
     return imagePowerUp;
   }
@@ -83,6 +95,7 @@ PImage imagePacmanFigure;
 
 public class PacmanFigure extends MovableItem {
   private int playerId;
+  private int score;
 
   public PacmanFigure(int playerId, float w, float h) {
     super(itemTypePacmanFigure + playerId, w, h);
@@ -95,7 +108,15 @@ public class PacmanFigure extends MovableItem {
     }
     return imagePacmanFigure;
   }
-
+  
+  public int getScore(){
+    return this.score; 
+  }
+  
+  public void setScore(int increment){
+    this.score += increment;
+  }
+    
   public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {
     System.out.println("player key event");
     if (e instanceof KeyPressedEvent) {
