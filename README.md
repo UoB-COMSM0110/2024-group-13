@@ -58,7 +58,7 @@ alt="Multiplayer Pacman" width="50%">
 This version introduces multiple game modes and novel
 power-upsto enhance gameplay significantly.
 
-#### Game Modes
+#### Game modes
 
 - **Single Player (Classic)**: Play as Pac-Man with
   AI-controlled ghosts.
@@ -132,9 +132,7 @@ Dive into a head-to-head competition to collect as many
 points as possible while navigating through a maze filled
 with challenges and surprises.
 
-### Gameplay
-
-### Description
+### Game Description
 
 Players aim to gather as many points as possible by
 collecting coins scattered throughout the map. Each player
@@ -204,7 +202,7 @@ Alternatively, complete dark mode:
 - customers
 - negative stakeholders: school
 
-### User stories
+### User Stories
 
 - as a player, I want to play against someone else so that
 I can spend time with my friend.
@@ -218,10 +216,11 @@ a team so that we can code together.
 game in five minutes so that I have a good understanding 
 of the game.
 
-### Use case specification
+### Usecase Specification
 
 User story: as a player, I want to play against someone 
 else so that I can spend time with my friend.
+
 1. the user (1st player) clicks the button which creates 
 the game to get a room number.
 2. the 1st player shares the room number with their 
@@ -240,12 +239,12 @@ the player into a ghost.
 and shows the final points.
 10. there is an option to start a new game.
 
-### Use case diagram
+### Usecase Diagram
 
 <img src="resources/GameUseCaseDiagram.png"
 alt="Use case diagram" width="70%">
 
-### Use case reflection
+### Usecase Reflection
 
 Making a use case specification and diagram enabled the
 group to look at the project from a different perspective, 
@@ -264,13 +263,43 @@ game. Creating a use case also helped us start to understand how
 we need to think about the architecture of the game and how we 
 will programme it.
 
-## Class diagram
+## Game Design
+
+### Class Diagram
+
+Classes of our Game:
+
 <img src="resources/PacClassDiagram.jpg"
 alt="ClassDiagram" width="70%">
 
-## Communication diagram
+### Communication Diagram
+
+Communication between classes:
+
 <img src="resources/PacCommunicationDiagram.jpg"
 alt="CommunicationDiagram" width="70%">
 
+## Qualitative HCI Evaluation
 
+### Think Aloud Evaluation
+
+#### 11/03/2024
+
+1. Effect when buttons being hovered on.
+2. Better to add background music.
+3. Consider to add multiple maps.
+4. Annimation effect for game figures.
+5. Add background story.
+
+#### 11/03/2024
+
+1. Pacman get stuck between coins.
+2. Arrow key does not function properly.
+
+### Heuristic Evaluation
+
+#### 11/03/2024
+
+<img src="resources/HeuristicEvaluation_240311.jpeg"
+alt="ClassDiagram" width="50%">
 
