@@ -21,7 +21,6 @@ public class Item {
     this.name = name;
     this.w = w;
     this.h = h;
-    this.discarded = false;
   }
   
   public Item setW(float w) { this.w = w; return this; }
@@ -71,8 +70,16 @@ public class Item {
       image(img, x, y, w, h);
   }
   
-  public void setDiscarded(){
+  public void isDiscarded(){
+    return this.discarded;
+  }
+
+  public void discard(){
     this.discarded = true;
+  }
+
+  public void restore(){
+    this.discarded = false;
   }
 
   public void setScore(int increment) {}
@@ -134,11 +141,17 @@ public class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
   private boolean moving;// Whether the item is moving between two frames.
+
+  private float prev_x;
+  private float prev_y;
   
   public MovableItem(String name, float w, float h) {
     super(name, w, h);
     speed = 100.0;
   }
+
+  public Item setX(float x) { this.x = x; this.prev_x = x; return this; }
+  public Item setY(float y) { this.y = y; this.prev_y = y; return this; }
   
   public MovableItem setSpeed(float speed) {
     this.speed = speed;
@@ -156,32 +169,19 @@ public class MovableItem extends SynchronizedItem {
   public boolean getMoving() { return moving; }
   public void setScore(int increment){}
   
-  public void evolve(GameInfo gInfo) { move(gInfo); }
+  public void evolve(GameInfo gInfo) {
+    if (getMoving()) { move(gInfo); }
+  }
 
   public void move(GameInfo gInfo) {
-    if (!moving) { return; }
     float distance = speed * gInfo.getLastFrameIntervalMs() / 1000.0;
+    this.prev_x = x;
+    this.prev_y = y;
     switch (direction) {
-      case UPWARD: {
-        float newY = getY() - distance;
-        setY(newY);
-        break;
-      }
-      case RIGHTWARD: {
-        float newX = getX() + distance;
-        setX(newX);
-        break;
-      }
-      case DOWNWARD: {
-        float newY = getY() + distance;
-        setY(newY);
-        break;
-      }
-      case LEFTWARD: {
-        float newX = getX() - distance;
-        setX(newX);
-        break;
-      }
+      case UPWARD: { this.y -= distance; break; }
+      case RIGHTWARD: { this.x += distance; break; }
+      case DOWNWARD: { this.y += distance; break; }
+      case LEFTWARD: { this.x -= distance; break; }
     }
   }
 }

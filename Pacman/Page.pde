@@ -3,7 +3,7 @@ import java.util.Collections;
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
 // and is responsible for updating and drawing them.
-public class Page {
+public static class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
   public Page previousPage; // With this attribute, we can form a page stack.
@@ -16,6 +16,14 @@ public class Page {
 
   public void addLocalItem(LocalItem item) {
     localItems.put(item.getName(), item);
+  }
+
+  public void getSyncItems() {
+    ArrayList<SynchronizedItem> items = new ArrayList<SynchronizedItem>();
+    this.syncItems.forEach((e) -> {
+        if (!e.isDiscarded()) { items.add(e); }
+    });
+    return items;
   }
 
   public void addSyncItem(SynchronizedItem item) {
