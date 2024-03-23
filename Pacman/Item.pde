@@ -12,10 +12,9 @@ public class Item {
   private String name;
   private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
-  private boolean elliptic;
   private int facing;
   private int layer; // Item layer decides its drawing order.
-  public boolean discarded;
+  private boolean discarded;
 
   public Item(String name, float w, float h) {
     this.name = name;
@@ -29,60 +28,46 @@ public class Item {
   public Item setY(float y) { this.y = y; return this; }
   public Item setFacing(int facing) { this.facing = facing; return this; }
   public Item setLayer(int layer) { this.layer = layer; return this; }
+  public Item discard() { this.discarded = true; return this; }
+  public Item restore() { this.discarded = false; return this; }
   
-  public float getX() { return x; }
-  public float getY() { return y; }
+  public String getName() { return name; }
   public float getW() { return w; }
   public float getH() { return h; }
+  public float getX() { return x; }
+  public float getY() { return y; }
   public int getFacing() { return facing; }
-  public String getName() { return name; }
   public int getLayer() { return layer; }
+  public boolean isDiscarded(){ return this.discarded; }
 
-  public void onEvents(GameInfo gInfo, ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(gInfo, e); });
+  public void onEvents(GameInfo gInfo, Page page, ArrayList<Event> events) {
+    events.forEach((e) -> { onEvent(gInfo, page, e); });
   }
 
   // Deals with events.
-  public void onEvent(GameInfo gInfo, Event e) {
-    if (e instanceof MouseEvent) {
-      onMouseEvent(gInfo, (MouseEvent)e);
-    } else if (e instanceof KeyboardEvent) {
-      onKeyboardEvent(gInfo, (KeyboardEvent)e);
-    } else {
-    }
+  public void onEvent(GameInfo gInfo, Page page, Event e) {
+    if (e instanceof MouseEvent) { onMouseEvent(gInfo, page, (MouseEvent)e); }
+    else if (e instanceof KeyboardEvent) { onKeyboardEvent(gInfo, page, (KeyboardEvent)e); }
+    else {}
   }
-
-  public void onMouseEvent(GameInfo gInfo, MouseEvent e) {}
-
-  public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {}
+  public void onMouseEvent(GameInfo gInfo, Page page, MouseEvent e) {}
+  public void onKeyboardEvent(GameInfo gInfo, Page page, KeyboardEvent e) {}
 
   // Update status for each game frame.
   // Generally the update here won't affect game logic,
-  // but only visual effects, human-game interactions, etc.
+  // but only affects visual effects, human-game interactions, etc.
   // This method can interact with other items.
   public void update(GameInfo gInfo, Page page) {}
 
   public PImage getImage() { return null; }
 
-  public void draw(GameInfo gInfo) {
+  public void draw(GameInfo gInfo) { draw(gInfo, this.x, this.y, this.w, this.h); }
+
+  public void draw(GameInfo gInfo, float x, float y, float w, float h) {
       PImage img = getImage();
       if (img == null) { return; }
       image(img, x, y, w, h);
   }
-  
-  public void isDiscarded(){
-    return this.discarded;
-  }
-
-  public void discard(){
-    this.discarded = true;
-  }
-
-  public void restore(){
-    this.discarded = false;
-  }
-
-  public void setScore(int increment) {}
 }
 
 
@@ -96,43 +81,41 @@ public class ItemLayerComparator implements Comparator<Item> {
 // Local items don't need synchronize between two players.
 // For example: buttons, labels, etc.
 public class LocalItem extends Item {
-  public LocalItem(String name, float w, float h) {
-    super(name, w, h);
-  }
+  public LocalItem(String name, float w, float h) { super(name, w, h); }
 }
 
 
 // Synchronized items need synchronize between two players.
 // For example: figures, bricks, bullets, etc.
 public class SynchronizedItem extends Item {
-  public SynchronizedItem(String name, float w, float h) {
-    super(name, w, h);
-  }
+  public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
 
   // Additional method for sync items to update status.
   // Mainly update status which affects game logic, e.g., movement of figures.
-  public void evolve(GameInfo gInfo) {}
+  public void evolve(GameInfo gInfo, Page page) {}
 
   // Called when two sync items collide with each other.
-  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {}
+  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item, float dx, float dy) {}
+  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {}
 
   // Serialize item status for transmission through network.
   public String serialize() { return ""; }
-
-  public void setScore(int increment){}
 
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override
   public void draw(GameInfo gInfo) {
-    PImage img = getImage();
-    if (img == null) { return; }
-    float actualX = getX() * gInfo.getSyncCoordScaleX() + gInfo.getSyncCoordOffsetX();
-    float actualY = getY() * gInfo.getSyncCoordScaleY() + gInfo.getSyncCoordOffsetY();
-    float actualW = getW() * gInfo.getSyncCoordScaleX();
-    float actualH = getH() * gInfo.getSyncCoordScaleY();
-    image(img, actualX, actualY, actualW, actualH);
+    draw(gInfo, getLocalX(gInfo), getLocalY(gInfo), getLocalW(gInfo), getLocalH(gInfo));
   }
+
+  public float getLocalX(GameInfo gInfo) {
+    return gInfo.getMapOffsetX() + getX() * gInfo.getMapScaleX();
+  }
+  public float getLocalY(GameInfo gInfo) {
+    return gInfo.getMapOffsetY() + getY() * gInfo.getMapScaleY();
+  }
+  public float getLocalW(GameInfo gInfo) { return getW() * gInfo.getMapScaleX(); }
+  public float getLocalH(GameInfo gInfo) { return getH() * gInfo.getMapScaleY(); }
 }
 
 
@@ -140,48 +123,47 @@ public class SynchronizedItem extends Item {
 public class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
-  private boolean moving;// Whether the item is moving between two frames.
-
-  private float prev_x;
-  private float prev_y;
+  private boolean moving; // Whether the item is moving between two frames.
+  
+  private float refX;
+  private float refY;
   
   public MovableItem(String name, float w, float h) {
     super(name, w, h);
     speed = 100.0;
   }
 
-  public Item setX(float x) { this.x = x; this.prev_x = x; return this; }
-  public Item setY(float y) { this.y = y; this.prev_y = y; return this; }
-  
-  public MovableItem setSpeed(float speed) {
-    this.speed = speed;
+  public MovableItem moveX(float dx) { setX(getX() + dx); return this; }
+  public MovableItem moveY(float dy) { setY(getY() + dy); return this; }
+  public MovableItem setSpeed(float speed) { this.speed = speed; return this; }
+  public MovableItem setDirection(int direction) { this.direction = direction; return this; }
+  public MovableItem startMoving() { this.moving = true; return this; }
+  public MovableItem stopMoving() { this.moving = false; return this; }
+  public MovableItem saveRefPoint(float x, float y) {
+    this.refX = x;
+    this.refY = y;
     return this;
   }
-  public MovableItem setDirection(int direction) {
-    this.direction = direction;
-    return this;
-  }
-  public MovableItem startMoving() { moving = true; return this; }
-  public MovableItem stopMoving() { moving = false; return this; }
   
-  public float getSpeed() { return speed; }
-  public int getDirection() { return direction; }
-  public boolean getMoving() { return moving; }
-  public void setScore(int increment){}
+  public float getSpeed() { return this.speed; }
+  public int getDirection() { return this.direction; }
+  public boolean isMoving() { return this.moving; }
   
-  public void evolve(GameInfo gInfo) {
-    if (getMoving()) { move(gInfo); }
+  @Override
+  public void evolve(GameInfo gInfo, Page page) {
+    if (isMoving()) {
+      saveRefPoint(getX(), getY());
+      move(gInfo);
+    }
   }
 
   public void move(GameInfo gInfo) {
-    float distance = speed * gInfo.getLastFrameIntervalMs() / 1000.0;
-    this.prev_x = x;
-    this.prev_y = y;
+    float distance = speed * gInfo.getLastFrameIntervalS();
     switch (direction) {
-      case UPWARD: { this.y -= distance; break; }
-      case RIGHTWARD: { this.x += distance; break; }
-      case DOWNWARD: { this.y += distance; break; }
-      case LEFTWARD: { this.x -= distance; break; }
+      case UPWARD: { moveY(-distance); break; }
+      case RIGHTWARD: { moveX(distance); break; }
+      case DOWNWARD: { moveY(distance); break; }
+      case LEFTWARD: { moveX(-distance); break; }
     }
   }
 }

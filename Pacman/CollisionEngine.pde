@@ -1,7 +1,7 @@
 // Class for detecting and solving collisions between items.
 public static class CollisionEngine {
   public static void solveCollisions(GameInfo gInfo, Page page) {
-    SimpleCollisionEngine.solveCollisions(gInfo, Page page);
+    SimpleCollisionEngine.solveCollisions(gInfo, page);
   }
 }
 
@@ -31,12 +31,13 @@ public static class SimpleCollisionEngine {
 
   // Solve collisions between a specific item and other items.
   public static void solveCollisionsForItem(GameInfo gInfo, Page page,
-      MovableItem item, ArrayList<SynchronizedItem> items) {
-    for (SynchronizedItem target : items) {
+      MovableItem item, ArrayList<SynchronizedItem> targets) {
+    for (SynchronizedItem target : targets) {
       if (isOverlap(item, target)) {
         float dx = getXCorrection(item, target);
         float dy = getYCorrection(item, target);
         item.onCollisionWith(gInfo, page, target, dx, dy);
+        target.onCollisionWith(gInfo, page, item);
       }
     }
   }

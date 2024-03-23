@@ -64,12 +64,16 @@ public class EventRecorder {
   ArrayList<Event> events;
 
   public EventRecorder() {
-    events = new ArrayList<Event>();
+    this.events = new ArrayList<Event>();
   }
   
-  public ArrayList<Event> getEvents() { return events; }
+  public ArrayList<Event> fetchEvents() {
+    ArrayList<Event> current_events = this.events;
+    this.events = new ArrayList<Event>();
+    return current_events;
+  }
 
-  public void clearEvents() { events.clear(); }
+  public void dropEvents() { this.events = new ArrayList<Event>(); }
 
   public void recordKeyPressed() {
     events.add(new KeyPressedEvent(key, keyCode));

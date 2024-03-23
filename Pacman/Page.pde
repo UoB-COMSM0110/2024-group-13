@@ -3,7 +3,7 @@ import java.util.Collections;
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
 // and is responsible for updating and drawing them.
-public static class Page {
+public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
   public Page previousPage; // With this attribute, we can form a page stack.
@@ -18,16 +18,24 @@ public static class Page {
     localItems.put(item.getName(), item);
   }
 
-  public void getSyncItems() {
+  public void addSyncItem(SynchronizedItem item) {
+    syncItems.put(item.getName(), item);
+  }
+
+  public ArrayList<SynchronizedItem> getSyncItems() {
     ArrayList<SynchronizedItem> items = new ArrayList<SynchronizedItem>();
-    this.syncItems.forEach((e) -> {
+    this.syncItems.forEach((name, e) -> {
         if (!e.isDiscarded()) { items.add(e); }
     });
     return items;
   }
 
-  public void addSyncItem(SynchronizedItem item) {
-    syncItems.put(item.getName(), item);
+  public ArrayList<LocalItem> getLocalItems() {
+    ArrayList<LocalItem> items = new ArrayList<LocalItem>();
+    this.localItems.forEach((name, e) -> {
+        if (!e.isDiscarded()) { items.add(e); }
+    });
+    return items;
   }
 
   // Update all the items, including sync ones and local ones.
@@ -43,16 +51,15 @@ public static class Page {
     //   receiveItems();
     // } else { // isServer
     //   receiveEvents();
-    syncItems.forEach((name, item) -> { item.onEvents(gInfo, events); });
-    syncItems.forEach((name, item) -> { item.evolve(gInfo); });
-    CollisionEngine.solveCollisions(gInfo,
-        new ArrayList<SynchronizedItem>(syncItems.values()));
+    syncItems.forEach((name, item) -> { item.onEvents(gInfo, this, events); });
+    syncItems.forEach((name, item) -> { item.evolve(gInfo, this); });
+    CollisionEngine.solveCollisions(gInfo, this);
     //   sendItems();
     // }
   }
 
   void dispatchEventsToLocalItems(GameInfo gInfo, ArrayList<Event> events) {
-    localItems.forEach((name, item) -> { item.onEvents(gInfo, events); });
+    localItems.forEach((name, item) -> { item.onEvents(gInfo, this, events); });
   }
 
   void updateItems(GameInfo gInfo) {
@@ -63,10 +70,10 @@ public static class Page {
   // Draw all the items, including sync ones and local ones.
   public void draw(GameInfo gInfo) {
     ArrayList<Item> items = new ArrayList<Item>();
-    syncItems.forEach((name, item) -> { items.add(item); });
-    localItems.forEach((name, item) -> { items.add(item); });
+    items.addAll(getSyncItems());
+    items.addAll(getLocalItems());
     Collections.sort(items, new ItemLayerComparator());
-    items.forEach((item) -> { if(item.discarded != true){item.draw(gInfo); }});
+    items.forEach((item) -> { item.draw(gInfo); });
   }
 
   // Whether the page should be replaced with next one.

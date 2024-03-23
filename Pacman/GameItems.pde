@@ -1,17 +1,44 @@
-final String itemTypeBreakableWall = "BreakableWall";
-int itemCountBreakableWall;
+
 String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
+String imagePathIndestructableWall = "data/IndestructableWall.png";
+PImage imageIndestructableWall;
+String imagePathCoin = "data/Coin.png";
+PImage imageCoin;
+String imagePathPowerUp = "data/PowerUp.png";
+PImage imagePowerUp;
+String imagePathPacmanFigure = "data/Coin.png";
+PImage imagePacmanFigure;
+String imagePathBullet = "data/Bullet.JPG";
+PImage imageBullet;
 
-public class BreakableWall extends SynchronizedItem {
+
+void loadResoucesForGameItems() {
+  imageBreakableWall = loadImage(imagePathBreakableWall);
+  imageIndestructableWall = loadImage(imagePathIndestructableWall);
+  imageCoin = loadImage(imagePathCoin);
+  imagePowerUp = loadImage(imagePathPowerUp);
+  imagePacmanFigure = loadImage(imagePathPacmanFigure);
+  imageBullet = loadImage(imagePathBullet);
+}
+
+
+public abstract class Wall extends SynchronizedItem {
+  public Wall(String name, float w, float h) {
+    super(name, w, h);
+  }
+}
+
+
+final String itemTypeBreakableWall = "BreakableWall";
+int itemCountBreakableWall;
+
+public class BreakableWall extends Wall {
   private int strength;
 
   public BreakableWall(float w, float h) {
     super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
     strength = 3;
-    if (imageBreakableWall == null ) {
-      imageBreakableWall = loadImage(imagePathBreakableWall);
-    }
   }
   
   public int getStrength() {
@@ -23,6 +50,7 @@ public class BreakableWall extends SynchronizedItem {
     return this;
   }
 
+  @Override
   public PImage getImage() {
     return imageBreakableWall;
   }
@@ -31,17 +59,13 @@ public class BreakableWall extends SynchronizedItem {
 
 final String itemTypeIndestructableWall = "IndestructableWall";
 int itemCountIndestructableWall;
-String imagePathIndestructableWall = "data/IndestructableWall.png";
-PImage imageIndestructableWall;
 
-public class IndestructableWall extends SynchronizedItem {
+public class IndestructableWall extends Wall {
   public IndestructableWall(float w, float h) {
     super(itemTypeIndestructableWall + itemCountIndestructableWall++, w, h);
-    if (imageIndestructableWall == null ) {
-      imageIndestructableWall = loadImage(imagePathIndestructableWall);
-    }
   }
 
+  @Override
   public PImage getImage() {
     return imageIndestructableWall;
   }
@@ -49,24 +73,20 @@ public class IndestructableWall extends SynchronizedItem {
 
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
-String imagePathCoin = "data/Coin.png";
-PImage imageCoin;
 
 public class Coin extends SynchronizedItem {
   public Coin(float w, float h) {
     super(itemTypeCoin + itemCountCoin++, w, h);
-    if (imageCoin == null ) {
-      imageCoin = loadImage(imagePathCoin);
-    }
   }
 
-  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+  @Override
+  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
     if(item instanceof PacmanFigure){
-      setDiscarded();
-      item.setScore(1);
+      discard();
     }
   }
 
+  @Override
   public PImage getImage() {
     return imageCoin;
   }
@@ -75,23 +95,20 @@ public class Coin extends SynchronizedItem {
 
 final String itemTypePowerUp = "PowerUp";
 int itemCountPowerUp;
-String imagePathPowerUp = "data/PowerUp.png";
-PImage imagePowerUp;
 
 public class PowerUp extends SynchronizedItem {
   public PowerUp(float w, float h) {
     super(itemTypePowerUp + itemCountPowerUp++, w, h);
-    if (imagePowerUp == null ) {
-      imagePowerUp = loadImage(imagePathPowerUp);
-    }
   }
 
-  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
+  @Override
+  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
     if(item instanceof PacmanFigure){
-      setDiscarded();
+      discard();
     }
   }  
 
+  @Override
   public PImage getImage() {
     return imagePowerUp;
   }
@@ -99,8 +116,6 @@ public class PowerUp extends SynchronizedItem {
 
 
 final String itemTypePacmanFigure = "PacmanFigure";
-String imagePathPacmanFigure = "data/Coin.png";
-PImage imagePacmanFigure;
 
 public class PacmanFigure extends MovableItem {
   private int playerId;
@@ -112,9 +127,6 @@ public class PacmanFigure extends MovableItem {
   }
 
   public PImage getImage() {
-    if (imagePacmanFigure == null ) {
-      imagePacmanFigure = loadImage(imagePathPacmanFigure);
-    }
     return imagePacmanFigure;
   }
   
@@ -122,11 +134,22 @@ public class PacmanFigure extends MovableItem {
     return this.score; 
   }
 
-  public void setScore(int increment){
+  public void incScore(int increment){
     this.score += increment;
   }
+
+  @Override
+  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item, float dx, float dy) {
+    if(item instanceof Coin){
+      incScore(1);
+    } else if (item instanceof Wall) {
+      moveX(dx);
+      moveY(dy);
+    }
+  }
   
-  public void onKeyboardEvent(GameInfo gInfo, KeyboardEvent e) {
+  @Override
+  public void onKeyboardEvent(GameInfo gInfo, Page page, KeyboardEvent e) {
     System.out.println("player key event");
     if (e instanceof KeyPressedEvent) {
       onKeyPressedEvent(gInfo, (KeyPressedEvent)e);
@@ -190,33 +213,28 @@ public class PacmanFigure extends MovableItem {
 
 final String itemTypeBullet = "Bullet";
 int itemCountBullet;
-String imagePathBullet = "data/Bullet.JPG";
-PImage imageBullet;
 
 public class Bullet extends MovableItem {
   
   public Bullet(float w, float h) {
     super(itemTypeBullet + itemCountBullet++, w, h);
-    if (imageBullet == null ) {
-      imageBullet = loadImage(imagePathBullet);
-    }
   }
   
   public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
     
     if(item instanceof IndestructableWall){
-      this.setDiscarded();
+      discard();
     }
     
     if(item instanceof BreakableWall) {
       BreakableWall breakableWall = (BreakableWall)item;
       if (breakableWall.getStrength() == 1) {
         breakableWall.setStrength(0);
-        breakableWall.setDiscarded();
-        this.setDiscarded();
+        breakableWall.discard();
+        this.discard();
       } else {
         breakableWall.setStrength(breakableWall.getStrength() - 1);
-        this.setDiscarded();
+        this.discard();
       }
     }
     
@@ -224,11 +242,11 @@ public class Bullet extends MovableItem {
       Ghost ghost = (Ghost)item;
       if (ghost.getGhostLife() == 1) {
         ghost.setGhostLife(0);
-        ghost.setDiscarded();
-        this.setDiscarded();
+        ghost.discard();
+        this.discard();
       } else {
         ghost.setGhostLife(ghost.getGhostLife() - 1);
-        this.setDiscarded();
+        this.discard();
       }
     }
   }  

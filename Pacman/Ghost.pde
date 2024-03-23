@@ -28,27 +28,19 @@ public class Ghost extends MovableItem {
     }
     
     @Override
-    public void evolve(GameInfo gInfo) {
+    public void evolve(GameInfo gInfo, Page page) {
         //  Randomly change direction
         if (random.nextInt(35) == 0) {
             // probability of changing direction on each call
             randomizeDirection();
         }
-        
         // keep moving
-        super.evolve(gInfo);
+        super.evolve(gInfo, page);
     }
     
     private void randomizeDirection() {
         int[] directions = {UPWARD, RIGHTWARD, DOWNWARD, LEFTWARD};
         setDirection(directions[random.nextInt(directions.length)]);
-    }
-    
-    public void move(GameInfo gInfo) {
-        if (!getMoving()) {
-            startMoving(); // 
-        }
-        super.move(gInfo); // update location
     }
 
     @Override

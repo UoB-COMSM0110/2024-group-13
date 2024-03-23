@@ -23,7 +23,7 @@ public class Button extends LocalItem {
   }
 
   @Override
-  void onMouseEvent(GameInfo gInfo, MouseEvent e) {
+  void onMouseEvent(GameInfo gInfo, Page page, MouseEvent e) {
     if (!isMouseEventRelative(e)) {
       return;
     }
@@ -41,19 +41,19 @@ public class Button extends LocalItem {
   // Called when mouse clicks on the button.
   void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
     if(text == "Play"){
-      GamePage gamePage = new GamePage(gInfo, game.page);
-      game.page = gamePage;
+      GamePage gamePage = new GamePage(gInfo, page);
+      page = gamePage;
     }
     else if (text == "Help"){
-      HelpPage helpPage = new HelpPage(gInfo, game.page);
-      game.page = helpPage;
+      HelpPage helpPage = new HelpPage(gInfo, page);
+      page = helpPage;
     }
     else if(text == "Back"){
-      game.page  = game.page.previousPage;
+      page  = page.previousPage;
     }
     else if(text == "Start"){
-      GamePage gamePage = new GamePage(gInfo, game.page);
-      game.page = gamePage;
+      GamePage gamePage = new GamePage(gInfo, page);
+      page = gamePage;
     }
   }
 
