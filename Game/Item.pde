@@ -5,6 +5,13 @@ static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
 static final int LEFTWARD = 270;
 
+static int alignDirection(int direction) {
+  if (direction <= UPWARD) { return UPWARD; }
+  if (direction <= RIGHTWARD) { return RIGHTWARD; }
+  if (direction <= DOWNWARD) { return DOWNWARD; }
+  return LEFTWARD;
+}
+
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public class Item {
@@ -25,7 +32,7 @@ public class Item {
   public Item setH(float h) { this.h = h; return this; }
   public Item setX(float x) { this.x = x; return this; }
   public Item setY(float y) { this.y = y; return this; }
-  public Item setFacing(int facing) { this.facing = facing; return this; }
+  public Item setFacing(int facing) { this.facing = alignDirection(facing); return this; }
   public Item setLayer(int layer) { this.layer = layer; return this; }
   public Item discard() { this.discarded = true; return this; }
   public Item restore() { this.discarded = false; return this; }
@@ -67,6 +74,8 @@ public class Item {
   // but only affects visual effects, human-game interactions, etc.
   // This method can interact with other items.
   public void update() {}
+
+  public void delete() { page.deleteItem(getName()); }
 
   public PImage getImage() { return null; }
 
@@ -140,8 +149,11 @@ public class MovableItem extends SynchronizedItem {
     super(name, w, h);
   }
 
-  public MovableItem setSpeed(float speed) { this.speed = speed; return this; }
-  public MovableItem setDirection(int direction) { this.direction = direction; return this; }
+  public MovableItem setSpeed(float speed) { this.speed = max(speed, 0.0); return this; }
+  public MovableItem setDirection(int direction) {
+    this.direction = alignDirection(direction);
+    return this;
+  }
   public MovableItem startMoving() { this.moving = true; return this; }
   public MovableItem stopMoving() { this.moving = false; return this; }
   
@@ -171,34 +183,32 @@ public class MovableItem extends SynchronizedItem {
   }
 
   public boolean tryStepbackFrom(Item target) {
-    float backMovement = 0.0, prevMovement = 0.0;
+    float backMovement = getPenetrationDepthOf(target);
+    float prevMovement = getMovementFromRefPoint();
+    if (backMovement < 0 || backMovement > prevMovement) { return false; }
+    backMovement = min(backMovement * 1.001, prevMovement);
+    doMovement(-backMovement);
+    return true;
+  }
+
+  private float getPenetrationDepthOf(Item target) {
     switch (getDirection()) {
-      case UPWARD: {
-        backMovement = -(target.getBottomY() - getTopY());
-        prevMovement = -(getY() - this.refY);
-        break;
-      }
-      case RIGHTWARD: {
-        backMovement = target.getLeftX() - getRightX();
-        prevMovement = getX() - this.refX;
-        break;
-      }
-      case DOWNWARD: {
-        backMovement = target.getTopY() - getBottomY();
-        prevMovement = getY() - this.refY;
-        break;
-      }
-      case LEFTWARD: {
-        backMovement = -(target.getRightX() - getLeftX());
-        prevMovement = -(getX() - this.refX);
-        break;
-      }
+      case UPWARD: return target.getBottomY() - getTopY();
+      case RIGHTWARD: return -(target.getLeftX() - getRightX());
+      case DOWNWARD: return -(target.getTopY() - getBottomY());
+      case LEFTWARD: return target.getRightX() - getLeftX();
     }
-    if (backMovement < 0 && -backMovement < prevMovement) {
-      doMovement(backMovement);
-      return true;
+    return 0.0;
+  }
+
+  private float getMovementFromRefPoint() {
+    switch (getDirection()) {
+      case UPWARD: return -(getY() - this.refY);
+      case RIGHTWARD: return getX() - this.refX;
+      case DOWNWARD: return getY() - this.refY;
+      case LEFTWARD: return -(getX() - this.refX);
     }
-    return false;
+    return 0.0;
   }
 
   private void doMovement(float distance) {

@@ -1,4 +1,4 @@
-final String imagePathOverlay = "data/GamePageOverlay.png";
+final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
 final String instructionSet = "data/InstructionSet.png";
 
 // The first page of the game.
@@ -8,7 +8,7 @@ public class HelpPage extends Page {
   
   public HelpPage(Page previousPage) {
     super(previousPage);
-    this.imageOverlay = loadImage(imagePathOverlay);
+    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet);
 
     Button backButton = new Button("Back", 200, 40, "Back");

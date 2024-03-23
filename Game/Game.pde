@@ -13,7 +13,7 @@ void setup(){
   // Load resouces.
   loadResoucesForGameItems();
   loadResourcesForGui();
-  loadResourcesForGamePage();
+  loadResourcesForPlayPage();
   loadResoucesForFigures();
 
   // Create the start page.
@@ -61,6 +61,8 @@ void keyReleased() {
 //   eventRecorder.recordMouseReleased();
 // }
 
+int mouseClickCnt = 0;
 void mouseClicked() {
+  System.out.println("mouse clicked " + mouseClickCnt++);
   eventRecorder.recordMouseClicked();
 }

@@ -44,19 +44,16 @@ public class Button extends LocalItem {
   // Called when mouse clicks on the button.
   void onMouseClickedEvent(MouseClickedEvent e) {
     if(text == "Play"){
-      GamePage gamePage = new GamePage(page);
-      page = gamePage;
+      page = new PlayPage(page);
     }
     else if (text == "Help"){
-      HelpPage helpPage = new HelpPage(page);
-      page = helpPage;
+      page = new HelpPage(page);
     }
     else if(text == "Back"){
       page  = page.previousPage;
     }
     else if(text == "Start"){
-      GamePage gamePage = new GamePage(page);
-      page = gamePage;
+      page = new PlayPage(page);
     }
   }
 

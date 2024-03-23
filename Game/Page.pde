@@ -22,20 +22,18 @@ public class Page {
     syncItems.put(item.getName(), item);
   }
 
+  public void deleteItem(String name) {
+    if (this.syncItems.remove(name) == null) {
+      this.localItems.remove(name);
+    }
+  }
+
   public ArrayList<SynchronizedItem> getSyncItems() {
-    ArrayList<SynchronizedItem> items = new ArrayList<SynchronizedItem>();
-    this.syncItems.forEach((name, e) -> {
-        if (!e.isDiscarded()) { items.add(e); }
-    });
-    return items;
+    return new ArrayList<SynchronizedItem>(this.syncItems.values());
   }
 
   public ArrayList<LocalItem> getLocalItems() {
-    ArrayList<LocalItem> items = new ArrayList<LocalItem>();
-    this.localItems.forEach((name, e) -> {
-        if (!e.isDiscarded()) { items.add(e); }
-    });
-    return items;
+    return new ArrayList<LocalItem>(this.localItems.values());
   }
 
   // Update all the items, including sync ones and local ones.
@@ -74,7 +72,9 @@ public class Page {
     items.addAll(getSyncItems());
     items.addAll(getLocalItems());
     Collections.sort(items, new ItemLayerComparator());
-    items.forEach((item) -> { item.draw(); });
+    for (Item item : items) {
+      if (!item.isDiscarded()) { item.draw(); }
+    }
   }
 
   // Whether the page should be replaced with next one.

@@ -84,6 +84,7 @@ public class Ghost extends Figure {
         refreshHp(3);
         setLayer(1);
         randomizeDirection();
+        startMoving();
     }
     
     @Override
@@ -145,10 +146,12 @@ public class Pacman extends Figure {
 
   @Override
   public void onCollisionWith(SynchronizedItem item) {
-    if(item instanceof Coin){
+    if (item instanceof Coin){
       incScore(1);
     } else if (item instanceof Bullet) {
       decHp(1);
+    } else if (item instanceof Wall) {
+      tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
       decLives(1);
     }
@@ -156,7 +159,6 @@ public class Pacman extends Figure {
   
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
-    System.out.println("player key event");
     if (e instanceof KeyPressedEvent) {
       onKeyPressedEvent((KeyPressedEvent)e);
     } else if (e instanceof KeyReleasedEvent) {

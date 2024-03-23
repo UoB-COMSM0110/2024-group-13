@@ -19,6 +19,22 @@ void loadResoucesForGameItems() {
 }
 
 
+public class Border extends SynchronizedItem {
+  public Border(String name, float w, float h) {
+    super(name, w, h);
+  }
+
+  @Override
+  public void onCollisionWith(SynchronizedItem item) {
+    if (item instanceof Figure) {
+      ((Figure)item).tryStepbackFrom(this);
+    } else {
+      item.delete();
+    }
+  }
+}
+
+
 public abstract class Wall extends SynchronizedItem {
   public Wall(String name, float w, float h) {
     super(name, w, h);

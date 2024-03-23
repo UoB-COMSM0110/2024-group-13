@@ -1,7 +1,11 @@
 // Base class for all events.
 // Event is mainly used for dealing with user inputs.
 public class Event {
-  public Event() {}
+  private int hostId;
+
+  public Event() {
+    this.hostId = gameInfo.getHostId();
+  }
 }
 
 
