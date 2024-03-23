@@ -6,7 +6,7 @@ PImage imageGamePageBackground;
 String mapPath = "data/map.csv";
 
 public class GamePage extends Page {
-  private PacmanFigure pac1;  
+  private Pacman pac1;  
 
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
@@ -21,7 +21,7 @@ public class GamePage extends Page {
 
     loadMap(mapPath);
 
-    pac1 = new PacmanFigure(0, 20, 20);
+    pac1 = new Pacman(0, 20, 20);
     pac1.setX(360).setY(350);
     addSyncItem(pac1);
     

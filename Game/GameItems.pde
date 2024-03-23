@@ -7,8 +7,8 @@ String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
 String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
-String imagePathPacmanFigure = "data/Coin.png";
-PImage imagePacmanFigure;
+String imagePathPacman = "data/Coin.png";
+PImage imagePacman;
 String imagePathBullet = "data/Bullet.JPG";
 PImage imageBullet;
 
@@ -18,7 +18,7 @@ void loadResoucesForGameItems() {
   imageIndestructableWall = loadImage(imagePathIndestructableWall);
   imageCoin = loadImage(imagePathCoin);
   imagePowerUp = loadImage(imagePathPowerUp);
-  imagePacmanFigure = loadImage(imagePathPacmanFigure);
+  imagePacman = loadImage(imagePathPacman);
   imageBullet = loadImage(imagePathBullet);
 }
 
@@ -81,7 +81,7 @@ public class Coin extends SynchronizedItem {
 
   @Override
   public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
-    if(item instanceof PacmanFigure){
+    if(item instanceof Pacman){
       discard();
     }
   }
@@ -103,7 +103,7 @@ public class PowerUp extends SynchronizedItem {
 
   @Override
   public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
-    if(item instanceof PacmanFigure){
+    if(item instanceof Pacman){
       discard();
     }
   }  
@@ -115,19 +115,19 @@ public class PowerUp extends SynchronizedItem {
 }
 
 
-final String itemTypePacmanFigure = "PacmanFigure";
+final String itemTypePacman = "Pacman";
 
-public class PacmanFigure extends MovableItem {
+public class Pacman extends MovableItem {
   private int playerId;
   private int score;
 
-  public PacmanFigure(int playerId, float w, float h) {
-    super(itemTypePacmanFigure + playerId, w, h);
+  public Pacman(int playerId, float w, float h) {
+    super(itemTypePacman + playerId, w, h);
     this.playerId = playerId;
   }
 
   public PImage getImage() {
-    return imagePacmanFigure;
+    return imagePacman;
   }
   
   public int getScore(){
