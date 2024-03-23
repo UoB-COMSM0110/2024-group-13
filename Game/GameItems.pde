@@ -1,4 +1,3 @@
-
 final String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
 final String imagePathIndestructableWall = "data/IndestructableWall.png";
@@ -7,8 +6,6 @@ final String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
 final String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
-final String imagePathPacman = "data/Coin.png";
-PImage imagePacman;
 final String imagePathBullet = "data/Bullet.JPG";
 PImage imageBullet;
 
@@ -18,7 +15,6 @@ void loadResoucesForGameItems() {
   imageIndestructableWall = loadImage(imagePathIndestructableWall);
   imageCoin = loadImage(imagePathCoin);
   imagePowerUp = loadImage(imagePathPowerUp);
-  imagePacman = loadImage(imagePathPacman);
   imageBullet = loadImage(imagePathBullet);
 }
 
@@ -45,10 +41,21 @@ public class BreakableWall extends Wall {
     return this.strength;
   }
   
-  public BreakableWall setStrength(int strength) {
-    this.strength = strength;
+  public BreakableWall decStrength() {
+    this.strength -= 1;
+    if (this.strength <= 0) {
+      discard();
+    }
     return this;
   }
+
+  @Override
+  public void onCollisionWith(SynchronizedItem item) {
+    if (item instanceof Bullet) {
+      decStrength();
+    }
+  }
+  
 
   @Override
   public PImage getImage() {
@@ -71,6 +78,7 @@ public class IndestructableWall extends Wall {
   }
 }
 
+
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
 
@@ -80,7 +88,7 @@ public class Coin extends SynchronizedItem {
   }
 
   @Override
-  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
+  public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Pacman){
       discard();
     }
@@ -102,7 +110,7 @@ public class PowerUp extends SynchronizedItem {
   }
 
   @Override
-  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {
+  public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Pacman){
       discard();
     }
@@ -115,102 +123,6 @@ public class PowerUp extends SynchronizedItem {
 }
 
 
-final String itemTypePacman = "Pacman";
-
-public class Pacman extends MovableItem {
-  private int playerId;
-  private int score;
-
-  public Pacman(int playerId, float w, float h) {
-    super(itemTypePacman + playerId, w, h);
-    this.playerId = playerId;
-  }
-
-  public PImage getImage() {
-    return imagePacman;
-  }
-  
-  public int getScore(){
-    return this.score; 
-  }
-
-  public void incScore(int increment){
-    this.score += increment;
-  }
-
-  @Override
-  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item, float dx, float dy) {
-    if(item instanceof Coin){
-      incScore(1);
-    } else if (item instanceof Wall) {
-      moveX(dx);
-      moveY(dy);
-    }
-  }
-  
-  @Override
-  public void onKeyboardEvent(GameInfo gInfo, Page page, KeyboardEvent e) {
-    System.out.println("player key event");
-    if (e instanceof KeyPressedEvent) {
-      onKeyPressedEvent(gInfo, (KeyPressedEvent)e);
-    } else if (e instanceof KeyReleasedEvent) {
-      onKeyReleasedEvent(gInfo, (KeyReleasedEvent)e);
-    }
-  }
-
-  public void onKeyPressedEvent(GameInfo gInfo, KeyPressedEvent e) {
-    if (e.getKey() == CODED) {
-      switch (e.getKeyCode()) {
-        case UP: { startMovingUp(); break; }
-        case LEFT: { startMovingLeft(); break; }
-        case DOWN: { startMovingDown(); break; }
-        case RIGHT: { startMovingRight(); break; }
-      }
-      return;
-    }
-    switch (e.getKey()) {
-      case 'w': case 'W': { startMovingUp(); break; }
-      case 'a': case 'A': { startMovingLeft(); break; }
-      case 's': case 'S': { startMovingDown(); break; }
-      case 'd': case 'D': { startMovingRight(); break; }
-    }
-  }
-
-  public void onKeyReleasedEvent(GameInfo gInfo, KeyReleasedEvent e) {
-    if (e.getKey() == CODED) {
-      switch (e.getKeyCode()) {
-        case UP: case LEFT: case DOWN: case RIGHT: { stopMoving(); break; }
-      }
-      return;
-    }
-    switch (e.getKey()) {
-      case 'w': case 'W': case 'a': case 'A':
-      case 's': case 'S': case 'd': case 'D': { stopMoving(); break; }
-    }
-  }
-
-  public void startMovingUp() {
-    setFacing(UPWARD);
-    setDirection(UPWARD);
-    startMoving();
-  }
-  public void startMovingRight() {
-    setFacing(RIGHTWARD);
-    setDirection(RIGHTWARD);
-    startMoving();
-  }
-  public void startMovingDown() {
-    setFacing(DOWNWARD);
-    setDirection(DOWNWARD);
-    startMoving();
-  }
-  public void startMovingLeft() {
-    setFacing(LEFTWARD);
-    setDirection(LEFTWARD);
-    startMoving();
-  }
-}
-
 final String itemTypeBullet = "Bullet";
 int itemCountBullet;
 
@@ -218,36 +130,14 @@ public class Bullet extends MovableItem {
   
   public Bullet(float w, float h) {
     super(itemTypeBullet + itemCountBullet++, w, h);
+    setSpeed(200.0);
   }
   
-  public void onCollisionWith(GameInfo gInfo, SynchronizedItem item) {
-    
-    if(item instanceof IndestructableWall){
+  public void onCollisionWith(SynchronizedItem item) {
+    if(item instanceof Wall){
       discard();
-    }
-    
-    if(item instanceof BreakableWall) {
-      BreakableWall breakableWall = (BreakableWall)item;
-      if (breakableWall.getStrength() == 1) {
-        breakableWall.setStrength(0);
-        breakableWall.discard();
-        this.discard();
-      } else {
-        breakableWall.setStrength(breakableWall.getStrength() - 1);
-        this.discard();
-      }
-    }
-    
-    if (item instanceof Ghost) {
-      Ghost ghost = (Ghost)item;
-      if (ghost.getGhostLife() == 1) {
-        ghost.setGhostLife(0);
-        ghost.discard();
-        this.discard();
-      } else {
-        ghost.setGhostLife(ghost.getGhostLife() - 1);
-        this.discard();
-      }
+    } else if (item instanceof Figure) {
+      discard();
     }
   }  
   

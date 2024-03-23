@@ -1,8 +1,13 @@
-GameInfo gInfo;
+GameInfo gameInfo;
 EventRecorder eventRecorder;
+
 Page page;
 
 void setup(){
+  // Create the top-level game objects.
+  gameInfo = new GameInfo();
+  eventRecorder = new EventRecorder();
+
   size(800, 600); // Use `windowResize` to resize window
 
   // Load resouces.
@@ -11,30 +16,28 @@ void setup(){
   loadResourcesForGamePage();
   loadResoucesForFigures();
 
-  // Create the top-level game object.
-  gInfo = new GameInfo();
-  eventRecorder = new EventRecorder();
-  page = new StartPage(gInfo, null);
+  // Create the start page.
+  page = new StartPage(null);
 
-  frameRate(gInfo.getFrameRateConfig());
+  frameRate(gameInfo.getFrameRateConfig());
 }
 
 void draw() {
   // Update information, e.g., frame number, time, ...
-  gInfo.update();
-  System.out.println("frame interval: " + gInfo.getLastFrameIntervalMs());
+  gameInfo.update();
 
   // Check whether to switch page.
   if (page.isObsolete()) {
-    page = page.getNextPage(gInfo);
+    page = page.getNextPage();
     eventRecorder.dropEvents();
   }
+
   // Update page and its items.
-  page.update(gInfo, eventRecorder.fetchEvents());
+  page.update();
 
   // Draw page.
   background(0);
-  page.draw(gInfo);
+  page.draw();
 }
 
 

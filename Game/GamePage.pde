@@ -12,8 +12,8 @@ float CHARACTER_SIZE = 10.0;
 public class GamePage extends Page {
   private Pacman pac1;  
 
-  public GamePage(GameInfo gInfo, Page previousPage) {
-    super(gInfo, previousPage);
+  public GamePage(Page previousPage) {
+    super(previousPage);
 
     Button backButton = new Button("Back", 200, 40, "Back");
     backButton.setX(20).setY(10);
@@ -31,9 +31,9 @@ public class GamePage extends Page {
   }
 
   @Override
-  public void draw(GameInfo gInfo) {
+  public void draw() {
     image(imageGamePageBackground, 0, 0, 800, 600);
-    super.draw(gInfo);
+    super.draw();
     
     textSize(20);
     text("Score: " + pac1.getScore(), 700, 40);

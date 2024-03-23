@@ -26,12 +26,12 @@ public class Button extends LocalItem {
   }
 
   @Override
-  void onMouseEvent(GameInfo gInfo, Page page, MouseEvent e) {
+  void onMouseEvent(MouseEvent e) {
     if (!isMouseEventRelative(e)) {
       return;
     }
     if (e instanceof MouseClickedEvent) {
-      onMouseClickedEvent(gInfo, (MouseClickedEvent)e);
+      onMouseClickedEvent((MouseClickedEvent)e);
     }
   }
 
@@ -42,20 +42,20 @@ public class Button extends LocalItem {
   }
 
   // Called when mouse clicks on the button.
-  void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
+  void onMouseClickedEvent(MouseClickedEvent e) {
     if(text == "Play"){
-      GamePage gamePage = new GamePage(gInfo, page);
+      GamePage gamePage = new GamePage(page);
       page = gamePage;
     }
     else if (text == "Help"){
-      HelpPage helpPage = new HelpPage(gInfo, page);
+      HelpPage helpPage = new HelpPage(page);
       page = helpPage;
     }
     else if(text == "Back"){
       page  = page.previousPage;
     }
     else if(text == "Start"){
-      GamePage gamePage = new GamePage(gInfo, page);
+      GamePage gamePage = new GamePage(page);
       page = gamePage;
     }
   }
@@ -66,8 +66,8 @@ public class Button extends LocalItem {
   }
 
   @Override
-  public void draw(GameInfo gInfo) {
-    super.draw(gInfo);
+  public void draw() {
+    super.draw();
     fill(this.textColor);
     textSize(this.textSize);
     textFont(this.textFont);

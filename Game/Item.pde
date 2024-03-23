@@ -1,6 +1,5 @@
 import java.util.Comparator;
 
-// Using degree to represent the facing of an item.
 static final int UPWARD = 0;
 static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
@@ -32,38 +31,48 @@ public class Item {
   public Item restore() { this.discarded = false; return this; }
   
   public String getName() { return name; }
-  public float getW() { return w; }
-  public float getH() { return h; }
-  public float getX() { return x; }
-  public float getY() { return y; }
+  public float getW() { return this.w; }
+  public float getH() { return this.h; }
+  public float getX() { return this.x; }
+  public float getY() { return this.y; }
   public int getFacing() { return facing; }
   public int getLayer() { return layer; }
   public boolean isDiscarded(){ return this.discarded; }
 
-  public void onEvents(GameInfo gInfo, Page page, ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(gInfo, page, e); });
+  public Item setLeftX(float x) { return setX(x); }
+  public Item setRightX(float x) { return setX(x - getW()); }
+  public Item setTopY(float y) { return setY(y); }
+  public Item setBottomY(float y) { return setY(y - getH()); }
+
+  public float getLeftX() { return getX(); }
+  public float getRightX() { return getX() + getW(); }
+  public float getTopY() { return getY(); }
+  public float getBottomY() { return getY() + getH(); }
+
+  public void onEvents(ArrayList<Event> events) {
+    events.forEach((e) -> { onEvent(e); });
   }
 
   // Deals with events.
-  public void onEvent(GameInfo gInfo, Page page, Event e) {
-    if (e instanceof MouseEvent) { onMouseEvent(gInfo, page, (MouseEvent)e); }
-    else if (e instanceof KeyboardEvent) { onKeyboardEvent(gInfo, page, (KeyboardEvent)e); }
+  public void onEvent(Event e) {
+    if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
+    else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
     else {}
   }
-  public void onMouseEvent(GameInfo gInfo, Page page, MouseEvent e) {}
-  public void onKeyboardEvent(GameInfo gInfo, Page page, KeyboardEvent e) {}
+  public void onMouseEvent(MouseEvent e) {}
+  public void onKeyboardEvent(KeyboardEvent e) {}
 
   // Update status for each game frame.
   // Generally the update here won't affect game logic,
   // but only affects visual effects, human-game interactions, etc.
   // This method can interact with other items.
-  public void update(GameInfo gInfo, Page page) {}
+  public void update() {}
 
   public PImage getImage() { return null; }
 
-  public void draw(GameInfo gInfo) { draw(gInfo, this.x, this.y, this.w, this.h); }
+  public void draw() { draw(getX(), getY(), getW(), getH()); }
 
-  public void draw(GameInfo gInfo, float x, float y, float w, float h) {
+  public void draw(float x, float y, float w, float h) {
       PImage img = getImage();
       if (img == null) { return; }
       image(img, x, y, w, h);
@@ -92,11 +101,10 @@ public class SynchronizedItem extends Item {
 
   // Additional method for sync items to update status.
   // Mainly update status which affects game logic, e.g., movement of figures.
-  public void evolve(GameInfo gInfo, Page page) {}
+  public void evolve() {}
 
   // Called when two sync items collide with each other.
-  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item, float dx, float dy) {}
-  public void onCollisionWith(GameInfo gInfo, Page page, SynchronizedItem item) {}
+  public void onCollisionWith(SynchronizedItem item) {}
 
   // Serialize item status for transmission through network.
   public String serialize() { return ""; }
@@ -104,18 +112,18 @@ public class SynchronizedItem extends Item {
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override
-  public void draw(GameInfo gInfo) {
-    draw(gInfo, getLocalX(gInfo), getLocalY(gInfo), getLocalW(gInfo), getLocalH(gInfo));
+  public void draw() {
+    draw(getLocalX(), getLocalY(), getLocalW(), getLocalH());
   }
 
-  public float getLocalX(GameInfo gInfo) {
-    return gInfo.getMapOffsetX() + getX() * gInfo.getMapScaleX();
+  public float getLocalX() {
+    return gameInfo.getMapOffsetX() + getX() * gameInfo.getMapScaleX();
   }
-  public float getLocalY(GameInfo gInfo) {
-    return gInfo.getMapOffsetY() + getY() * gInfo.getMapScaleY();
+  public float getLocalY() {
+    return gameInfo.getMapOffsetY() + getY() * gameInfo.getMapScaleY();
   }
-  public float getLocalW(GameInfo gInfo) { return getW() * gInfo.getMapScaleX(); }
-  public float getLocalH(GameInfo gInfo) { return getH() * gInfo.getMapScaleY(); }
+  public float getLocalW() { return getW() * gameInfo.getMapScaleX(); }
+  public float getLocalH() { return getH() * gameInfo.getMapScaleY(); }
 }
 
 
@@ -130,36 +138,71 @@ public class MovableItem extends SynchronizedItem {
   
   public MovableItem(String name, float w, float h) {
     super(name, w, h);
-    speed = 100.0;
   }
 
-  public MovableItem moveX(float dx) { setX(getX() + dx); return this; }
-  public MovableItem moveY(float dy) { setY(getY() + dy); return this; }
   public MovableItem setSpeed(float speed) { this.speed = speed; return this; }
   public MovableItem setDirection(int direction) { this.direction = direction; return this; }
   public MovableItem startMoving() { this.moving = true; return this; }
   public MovableItem stopMoving() { this.moving = false; return this; }
-  public MovableItem saveRefPoint(float x, float y) {
-    this.refX = x;
-    this.refY = y;
-    return this;
-  }
   
   public float getSpeed() { return this.speed; }
   public int getDirection() { return this.direction; }
   public boolean isMoving() { return this.moving; }
   
   @Override
-  public void evolve(GameInfo gInfo, Page page) {
+  public void evolve() {
     if (isMoving()) {
-      saveRefPoint(getX(), getY());
-      move(gInfo);
+      move();
     }
   }
 
-  public void move(GameInfo gInfo) {
-    float distance = speed * gInfo.getLastFrameIntervalS();
-    switch (direction) {
+  private MovableItem moveX(float dx) { setX(getX() + dx); return this; }
+  private MovableItem moveY(float dy) { setY(getY() + dy); return this; }
+
+  private void saveRefPoint() {
+    this.refX = getX();
+    this.refY = getY();
+  }
+
+  public void move() {
+    saveRefPoint();
+    float distance = speed * gameInfo.getLastFrameIntervalS();
+    doMovement(distance);
+  }
+
+  public boolean tryStepbackFrom(Item target) {
+    float backMovement = 0.0, prevMovement = 0.0;
+    switch (getDirection()) {
+      case UPWARD: {
+        backMovement = -(target.getBottomY() - getTopY());
+        prevMovement = -(getY() - this.refY);
+        break;
+      }
+      case RIGHTWARD: {
+        backMovement = target.getLeftX() - getRightX();
+        prevMovement = getX() - this.refX;
+        break;
+      }
+      case DOWNWARD: {
+        backMovement = target.getTopY() - getBottomY();
+        prevMovement = getY() - this.refY;
+        break;
+      }
+      case LEFTWARD: {
+        backMovement = -(target.getRightX() - getLeftX());
+        prevMovement = -(getX() - this.refX);
+        break;
+      }
+    }
+    if (backMovement < 0 && -backMovement < prevMovement) {
+      doMovement(backMovement);
+      return true;
+    }
+    return false;
+  }
+
+  private void doMovement(float distance) {
+    switch (getDirection()) {
       case UPWARD: { moveY(-distance); break; }
       case RIGHTWARD: { moveX(distance); break; }
       case DOWNWARD: { moveY(distance); break; }
