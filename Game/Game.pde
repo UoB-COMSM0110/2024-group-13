@@ -5,12 +5,17 @@ Page page;
 void setup(){
   size(800, 600); // Use `windowResize` to resize window
 
+  // Load resouces.
+  loadResoucesForGameItems();
+  loadResourcesForGui();
+  loadResourcesForGamePage();
+  loadResoucesForFigures();
+
   // Create the top-level game object.
   gInfo = new GameInfo();
   eventRecorder = new EventRecorder();
   page = new StartPage(gInfo, null);
 
-  loadResoucesForGameItems();
   frameRate(gInfo.getFrameRateConfig());
 }
 

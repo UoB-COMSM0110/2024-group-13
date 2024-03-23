@@ -1,19 +1,19 @@
-final float CHARACTER_SIZE = 10.0;
-
-String imagePathGamePageBackground = "data/GamePageBackground.png";
+final String imagePathGamePageBackground = "data/GamePageBackground.png";
 PImage imageGamePageBackground;
 
-String mapPath = "data/map.csv";
+void loadResourcesForGamePage() {
+  imageGamePageBackground = loadImage(imagePathGamePageBackground);
+}
+
+
+final String mapPath = "data/map.csv";
+float CHARACTER_SIZE = 10.0;
 
 public class GamePage extends Page {
   private Pacman pac1;  
 
   public GamePage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
-    
-    if (imageGamePageBackground == null) {
-      imageGamePageBackground = loadImage(imagePathGamePageBackground);
-    }
 
     Button backButton = new Button("Back", 200, 40, "Back");
     backButton.setX(20).setY(10);
@@ -25,7 +25,7 @@ public class GamePage extends Page {
     pac1.setX(360).setY(350);
     addSyncItem(pac1);
     
-    Ghost goo = new Ghost("goo", 20, 20);
+    Ghost goo = new Ghost(20, 20);
     goo.setX(30).setY(100);
     addSyncItem(goo);
   }

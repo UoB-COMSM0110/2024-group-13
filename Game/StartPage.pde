@@ -1,19 +1,16 @@
-String imagePathStartPageBackground = "data/StartPageBackground.png";
-PImage imageStartPageBackground;
-String imagePathGameBanner = "data/GameBanner.png";
-PImage imageGameBanner;
+final String imagePathStartPageBackground = "data/StartPageBackground.png";
+final String imagePathGameBanner = "data/GameBanner.png";
+
 
 // The first page of the game.
 public class StartPage extends Page {
+  private PImage imageStartPageBackground;
+  private PImage imageGameBanner;
+
   public StartPage(GameInfo gInfo, Page previousPage) {
     super(gInfo, previousPage);
-    
-    if (imageStartPageBackground == null) {
-      imageStartPageBackground = loadImage(imagePathStartPageBackground);
-    }
-    if (imageGameBanner == null) {
-      imageGameBanner = loadImage(imagePathGameBanner);
-    }
+    this.imageStartPageBackground = loadImage(imagePathStartPageBackground);
+    this.imageGameBanner = loadImage(imagePathGameBanner);
 
     Button playButton = new Button("Play", 200, 40, "Play");
     playButton.setX(300).setY(350);
@@ -26,8 +23,8 @@ public class StartPage extends Page {
 
   @Override
   public void draw(GameInfo gInfo) {
-    image(imageStartPageBackground, 0, 0, 800, 600);
-    image(imageGameBanner,145,150, 509, 165);
+    image(this.imageStartPageBackground, 0, 0, 800, 600);
+    image(this.imageGameBanner,145,150, 509, 165);
     super.draw(gInfo);
   }
 }

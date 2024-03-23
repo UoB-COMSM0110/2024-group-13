@@ -1,9 +1,15 @@
-String imagePathButton = "data/Button.png";
+final String imagePathButton = "data/Button.png";
 PImage imageButton;
+final String fontPathMinecraft = "data/Minecraft.ttf";
+PFont fontMinecraft;
+
+void loadResourcesForGui() {
+  imageButton = loadImage(imagePathButton);
+  fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
+}
+
 
 int fontSizeMinecraft = 20;
-String fontPathMinecraft = "data/Minecraft.ttf";
-PFont fontMinecraft;
   
 public class Button extends LocalItem {
   String text;
@@ -16,9 +22,6 @@ public class Button extends LocalItem {
     this.text = text;
     this.textColor = color(100, 20, 20);
     this.textSize = fontSizeMinecraft;
-    if (fontMinecraft == null) {
-      fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
-    }
     this.textFont = fontMinecraft;
   }
 
@@ -59,7 +62,6 @@ public class Button extends LocalItem {
 
   @Override
   public PImage getImage() {
-    if (imageButton == null) { imageButton = loadImage(imagePathButton); }
     return imageButton;
   }
 

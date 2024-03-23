@@ -1,29 +1,35 @@
 import java.util.Random;
 
-final String itemTypeGhost = "Ghost";
-String ghostImagePath = "data/ghost.jpg";
-PImage ghostImage;
+final String imagePathGhost = "data/Ghost.jpg";
+PImage imageGhost;
 
+void loadResoucesForFigures() {
+  imageGhost = loadImage(imagePathGhost);
+}
+
+
+final String itemTypeGhost = "Ghost";
+int itemCountGhost;
 
 // Ghost class
 public class Ghost extends MovableItem {
     private Random random = new Random();
-    private int ghostLife;
+    private int healthPoints;
     
     // Constructor
-    public Ghost(String name, float w, float h) {
-        super(name, w, h);
-        ghostLife = 3;
+    public Ghost(float w, float h) {
+        super(itemTypeGhost + itemCountGhost++, w, h);
+        this.healthPoints = 3;
         setSpeed(30.0); // set Ghost speed
         randomizeDirection(); // Start by a random direction
     }
     
     public int getGhostLife() {
-      return ghostLife;
+      return healthPoints;
     }
     
-    public Ghost setGhostLife(int ghostLife) {
-      this.ghostLife = ghostLife;
+    public Ghost setGhostLife(int healthPoints) {
+      this.healthPoints = healthPoints;
       return this;
     }
     
@@ -45,10 +51,6 @@ public class Ghost extends MovableItem {
 
     @Override
     public PImage getImage() {
-        // return loadImage("ghost.png");
-        if (ghostImage == null){
-        ghostImage = loadImage(ghostImagePath);
-        }
-        return ghostImage;
+        return imageGhost;
     }
 }

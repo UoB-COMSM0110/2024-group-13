@@ -1,15 +1,15 @@
 
-String imagePathBreakableWall = "data/BreakableWall.png";
+final String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
-String imagePathIndestructableWall = "data/IndestructableWall.png";
+final String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
-String imagePathCoin = "data/Coin.png";
+final String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
-String imagePathPowerUp = "data/PowerUp.png";
+final String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
-String imagePathPacman = "data/Coin.png";
+final String imagePathPacman = "data/Coin.png";
 PImage imagePacman;
-String imagePathBullet = "data/Bullet.JPG";
+final String imagePathBullet = "data/Bullet.JPG";
 PImage imageBullet;
 
 
