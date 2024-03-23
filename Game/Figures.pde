@@ -82,7 +82,7 @@ public class Ghost extends Figure {
         super(itemTypeGhost + itemCountGhost++, w, h);
         setSpeed(50.0); // set Ghost speed
         refreshHp(3);
-        setLayer(1);
+        setLayer(2);
         randomizeDirection();
         startMoving();
     }
@@ -144,6 +144,18 @@ public class Pacman extends Figure {
     this.score += increment;
   }
 
+  public void fire() {
+    Bullet bullet = new Bullet(10.0, 10.0);
+    bullet.setDirection(getFacing());
+    switch (getFacing()) {
+      case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
+      case RIGHTWARD: { bullet.setLeftX(getRightX() + epsilon).setCenterY(getCenterY()); break; }
+      case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
+      case LEFTWARD: { bullet.setRightX(getLeftX() - epsilon).setCenterY(getCenterY()); break; }
+    }
+    page.addSyncItem(bullet);
+  }
+
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Coin){
@@ -167,54 +179,39 @@ public class Pacman extends Figure {
   }
 
   public void onKeyPressedEvent(KeyPressedEvent e) {
-    if (e.getKey() == CODED) {
-      switch (e.getKeyCode()) {
-        case UP: { startMovingUp(); break; }
-        case LEFT: { startMovingLeft(); break; }
-        case DOWN: { startMovingDown(); break; }
-        case RIGHT: { startMovingRight(); break; }
-      }
+    Integer direction = getDirectionFromKeyEvent(e);
+    if (direction != null) {
+      setFacing(direction.intValue());
+      setDirection(direction.intValue());
+      startMoving();
       return;
     }
-    switch (e.getKey()) {
-      case 'w': case 'W': { startMovingUp(); break; }
-      case 'a': case 'A': { startMovingLeft(); break; }
-      case 's': case 'S': { startMovingDown(); break; }
-      case 'd': case 'D': { startMovingRight(); break; }
-    }
+    if (e.getKey() == CODED) { return; }
+    if (e.getKey() == ' ') { fire(); return; }
   }
 
   public void onKeyReleasedEvent(KeyReleasedEvent e) {
-    if (e.getKey() == CODED) {
-      switch (e.getKeyCode()) {
-        case UP: case LEFT: case DOWN: case RIGHT: { stopMoving(); break; }
-      }
-      return;
-    }
-    switch (e.getKey()) {
-      case 'w': case 'W': case 'a': case 'A':
-      case 's': case 'S': case 'd': case 'D': { stopMoving(); break; }
-    }
+    Integer direction = getDirectionFromKeyEvent(e);
+    if (direction == null) { return; }
+    if (getDirection() == direction.intValue()) { stopMoving(); }
   }
 
-  public void startMovingUp() {
-    setFacing(UPWARD);
-    setDirection(UPWARD);
-    startMoving();
-  }
-  public void startMovingRight() {
-    setFacing(RIGHTWARD);
-    setDirection(RIGHTWARD);
-    startMoving();
-  }
-  public void startMovingDown() {
-    setFacing(DOWNWARD);
-    setDirection(DOWNWARD);
-    startMoving();
-  }
-  public void startMovingLeft() {
-    setFacing(LEFTWARD);
-    setDirection(LEFTWARD);
-    startMoving();
+  private Integer getDirectionFromKeyEvent(KeyboardEvent e) {
+    if (e.getKey() == CODED) {
+      switch (e.getKeyCode()) {
+        case UP: return UPWARD;
+        case LEFT: return LEFTWARD;
+        case DOWN: return DOWNWARD;
+        case RIGHT: return RIGHTWARD;
+        default: return null;
+      }
+    }
+    switch (e.getKey()) {
+      case 'w': case 'W': return UPWARD;
+      case 'a': case 'A': return LEFTWARD;
+      case 's': case 'S': return DOWNWARD;
+      case 'd': case 'D': return RIGHTWARD;
+      default: return null;
+    }
   }
 }

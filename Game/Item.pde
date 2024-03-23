@@ -5,13 +5,6 @@ static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
 static final int LEFTWARD = 270;
 
-static int alignDirection(int direction) {
-  if (direction <= UPWARD) { return UPWARD; }
-  if (direction <= RIGHTWARD) { return RIGHTWARD; }
-  if (direction <= DOWNWARD) { return DOWNWARD; }
-  return LEFTWARD;
-}
-
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public class Item {
@@ -32,7 +25,7 @@ public class Item {
   public Item setH(float h) { this.h = h; return this; }
   public Item setX(float x) { this.x = x; return this; }
   public Item setY(float y) { this.y = y; return this; }
-  public Item setFacing(int facing) { this.facing = alignDirection(facing); return this; }
+  public Item setFacing(int facing) { this.facing = facing; return this; }
   public Item setLayer(int layer) { this.layer = layer; return this; }
   public Item discard() { this.discarded = true; return this; }
   public Item restore() { this.discarded = false; return this; }
@@ -50,11 +43,15 @@ public class Item {
   public Item setRightX(float x) { return setX(x - getW()); }
   public Item setTopY(float y) { return setY(y); }
   public Item setBottomY(float y) { return setY(y - getH()); }
+  public Item setCenterX(float x) { return setX(x - getW() / 2.0); }
+  public Item setCenterY(float y) { return setY(y - getH() / 2.0); }
 
   public float getLeftX() { return getX(); }
   public float getRightX() { return getX() + getW(); }
   public float getTopY() { return getY(); }
   public float getBottomY() { return getY() + getH(); }
+  public float getCenterX() { return getX() + getW() / 2.0; }
+  public float getCenterY() { return getY() + getH() / 2.0; }
 
   public void onEvents(ArrayList<Event> events) {
     events.forEach((e) -> { onEvent(e); });
@@ -151,7 +148,7 @@ public class MovableItem extends SynchronizedItem {
 
   public MovableItem setSpeed(float speed) { this.speed = max(speed, 0.0); return this; }
   public MovableItem setDirection(int direction) {
-    this.direction = alignDirection(direction);
+    this.direction = direction;
     return this;
   }
   public MovableItem startMoving() { this.moving = true; return this; }
@@ -186,7 +183,7 @@ public class MovableItem extends SynchronizedItem {
     float backMovement = getPenetrationDepthOf(target);
     float prevMovement = getMovementFromRefPoint();
     if (backMovement < 0 || backMovement > prevMovement) { return false; }
-    backMovement = min(backMovement * 1.001, prevMovement);
+    backMovement = min(backMovement + epsilon, prevMovement);
     doMovement(-backMovement);
     return true;
   }

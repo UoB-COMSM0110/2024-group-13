@@ -147,13 +147,14 @@ public class Bullet extends MovableItem {
   public Bullet(float w, float h) {
     super(itemTypeBullet + itemCountBullet++, w, h);
     setSpeed(200.0);
+    startMoving();
   }
   
   public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Wall){
-      discard();
+      delete();
     } else if (item instanceof Figure) {
-      discard();
+      delete();
     }
   }  
   

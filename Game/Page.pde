@@ -22,10 +22,12 @@ public class Page {
     syncItems.put(item.getName(), item);
   }
 
-  public void deleteItem(String name) {
-    if (this.syncItems.remove(name) == null) {
-      this.localItems.remove(name);
+  public boolean deleteItem(String name) {
+    Item deleted = this.syncItems.remove(name);
+    if (deleted  == null) {
+      deleted = this.localItems.remove(name);
     }
+    return deleted != null;
   }
 
   public ArrayList<SynchronizedItem> getSyncItems() {
@@ -50,20 +52,20 @@ public class Page {
     //   receiveItems();
     // } else { // isServer
     //   receiveEvents();
-    syncItems.forEach((name, item) -> { item.onEvents(events); });
-    syncItems.forEach((name, item) -> { item.evolve(); });
+    getSyncItems().forEach((item) -> { item.onEvents(events); });
+    getSyncItems().forEach((item) -> { item.evolve(); });
     (new CollisionEngine()).solveCollisions();
     //   sendItems();
     // }
   }
 
   void dispatchEventsToLocalItems(ArrayList<Event> events) {
-    localItems.forEach((name, item) -> { item.onEvents(events); });
+    getLocalItems().forEach((item) -> { item.onEvents(events); });
   }
 
   void updateItems() {
-    syncItems.forEach((name, item) -> { item.update(); });
-    localItems.forEach((name, item) -> { item.update(); });
+    getSyncItems().forEach((item) -> { item.update(); });
+    getLocalItems().forEach((item) -> { item.update(); });
   }
 
   // Draw all the items, including sync ones and local ones.

@@ -1,7 +1,7 @@
 // EventRecorder is used to store all the events between two game frames.
 // These events are processed when the frame refreshes.
 public class EventRecorder {
-  ArrayList<Event> events;
+  private ArrayList<Event> events;
 
   public EventRecorder() {
     this.events = new ArrayList<Event>();
