@@ -1,28 +1,48 @@
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
 final String fontPathMinecraft = "data/Minecraft.ttf";
+final int fontSizeMinecraft = 20;
 PFont fontMinecraft;
 
 void loadResourcesForGui() {
   imageButton = loadImage(imagePathButton);
-  fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
+  fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft, true);
 }
 
-
-int fontSizeMinecraft = 20;
   
-public class Button extends LocalItem {
+public class Label extends LocalItem {
   String text;
   int textColor;
   int textSize;
   PFont textFont;
-  
-  public Button(String name, float w, float h, String text) {
+
+  public Label(String name, float w, float h, String text) {
     super(name, w, h);
     this.text = text;
     this.textColor = color(100, 20, 20);
     this.textSize = fontSizeMinecraft;
     this.textFont = fontMinecraft;
+  }
+
+  @Override
+  public PImage getImage() {
+    return imageButton;
+  }
+
+  @Override
+  public void draw() {
+    super.draw();
+    fill(this.textColor);
+    textFont(this.textFont, this.textSize);
+    textAlign(CENTER, CENTER);
+    text(this.text, getCenterX(), getCenterY());
+  }
+}
+
+
+public class Button extends Label {
+  public Button(String name, float w, float h, String text) {
+    super(name, w, h, text);
   }
 
   @Override
@@ -55,21 +75,5 @@ public class Button extends LocalItem {
     else if(text == "Start"){
       page = new PlayPage(page);
     }
-  }
-
-  @Override
-  public PImage getImage() {
-    return imageButton;
-  }
-
-  @Override
-  public void draw() {
-    super.draw();
-    fill(this.textColor);
-    textSize(this.textSize);
-    textFont(this.textFont);
-    textAlign(CENTER, CENTER);
-    text(this.text, getX() + getW() / 2, getY() + getH() / 2);
-    
   }
 }
