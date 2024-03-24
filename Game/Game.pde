@@ -28,8 +28,10 @@ void draw() {
 
   // Check whether to switch page.
   if (page.isObsolete()) {
-    page = page.getNextPage();
+    page.onSwitchOut();
     eventRecorder.dropEvents();
+    page = page.fetchNextPage();
+    page.onSwitchIn();
   }
 
   // Update page and its items.

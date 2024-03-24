@@ -15,8 +15,8 @@ public class PlayPage extends Page {
   public PlayPage(Page previousPage) {
     super(previousPage);
 
-    Button backButton = new Button("ButtonBack", 200, 40, () -> {
-      trySetNextPage(getPreviousPage());
+    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
+      trySwitchPage(getPreviousPage());
     });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);

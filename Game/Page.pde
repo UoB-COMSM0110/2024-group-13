@@ -16,6 +16,9 @@ public class Page {
     this.nextPage = null;
   }
 
+  public void onSwitchOut() {}
+  public void onSwitchIn() {}
+
   public void addLocalItem(LocalItem item) {
     localItems.put(item.getName(), item);
   }
@@ -81,9 +84,9 @@ public class Page {
     }
   }
 
-  public Page getPreviousPage() { return this.nextPage; }
+  public Page getPreviousPage() { return this.previousPage; }
 
-  public void trySetNextPage(Page nextPage) {
+  public void trySwitchPage(Page nextPage) {
     if (this.nextPage == null) { this.nextPage = nextPage; }
   }
 
@@ -91,8 +94,10 @@ public class Page {
   public boolean isObsolete() { return this.nextPage != null; }
 
   // Generate the next page.
-  public Page getNextPage() {
+  public Page fetchNextPage() {
     if (!isObsolete()) { return this; }
-    return this.nextPage;
+    Page next = this.nextPage;
+    this.nextPage = null;
+    return next;
   }
 }
