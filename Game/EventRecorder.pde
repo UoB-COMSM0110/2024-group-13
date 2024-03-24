@@ -24,6 +24,10 @@ public class EventRecorder {
   }
 
   public void recordMouseClicked() {
-    events.add(new MouseClickedEvent(mouseX, mouseY));
+    events.add(new MouseClickedEvent(mouseX, mouseY, mouseButton));
+  }
+
+  public void recordMouseMoved() {
+    events.add(new MouseMovedEvent(mouseX, mouseY));
   }
 }

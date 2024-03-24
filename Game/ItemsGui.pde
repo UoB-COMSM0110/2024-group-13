@@ -41,39 +41,64 @@ public class Label extends LocalItem {
 
 
 public class Button extends Label {
+  private Action action;
+
+  private boolean hovering;
+  private float zoomRatio;
+
   public Button(String name, float w, float h, String text) {
-    super(name, w, h, text);
+    this(name, w, h, text, null);
   }
+
+  public Button(String name, float w, float h, String text, Action action) {
+    super(name, w, h, text);
+    this.action = action;
+    this.hovering = false;
+    this.zoomRatio = 1.02;
+  }
+
+  Button setAction(Action action) { this.action = action; return this; }
 
   @Override
-  void onMouseEvent(MouseEvent e) {
-    if (!isMouseEventRelative(e)) {
-      return;
-    }
+  public void onMouseEvent(MouseEvent e) {
     if (e instanceof MouseClickedEvent) {
-      onMouseClickedEvent((MouseClickedEvent)e);
+      MouseClickedEvent click = (MouseClickedEvent)e;
+      if (click.getButton() == LEFT && isMouseEventRelated(click)) {
+        onClickedOn();
+      }
+    } else if (e instanceof MouseMovedEvent) {
+      MouseMovedEvent mouse = (MouseMovedEvent)e;
+      if (isMouseEventRelated(mouse)) {
+        onHoverOn();
+      } else {
+        onHoverOff();
+      }
     }
   }
 
-  // Whether the mouse cursor is over the button when the event happened.
-  private boolean isMouseEventRelative(MouseEvent e) {
-    return getX() < e.getX() && e.getX() < getX() + getW()
-      && getY() < e.getY() && e.getY() < getY() + getH();
+  public void onClickedOn() {
+    if (this.action != null) { this.action.run(); }
   }
 
-  // Called when mouse clicks on the button.
-  void onMouseClickedEvent(MouseClickedEvent e) {
-    if(text == "Play"){
-      page = new PlayPage(page);
+  public void onHoverOn() {
+    if (!this.hovering) {
+      this.hovering = true;
+      zoom(this.zoomRatio);
     }
-    else if (text == "Help"){
-      page = new HelpPage(page);
+  }
+
+  public void onHoverOff() {
+    if (this.hovering) {
+      this.hovering = false;
+      zoom(1.0 / this.zoomRatio);
     }
-    else if(text == "Back"){
-      page  = page.previousPage;
-    }
-    else if(text == "Start"){
-      page = new PlayPage(page);
-    }
+  }
+
+  public void zoom(float ratio) {
+      float centerX = getCenterX();
+      float centerY = getCenterY();
+      float newW = getW() * ratio;
+      float newH = getH() * ratio;
+      setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
   }
 }

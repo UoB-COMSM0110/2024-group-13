@@ -6,12 +6,14 @@ import java.util.Collections;
 public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
-  public Page previousPage; // With this attribute, we can form a page stack.
+  private Page previousPage; // With this attribute, we can form a page stack.
+  private Page nextPage;
 
   public Page(Page previousPage) {
-    syncItems = new HashMap<String, SynchronizedItem>();
-    localItems = new HashMap<String, LocalItem>();
+    this.syncItems = new HashMap<String, SynchronizedItem>();
+    this.localItems = new HashMap<String, LocalItem>();
     this.previousPage = previousPage;
+    this.nextPage = null;
   }
 
   public void addLocalItem(LocalItem item) {
@@ -79,9 +81,18 @@ public class Page {
     }
   }
 
+  public Page getPreviousPage() { return this.nextPage; }
+
+  public void trySetNextPage(Page nextPage) {
+    if (this.nextPage == null) { this.nextPage = nextPage; }
+  }
+
   // Whether the page should be replaced with next one.
-  public boolean isObsolete() { return false; }
+  public boolean isObsolete() { return this.nextPage != null; }
 
   // Generate the next page.
-  public Page getNextPage() { return this; }
+  public Page getNextPage() {
+    if (!isObsolete()) { return this; }
+    return this.nextPage;
+  }
 }
