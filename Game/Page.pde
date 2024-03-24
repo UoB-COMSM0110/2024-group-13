@@ -6,12 +6,14 @@ import java.util.Collections;
 public class Page {
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
+  private ArrayList<Timer> timers;
   private Page previousPage; // With this attribute, we can form a page stack.
   private Page nextPage;
 
   public Page(Page previousPage) {
     this.syncItems = new HashMap<String, SynchronizedItem>();
     this.localItems = new HashMap<String, LocalItem>();
+    this.timers = new ArrayList<Timer>();
     this.previousPage = previousPage;
     this.nextPage = null;
   }
@@ -19,12 +21,20 @@ public class Page {
   public void onSwitchOut() {}
   public void onSwitchIn() {}
 
-  public void addLocalItem(LocalItem item) {
-    localItems.put(item.getName(), item);
-  }
+  public void addLocalItem(LocalItem item) { localItems.put(item.getName(), item); }
 
   public void addSyncItem(SynchronizedItem item) {
     syncItems.put(item.getName(), item);
+  }
+
+  public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
+
+  public ArrayList<SynchronizedItem> getSyncItems() {
+    return new ArrayList<SynchronizedItem>(this.syncItems.values());
+  }
+
+  public ArrayList<LocalItem> getLocalItems() {
+    return new ArrayList<LocalItem>(this.localItems.values());
   }
 
   public boolean deleteItem(String name) {
@@ -35,23 +45,31 @@ public class Page {
     return deleted != null;
   }
 
-  public ArrayList<SynchronizedItem> getSyncItems() {
-    return new ArrayList<SynchronizedItem>(this.syncItems.values());
-  }
-
-  public ArrayList<LocalItem> getLocalItems() {
-    return new ArrayList<LocalItem>(this.localItems.values());
-  }
+  public void addTimer(Timer timer) { this.timers.add(timer); }
 
   // Update all the items, including sync ones and local ones.
   public void update() {
     ArrayList<Event> events = eventRecorder.fetchEvents();
+    runTimers();
     evolveSyncItems(events);
     dispatchEventsToLocalItems(events);
     updateItems();
   }
 
-  void evolveSyncItems(ArrayList<Event> events) {
+  public void runTimers() {
+    ArrayList<Timer> oldTimers = this.timers;
+    this.timers = new ArrayList<Timer>();
+    for (Timer timer : oldTimers) {
+      if (timer.due()) {
+        timer.run();
+      }
+      if (!timer.expired()) {
+        addTimer(timer);
+      }
+    }
+  }
+
+  public void evolveSyncItems(ArrayList<Event> events) {
     // if (isClient) {
     //   sendEvents();
     //   receiveItems();
@@ -64,11 +82,11 @@ public class Page {
     // }
   }
 
-  void dispatchEventsToLocalItems(ArrayList<Event> events) {
+  public void dispatchEventsToLocalItems(ArrayList<Event> events) {
     getLocalItems().forEach((item) -> { item.onEvents(events); });
   }
 
-  void updateItems() {
+  public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
     getLocalItems().forEach((item) -> { item.update(); });
   }

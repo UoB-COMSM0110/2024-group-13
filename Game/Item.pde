@@ -191,8 +191,11 @@ public class MovableItem extends SynchronizedItem {
     if (backMovement < 0 || backMovement > prevMovement) { return false; }
     backMovement = min(backMovement + epsilon, prevMovement);
     doMovement(-backMovement);
+    onStepback(target);
     return true;
   }
+
+  public void onStepback(Item target) {}
 
   private float getPenetrationDepthOf(Item target) {
     switch (getDirection()) {

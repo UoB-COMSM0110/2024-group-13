@@ -11,31 +11,53 @@ void loadResourcesForGui() {
 
   
 public class Label extends LocalItem {
-  String text;
-  int textColor;
-  int textSize;
-  PFont textFont;
+  private String prefix;
+  private String text;
+  private int textColor;
+  private int textSize;
+  private PFont textFont;
+  private int textAlignHorizon;
+  private int textAlignVertical;
 
   public Label(String name, float w, float h, String text) {
     super(name, w, h);
+    this.prefix = "";
     this.text = text;
     this.textColor = color(100, 20, 20);
     this.textSize = fontSizeMinecraft;
     this.textFont = fontMinecraft;
+    this.textAlignHorizon = CENTER;
+    this.textAlignVertical = CENTER;
   }
 
-  @Override
-  public PImage getImage() {
-    return imageButton;
-  }
+  public Label setPrefix(String prefix) { this.prefix = prefix; return this; }
+  public Label setText(String text) { this.text = text; return this; }
+
+  public Label setTextAlignHorizon(int align) { this.textAlignHorizon = align; return this; }
 
   @Override
   public void draw() {
     super.draw();
+    drawTextContent();
+  }
+
+  private void drawTextContent() {
+    float alignPointX = getX();
+    float alignPointY = getY();
+    switch (this.textAlignHorizon) {
+      case LEFT: { alignPointX = getLeftX(); break; }
+      case CENTER: { alignPointX = getCenterX(); break; }
+      case RIGHT: { alignPointX = getRightX(); break; }
+    }
+    switch (this.textAlignVertical) {
+      case TOP: { alignPointY = getTopY(); break; }
+      case CENTER: { alignPointY = getCenterY(); break; }
+      case BOTTOM: { alignPointY = getBottomY(); break; }
+    }
     fill(this.textColor);
     textFont(this.textFont, this.textSize);
-    textAlign(CENTER, CENTER);
-    text(this.text, getCenterX(), getCenterY());
+    textAlign(this.textAlignHorizon, this.textAlignVertical);
+    text(this.prefix + this.text, alignPointX, alignPointY);
   }
 }
 
@@ -100,5 +122,10 @@ public class Button extends Label {
       float newW = getW() * ratio;
       float newH = getH() * ratio;
       setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
+  }
+
+  @Override
+  public PImage getImage() {
+    return imageButton;
   }
 }
