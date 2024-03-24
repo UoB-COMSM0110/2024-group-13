@@ -26,10 +26,11 @@ public class Border extends SynchronizedItem {
 
   @Override
   public void onCollisionWith(SynchronizedItem item) {
+    // `item` can only be instance of MovableItem
     if (item instanceof Figure) {
       ((Figure)item).tryStepbackFrom(this);
     } else {
-      item.delete();
+      item.discard().delete();
     }
   }
 }

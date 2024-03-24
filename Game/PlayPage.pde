@@ -21,17 +21,20 @@ public class PlayPage extends Page {
 
     loadMap(mapPath);
 
-    Border leftBorder = new Border("LeftBorder", 0.0, gameInfo.getMapHeight());
-    leftBorder.setX(0.0).setY(0.0);
+    float borderSize = 10.0;
+    float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
+    float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
+    Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);
+    leftBorder.setX(-borderSize).setY(-borderSize);
     addSyncItem(leftBorder);
-    Border rightBorder = new Border("RightBorder", 0.0, gameInfo.getMapHeight());
-    rightBorder.setX(gameInfo.getMapWidth()).setY(0.0);
+    Border rightBorder = new Border("RightBorder", borderSize, verticalBorderHeight);
+    rightBorder.setX(gameInfo.getMapWidth()).setY(-borderSize);
     addSyncItem(rightBorder);
-    Border topBorder = new Border("TopBorder", gameInfo.getMapWidth(), 0.0);
-    topBorder.setX(0.0).setY(0.0);
+    Border topBorder = new Border("TopBorder", horizonBorderWidth, borderSize);
+    topBorder.setX(-borderSize).setY(-borderSize);
     addSyncItem(topBorder);
-    Border bottomBorder = new Border("BottomBorder", gameInfo.getMapWidth(), 0.0);
-    bottomBorder.setX(0.0).setY(gameInfo.getMapHeight());
+    Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize);
+    bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
     pac1 = new Pacman(0, 20, 20);
