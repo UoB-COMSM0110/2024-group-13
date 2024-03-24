@@ -1,19 +1,19 @@
-final float CHARACTER_SIZE = 10.0;
+final String imagePathPlayPageBackground = "data/PlayPageBackground.png";
+PImage imagePlayPageBackground;
 
-String imagePathGamePageBackground = "data/GamePageBackground.png";
-PImage imageGamePageBackground;
+void loadResourcesForPlayPage() {
+  imagePlayPageBackground = loadImage(imagePathPlayPageBackground);
+}
 
-String mapPath = "data/map.csv";
 
-public class GamePage extends Page {
-  private PacmanFigure pac1;  
+final String mapPath = "data/map.csv";
+float CHARACTER_SIZE = 10.0;
 
-  public GamePage(GameInfo gInfo, Page previousPage) {
-    super(gInfo, previousPage);
-    
-    if (imageGamePageBackground == null) {
-      imageGamePageBackground = loadImage(imagePathGamePageBackground);
-    }
+public class PlayPage extends Page {
+  private Pacman pac1;  
+
+  public PlayPage(Page previousPage) {
+    super(previousPage);
 
     Button backButton = new Button("Back", 200, 40, "Back");
     backButton.setX(20).setY(10);
@@ -21,19 +21,35 @@ public class GamePage extends Page {
 
     loadMap(mapPath);
 
-    pac1 = new PacmanFigure(0, 20, 20);
+    float borderSize = 10.0;
+    float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
+    float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
+    Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);
+    leftBorder.setX(-borderSize).setY(-borderSize);
+    addSyncItem(leftBorder);
+    Border rightBorder = new Border("RightBorder", borderSize, verticalBorderHeight);
+    rightBorder.setX(gameInfo.getMapWidth()).setY(-borderSize);
+    addSyncItem(rightBorder);
+    Border topBorder = new Border("TopBorder", horizonBorderWidth, borderSize);
+    topBorder.setX(-borderSize).setY(-borderSize);
+    addSyncItem(topBorder);
+    Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize);
+    bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
+    addSyncItem(bottomBorder);
+
+    pac1 = new Pacman(0, 20, 20);
     pac1.setX(360).setY(350);
     addSyncItem(pac1);
     
-    Ghost goo = new Ghost("goo", 20, 20);
+    Ghost goo = new Ghost(20, 20);
     goo.setX(30).setY(100);
     addSyncItem(goo);
   }
 
   @Override
-  public void draw(GameInfo gInfo) {
-    image(imageGamePageBackground, 0, 0, 800, 600);
-    super.draw(gInfo);
+  public void draw() {
+    image(imagePlayPageBackground, 0, 0, 800, 600);
+    super.draw();
     
     textSize(20);
     text("Score: " + pac1.getScore(), 700, 40);

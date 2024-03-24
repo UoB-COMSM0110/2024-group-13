@@ -1,7 +1,11 @@
 // Base class for all events.
 // Event is mainly used for dealing with user inputs.
 public class Event {
-  public Event() {}
+  private int hostId;
+
+  public Event() {
+    this.hostId = gameInfo.getHostId();
+  }
 }
 
 
@@ -54,32 +58,5 @@ public class MouseEvent extends Event {
 public class MouseClickedEvent extends MouseEvent {
   public MouseClickedEvent(float x, float y) {
     super(x, y);
-  }
-}
-
-
-// EventRecorder is used to store all the events between two game frames.
-// These events are processed when the frame refreshes.
-public class EventRecorder {
-  ArrayList<Event> events;
-
-  public EventRecorder() {
-    events = new ArrayList<Event>();
-  }
-  
-  public ArrayList<Event> getEvents() { return events; }
-
-  public void clearEvents() { events.clear(); }
-
-  public void recordKeyPressed() {
-    events.add(new KeyPressedEvent(key, keyCode));
-  }
-
-  public void recordKeyReleased() {
-    events.add(new KeyReleasedEvent(key, keyCode));
-  }
-
-  public void recordMouseClicked() {
-    events.add(new MouseClickedEvent(mouseX, mouseY));
   }
 }

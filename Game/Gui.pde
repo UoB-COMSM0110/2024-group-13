@@ -1,9 +1,15 @@
-String imagePathButton = "data/Button.png";
+final String imagePathButton = "data/Button.png";
 PImage imageButton;
+final String fontPathMinecraft = "data/Minecraft.ttf";
+PFont fontMinecraft;
+
+void loadResourcesForGui() {
+  imageButton = loadImage(imagePathButton);
+  fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
+}
+
 
 int fontSizeMinecraft = 20;
-String fontPathMinecraft = "data/Minecraft.ttf";
-PFont fontMinecraft;
   
 public class Button extends LocalItem {
   String text;
@@ -16,19 +22,16 @@ public class Button extends LocalItem {
     this.text = text;
     this.textColor = color(100, 20, 20);
     this.textSize = fontSizeMinecraft;
-    if (fontMinecraft == null) {
-      fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft);
-    }
     this.textFont = fontMinecraft;
   }
 
   @Override
-  void onMouseEvent(GameInfo gInfo, MouseEvent e) {
+  void onMouseEvent(MouseEvent e) {
     if (!isMouseEventRelative(e)) {
       return;
     }
     if (e instanceof MouseClickedEvent) {
-      onMouseClickedEvent(gInfo, (MouseClickedEvent)e);
+      onMouseClickedEvent((MouseClickedEvent)e);
     }
   }
 
@@ -39,33 +42,29 @@ public class Button extends LocalItem {
   }
 
   // Called when mouse clicks on the button.
-  void onMouseClickedEvent(GameInfo gInfo, MouseClickedEvent e) {
+  void onMouseClickedEvent(MouseClickedEvent e) {
     if(text == "Play"){
-      GamePage gamePage = new GamePage(gInfo, game.page);
-      game.page = gamePage;
+      page = new PlayPage(page);
     }
     else if (text == "Help"){
-      HelpPage helpPage = new HelpPage(gInfo, game.page);
-      game.page = helpPage;
+      page = new HelpPage(page);
     }
     else if(text == "Back"){
-      game.page  = game.page.previousPage;
+      page  = page.previousPage;
     }
     else if(text == "Start"){
-      GamePage gamePage = new GamePage(gInfo, game.page);
-      game.page = gamePage;
+      page = new PlayPage(page);
     }
   }
 
   @Override
   public PImage getImage() {
-    if (imageButton == null) { imageButton = loadImage(imagePathButton); }
     return imageButton;
   }
 
   @Override
-  public void draw(GameInfo gInfo) {
-    super.draw(gInfo);
+  public void draw() {
+    super.draw();
     fill(this.textColor);
     textSize(this.textSize);
     textFont(this.textFont);
