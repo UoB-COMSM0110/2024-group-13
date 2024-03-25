@@ -1,12 +1,16 @@
+final int textColorDefault = color(100, 20, 20);
+final int textSizeDefault = 20;
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
 final String fontPathMinecraft = "data/Minecraft.ttf";
-final int fontSizeMinecraft = 20;
 PFont fontMinecraft;
+final String fontPathErikaType = "data/ErikaType.ttf";
+PFont fontErikaType;
 
 void loadResourcesForGui() {
   imageButton = loadImage(imagePathButton);
-  fontMinecraft = createFont(fontPathMinecraft, fontSizeMinecraft, true);
+  fontMinecraft = createFont(fontPathMinecraft, textSizeDefault, true);
+  fontErikaType = createFont(fontPathErikaType, textSizeDefault, true);
 }
 
   
@@ -23,15 +27,18 @@ public class Label extends LocalItem {
     super(name, w, h);
     this.prefix = "";
     this.text = text;
-    this.textColor = color(100, 20, 20);
-    this.textSize = fontSizeMinecraft;
-    this.textFont = fontMinecraft;
+    this.textColor = textColorDefault;
+    this.textSize = textSizeDefault;
+    this.textFont = fontErikaType;
     this.textAlignHorizon = LEFT;
     this.textAlignVertical = CENTER;
   }
 
   public Label setPrefix(String prefix) { this.prefix = prefix; return this; }
   public Label setText(String text) { this.text = text; return this; }
+  public Label setTextColor(int textColor) { this.textColor = textColor; return this; }
+  public Label setTextSize(int textSize) { this.textSize = textSize; return this; }
+  public Label setTextFont(PFont textFont) { this.textFont = textFont; return this; }
   public Label setTextAlignHorizon(int align) { this.textAlignHorizon = align; return this; }
 
   public String getText() { return this.text; }
@@ -55,6 +62,7 @@ public class Label extends LocalItem {
       case CENTER: { alignPointY = getCenterY(); break; }
       case BOTTOM: { alignPointY = getBottomY(); break; }
     }
+    noStroke();
     fill(this.textColor);
     textFont(this.textFont, this.textSize);
     textAlign(this.textAlignHorizon, this.textAlignVertical);
@@ -75,7 +83,7 @@ public class Button extends Label {
 
   public Button(String name, float w, float h, String text, Action action) {
     super(name, w, h, text);
-    setTextAlignHorizon(CENTER);
+    setTextFont(fontMinecraft).setTextAlignHorizon(CENTER);
     this.action = action;
     this.hovering = false;
     this.zoomRatio = 1.02;
@@ -193,7 +201,7 @@ public class InputBox extends Label {
   public void onKeyPressedEvent(KeyPressedEvent e) {
     int key = e.getKey();
     switch (key) {
-      case ENTER: case RETURN: case ESC: { dropFocus(); break; }
+      case TAB: case ENTER: case RETURN: case ESC: { dropFocus(); break; }
       case BACKSPACE: case DELETE: { tryDeleteLast(); break; }
     }
     // Accept only ASCII printable characters, i.e., in range [32, 127].
@@ -223,8 +231,27 @@ public class InputBox extends Label {
 
   @Override
   public void draw() {
+    strokeWeight(0.0);
     fill(255);
-    rect(getX(), getY(), getW(), getH());
+    rect(getX(), getY(), getW(), getH(), 3);
+    if (isOnFocus()) { shade(); }
     super.draw();
+  }
+
+  public void shade() {
+    float step = 1.0;
+    int nStep = 10;
+    strokeWeight(step);
+    noFill();
+    for (int i = 0; i < nStep; ++i) {
+      float x = getX() + step * i;
+      float y = getY() + step * i;
+      float w = getW() - 2 * step * i;
+      float h = getH() - 2 * step * i;
+      int c = color(0, 200, 200);
+      float alpha = 255.0 * (1.0 - i * 1.0 / nStep);
+      stroke(c, alpha);
+      rect(x, y, w, h, 3);
+    }
   }
 }
