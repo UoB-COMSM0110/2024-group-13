@@ -1,3 +1,4 @@
+static final int singleHostId = 0;
 static final int serverHostId = 1;
 static final int clientHostId = 2;
 
@@ -20,7 +21,7 @@ public class GameInfo {
   private int lastFrameIntervalMs;
 
   public GameInfo() {
-    this.hostId = 0;
+    this.hostId = singleHostId;
 
     this.mapScaleX = 1.0;
     this.mapScaleY = 1.0;

@@ -38,8 +38,11 @@ public class PlayPage extends Page {
     addSyncItem(bottomBorder);
 
     Pacman pacman1 = new Pacman(1, 20, 20);
-    pacman1.setX(360).setY(350);
+    pacman1.setX(350).setY(350);
     addSyncItem(pacman1);
+    Pacman pacman2 = new Pacman(2, 20, 20);
+    pacman2.setX(370).setY(350);
+    addSyncItem(pacman2);
 
     Label score1 = new Label("Score1", 180, 25, "0");
     score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(40);

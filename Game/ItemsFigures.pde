@@ -129,7 +129,7 @@ public class Ghost extends Figure {
 final String itemTypePacman = "Pacman";
 
 public class Pacman extends Figure {
-  private int playerId;
+  private int playerId; // Valid values: 1, 2
   private int score;
 
   public Pacman(int playerId, float w, float h) {
@@ -185,7 +185,16 @@ public class Pacman extends Figure {
     }
   }
 
+  public boolean usingKeySetA() { // W A S D Space
+    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+  }
+  public boolean usingKeySetB() { // Arrows F
+    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
+  }
+
   public void onKeyPressedEvent(KeyPressedEvent e) {
+    if (e.getKey() == ' ' && usingKeySetA()) { fire(); return; }
+    if ((e.getKey() == 'f' || e.getKey() == 'F') && usingKeySetB()) { fire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction != null) {
       setFacing(direction.intValue());
@@ -193,8 +202,6 @@ public class Pacman extends Figure {
       startMoving();
       return;
     }
-    if (e.getKey() == CODED) { return; }
-    if (e.getKey() == ' ') { fire(); return; }
   }
 
   public void onKeyReleasedEvent(KeyReleasedEvent e) {
@@ -205,6 +212,7 @@ public class Pacman extends Figure {
 
   private Integer getDirectionFromKeyEvent(KeyboardEvent e) {
     if (e.getKey() == CODED) {
+      if(!usingKeySetB()) { return null; }
       switch (e.getKeyCode()) {
         case UP: return UPWARD;
         case LEFT: return LEFTWARD;
@@ -213,6 +221,7 @@ public class Pacman extends Figure {
         default: return null;
       }
     }
+    if(!usingKeySetA()) { return null; }
     switch (e.getKey()) {
       case 'w': case 'W': return UPWARD;
       case 'a': case 'A': return LEFTWARD;
