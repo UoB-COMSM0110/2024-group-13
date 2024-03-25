@@ -23,6 +23,20 @@ public class StartPage extends Page {
     });
     helpButton.setX(300).setY(400);
     addLocalItem(helpButton);
+
+    InputBox playerName1 = new InputBox("InputBoxPlayerName1", 300, 50, 15, (box) -> {
+      System.out.println(box.getText());
+      gameInfo.setPlayerName1(box.getText());
+    });
+    playerName1.setDefaultText("Happy Bunny").setPrefix(" Player 1 : ").setCenterX(400).setY(500);
+    addLocalItem(playerName1);
+
+    InputBox playerName2 = new InputBox("InputBoxPlayerName2", 300, 50, 15, (box) -> {
+      System.out.println(box.getText());
+      gameInfo.setPlayerName2(box.getText());
+    });
+    playerName2.setDefaultText("Lucky Kitty").setPrefix(" Player 2 : ").setCenterX(400).setY(560);
+    addLocalItem(playerName2);
   }
 
   @Override

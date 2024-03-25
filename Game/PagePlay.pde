@@ -15,7 +15,7 @@ public class PlayPage extends Page {
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
     Label fps = new Label("Fps", 200, 25, "");
-    fps.setPrefix("fps: ").setTextAlignHorizon(LEFT).setX(250).setY(10);
+    fps.setPrefix("fps: ").setX(250).setY(10);
     addLocalItem(fps);
     addTimer(new Timer(0.0, 1.0, () -> {
           Label fpsLabel = (Label)getLocalItem("Fps");
@@ -44,14 +44,14 @@ public class PlayPage extends Page {
     pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
     Label score1 = new Label("Score1", 200, 25, "0");
-    score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(15);
+    score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
     addLocalItem(score1);
 
     Pacman pacman2 = new Pacman(2, 18, 18);
     pacman2.setX(360).setY(350);
     addSyncItem(pacman2);
     Label score2 = new Label("Score2", 200, 25, "0");
-    score2.setPrefix("Player 2: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
+    score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
     addLocalItem(score2);
     
     Ghost ghost1 = new Ghost(20, 20);

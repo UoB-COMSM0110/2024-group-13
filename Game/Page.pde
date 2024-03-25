@@ -51,8 +51,8 @@ public class Page {
   public void update() {
     ArrayList<Event> events = eventRecorder.fetchEvents();
     runTimers();
-    evolveSyncItems(events);
     dispatchEventsToLocalItems(events);
+    evolveSyncItems(events);
     updateItems();
   }
 

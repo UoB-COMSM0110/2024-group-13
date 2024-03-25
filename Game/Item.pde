@@ -53,6 +53,14 @@ public class Item {
   public float getCenterX() { return getX() + getW() / 2.0; }
   public float getCenterY() { return getY() + getH() / 2.0; }
 
+  public void zoom(float ratio) {
+    float centerX = getCenterX();
+    float centerY = getCenterY();
+    float newW = getW() * ratio;
+    float newH = getH() * ratio;
+    setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
+  }
+
   public void onEvents(ArrayList<Event> events) {
     events.forEach((e) -> { onEvent(e); });
   }

@@ -22,6 +22,9 @@ public class GameInfo {
   private long lastFrameIntervalMs;
   private float avgFps;
 
+  private String playerName1;
+  private String playerName2;
+
   public GameInfo() {
     this.hostId = singleHostId;
 
@@ -38,7 +41,13 @@ public class GameInfo {
     this.gameStartTimeMs = System.currentTimeMillis();
     this.currentFrameCount = 0;
     this.avgFps = 1.0 / this.frameRateConfig;
+
+    this.playerName1 = "Anonym1";
+    this.playerName2 = "Anonym2";
   }
+
+  public void setPlayerName1(String name) { this.playerName1 = name; }
+  public void setPlayerName2(String name) { this.playerName2 = name; }
 
   public void update() {
     this.currentFrameCount += 1;
@@ -69,4 +78,7 @@ public class GameInfo {
   public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
   public float getLastFrameIntervalS() { return getLastFrameIntervalMs() / 1000.0; }
   public float getAvgFps() { return this.avgFps; }
+
+  public String getPlayerName1() { return this.playerName1; }
+  public String getPlayerName2() { return this.playerName2; }
 }

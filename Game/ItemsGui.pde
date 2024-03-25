@@ -26,14 +26,15 @@ public class Label extends LocalItem {
     this.textColor = color(100, 20, 20);
     this.textSize = fontSizeMinecraft;
     this.textFont = fontMinecraft;
-    this.textAlignHorizon = CENTER;
+    this.textAlignHorizon = LEFT;
     this.textAlignVertical = CENTER;
   }
 
   public Label setPrefix(String prefix) { this.prefix = prefix; return this; }
   public Label setText(String text) { this.text = text; return this; }
-
   public Label setTextAlignHorizon(int align) { this.textAlignHorizon = align; return this; }
+
+  public String getText() { return this.text; }
 
   @Override
   public void draw() {
@@ -74,6 +75,7 @@ public class Button extends Label {
 
   public Button(String name, float w, float h, String text, Action action) {
     super(name, w, h, text);
+    setTextAlignHorizon(CENTER);
     this.action = action;
     this.hovering = false;
     this.zoomRatio = 1.02;
@@ -116,16 +118,113 @@ public class Button extends Label {
     }
   }
 
-  public void zoom(float ratio) {
-      float centerX = getCenterX();
-      float centerY = getCenterY();
-      float newW = getW() * ratio;
-      float newH = getH() * ratio;
-      setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
-  }
-
   @Override
   public PImage getImage() {
     return imageButton;
+  }
+}
+
+
+@FunctionalInterface
+public static interface InputBoxCallback {
+  void onTextChange(InputBox inputBox);
+}
+
+public class InputBox extends Label {
+  private String defaultText;
+  private int maxLen;
+  private InputBoxCallback callback;
+
+  private boolean onFocus;
+  private String prevText;
+
+  public InputBox(String name, float w, float h, int maxLen) {
+    this(name, w, h, maxLen, null);
+  }
+
+  public InputBox(String name, float w, float h, int maxLen, InputBoxCallback callback) {
+    super(name, w, h, "");
+    this.defaultText = "";
+    this.maxLen = maxLen;
+    this.callback = callback;
+    this.onFocus = false;
+    this.prevText = "";
+  }
+
+  @Override
+  public InputBox setText(String text) {
+    this.prevText = getText();
+    super.setText(text);
+    if (!text.equals(this.prevText) && this.callback != null) { this.callback.onTextChange(this); }
+    return this;
+  }
+
+  public InputBox setDefaultText(String defaultText) {
+    this.defaultText = defaultText;
+    if (isEmpty()) { setTextToDefault(); }
+    return this;
+  }
+
+  public InputBox setTextToDefault() { setText(getDefaultText()); return this; }
+
+  public InputBox setCallback(InputBoxCallback callback) { this.callback = callback; return this; }
+  public InputBox catchFocus() { this.onFocus = true; return this; }
+  public InputBox dropFocus() {
+    this.onFocus = false;
+    if (isEmpty()) { setTextToDefault(); }
+    return this;
+  }
+
+  public int length() { return getText().length(); }
+  public int getMaxLen() { return this.maxLen; }
+  public boolean isEmpty() { return length() <= 0; }
+  public String getDefaultText() { return this.defaultText; }
+  public boolean isOnFocus() { return this.onFocus; }
+  public String getPrevText() { return this.prevText; }
+
+  @Override
+  public void onKeyboardEvent(KeyboardEvent e) {
+    if (!isOnFocus()) { return; }
+    if (e instanceof KeyPressedEvent) {
+      onKeyPressedEvent((KeyPressedEvent)e);
+    }
+  }
+
+  public void onKeyPressedEvent(KeyPressedEvent e) {
+    int key = e.getKey();
+    switch (key) {
+      case ENTER: case RETURN: case ESC: { dropFocus(); break; }
+      case BACKSPACE: case DELETE: { tryDeleteLast(); break; }
+    }
+    // Accept only ASCII printable characters, i.e., in range [32, 127].
+    if (' ' <= key && key <= '~') { tryAppend(key); }
+  }
+
+  public void tryDeleteLast() {
+    if (isEmpty()) { return; }
+    String newStr = getText().substring(0, length() - 1);
+    setText(newStr);
+  }
+
+  public void tryAppend(int key) {
+    if (length() >= getMaxLen()) { return; }
+    String newStr = getText() + (char)key;
+    setText(newStr);
+  }
+
+  @Override
+  public void onMouseEvent(MouseEvent e) {
+    if (e instanceof MouseClickedEvent) {
+      MouseClickedEvent click = (MouseClickedEvent)e;
+      if (isMouseEventRelated(click)) { catchFocus(); }
+      else { dropFocus(); }
+    }
+  }
+
+  @Override
+  public void draw() {
+    fill(255);
+    rect(getX(), getY(), getW(), getH());
+    super.draw();
   }
 }
