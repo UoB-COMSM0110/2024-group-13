@@ -237,5 +237,9 @@ public class Pacman extends Figure {
   void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
+    // gameInfo.setMapScaleX(5.0);
+    // gameInfo.setMapScaleY(5.0);
+    // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);
+    // gameInfo.setMapOffsetY(- getY() * 5.0 + 100 + 80);
   }
 }

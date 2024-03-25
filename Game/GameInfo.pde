@@ -46,6 +46,11 @@ public class GameInfo {
     this.playerName2 = "Anonym2";
   }
 
+  public void setMapScaleX(float scale) { this.mapScaleX = scale; }
+  public void setMapScaleY(float scale) { this.mapScaleY = scale; }
+  public void setMapOffsetX(float offset) { this.mapOffsetX = offset; }
+  public void setMapOffsetY(float offset) { this.mapOffsetY = offset; }
+
   public void setPlayerName1(String name) { this.playerName1 = name; }
   public void setPlayerName2(String name) { this.playerName2 = name; }
 
