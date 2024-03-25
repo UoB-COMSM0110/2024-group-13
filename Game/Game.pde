@@ -28,8 +28,10 @@ void draw() {
 
   // Check whether to switch page.
   if (page.isObsolete()) {
-    page = page.getNextPage();
+    page.onSwitchOut();
     eventRecorder.dropEvents();
+    page = page.fetchNextPage();
+    page.onSwitchIn();
   }
 
   // Update page and its items.
@@ -41,6 +43,8 @@ void draw() {
 }
 
 
+// keyTyped()
+
 void keyPressed() {
   eventRecorder.recordKeyPressed();
 }
@@ -49,20 +53,16 @@ void keyReleased() {
   eventRecorder.recordKeyReleased();
 }
 
-// void keyTyped() {
-//   eventRecorder.recordKeyTyped();
-// }
 
-// void mousePressed() {
-//   eventRecorder.recordMousePressed();
-// }
-// 
-// void mouseReleased() {
-//   eventRecorder.recordMouseReleased();
-// }
+// mousePressed()
+// mouseReleased()
+// mouseDragged()
+// mouseWheel()
 
-int mouseClickCnt = 0;
 void mouseClicked() {
-  System.out.println("mouse clicked " + mouseClickCnt++);
   eventRecorder.recordMouseClicked();
+}
+
+void mouseMoved() {
+  eventRecorder.recordMouseMoved();
 }

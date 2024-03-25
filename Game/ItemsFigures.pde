@@ -12,64 +12,64 @@ void loadResoucesForFigures() {
 
 
 public abstract class Figure extends MovableItem {
-    private int lives;
-    private int maxHp;
-    private int hp;
+  private int lives;
+  private int maxHp;
+  private int hp;
 
-    public Figure(String name, float w, float h) {
-      super(name, w, h);
-      setLives(1);
-      refreshHp(1);
-    }
+  public Figure(String name, float w, float h) {
+    super(name, w, h);
+    setLives(1);
+    refreshHp(1);
+  }
 
-    public int getLives() { return this.lives; }
-    
-    public Figure setLives(int lives) {
-      this.lives = lives >= 0 ? lives : 0;
-      return this;
-    }
-    
-    public Figure incLives(int inc) { return setLives(getLives() + inc); }
-    
-    public Figure decLives(int dec) {
-      setLives(getLives() - dec);
-      if (getLives() == 0) {
-        discard();
-      } else {
-        refreshHp();
-      }
-      return this;
-    }
+  public int getLives() { return this.lives; }
 
-    public int getMaxHp() { return this.maxHp; }
-    public Figure setMaxHp(int maxHp) {
-      this.maxHp = maxHp > 0 ? maxHp : 0;
-      return this;
-    }
+  public Figure setLives(int lives) {
+    this.lives = lives >= 0 ? lives : 0;
+    return this;
+  }
 
-    public Figure refreshHp() { return setHp(getMaxHp()); }
-    public Figure refreshHp(int maxHp) { return setMaxHp(maxHp).refreshHp(); }
-    
-    public int getHp() { return this.hp; }
-    
-    public Figure setHp(int hp) {
-      if (hp < 0) { hp = 0; }
-      if (getMaxHp() > 0 && hp > getMaxHp()) {
-        hp = getMaxHp();
-      }
-      this.hp = hp;
-      return this;
+  public Figure incLives(int inc) { return setLives(getLives() + inc); }
+
+  public Figure decLives(int dec) {
+    setLives(getLives() - dec);
+    if (getLives() == 0) {
+      discard();
+    } else {
+      refreshHp();
     }
-    
-    public Figure incHp(int inc) { return setHp(getHp() + inc); }
-    
-    public Figure decHp(int dec) {
-      setHp(getHp() - dec);
-      if (getHp() <= 0) {
-        decLives(1);
-      }
-      return this;
+    return this;
+  }
+
+  public int getMaxHp() { return this.maxHp; }
+  public Figure setMaxHp(int maxHp) {
+    this.maxHp = maxHp > 0 ? maxHp : 0;
+    return this;
+  }
+
+  public Figure refreshHp() { return setHp(getMaxHp()); }
+  public Figure refreshHp(int maxHp) { return setMaxHp(maxHp).refreshHp(); }
+
+  public int getHp() { return this.hp; }
+
+  public Figure setHp(int hp) {
+    if (hp < 0) { hp = 0; }
+    if (getMaxHp() > 0 && hp > getMaxHp()) {
+      hp = getMaxHp();
     }
+    this.hp = hp;
+    return this;
+  }
+
+  public Figure incHp(int inc) { return setHp(getHp() + inc); }
+
+  public Figure decHp(int dec) {
+    setHp(getHp() - dec);
+    if (getHp() <= 0) {
+      decLives(1);
+    }
+    return this;
+  }
 }
 
 
@@ -78,44 +78,53 @@ int itemCountGhost;
 
 // Ghost class
 public class Ghost extends Figure {
-    public Ghost(float w, float h) {
-        super(itemTypeGhost + itemCountGhost++, w, h);
-        setSpeed(50.0); // set Ghost speed
-        refreshHp(3);
-        setLayer(2);
-        randomizeDirection();
-        startMoving();
+  private Timer changeDirectionTimer;
+
+  public Ghost(float w, float h) {
+    super(itemTypeGhost + itemCountGhost++, w, h);
+    setSpeed(50.0); // set Ghost speed
+    refreshHp(3);
+    setLayer(2);
+    randomizeDirection();
+    startMoving();
+  }
+
+  @Override
+  public void evolve() {
+    if (random(35) < 1.0) {
+      // probability of changing direction on each call
+      randomizeDirection();
     }
-    
-    @Override
-    public void evolve() {
-      if (random(35) < 1.0) {
-        // probability of changing direction on each call
-        randomizeDirection();
-      }
-      super.evolve(); // keep moving
-    }
-    
+    super.evolve(); // keep moving
+  }
+
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Bullet) {
       decHp(1);
     }
   }
-  
-    private void randomizeDirection() {
-      switch ((int)random(4)) {
-        case 0: { setDirection(UPWARD); break; }
-        case 1: { setDirection(RIGHTWARD); break; }
-        case 2: { setDirection(DOWNWARD); break; }
-        case 3: { setDirection(LEFTWARD); break; }
-      }
-    }
 
-    @Override
-    public PImage getImage() {
-        return imageGhost;
+  @Override
+  public void onStepback(Item target) { randomizeDirection(); }
+
+  private void randomizeDirection() {
+    switch ((int)random(4)) {
+      case 0: { setDirection(UPWARD); break; }
+      case 1: { setDirection(RIGHTWARD); break; }
+      case 2: { setDirection(DOWNWARD); break; }
+      case 3: { setDirection(LEFTWARD); break; }
     }
+    if (this.changeDirectionTimer != null) { this.changeDirectionTimer.destroy(); }
+    float timeS = 1.0 + random(4.0); // [1.0s, 5.0s)
+    this.changeDirectionTimer = new OneOffTimer(timeS, () -> { randomizeDirection(); });
+    page.addTimer(this.changeDirectionTimer);
+  }
+
+  @Override
+  public PImage getImage() {
+    return imageGhost;
+  }
 }
 
 
@@ -132,13 +141,13 @@ public class Pacman extends Figure {
     refreshHp(3);
   }
 
+  public int getPlayerId() { return this.playerId; }
+
   public PImage getImage() {
     return imagePacman;
   }
-  
-  public int getScore(){
-    return this.score; 
-  }
+
+  public int getScore(){ return this.score; }
 
   public void incScore(int increment){
     this.score += increment;
@@ -168,7 +177,7 @@ public class Pacman extends Figure {
       decLives(1);
     }
   }
-  
+
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
     if (e instanceof KeyPressedEvent) {
@@ -213,5 +222,11 @@ public class Pacman extends Figure {
       case 'd': case 'D': return RIGHTWARD;
       default: return null;
     }
+  }
+
+  @Override
+  void update() {
+    Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
+    if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
   }
 }

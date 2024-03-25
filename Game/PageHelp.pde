@@ -11,7 +11,9 @@ public class HelpPage extends Page {
     this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet);
 
-    Button backButton = new Button("Back", 200, 40, "Back");
+    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
+      trySwitchPage(getPreviousPage());
+    });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
   }

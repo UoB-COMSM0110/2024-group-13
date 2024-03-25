@@ -66,13 +66,19 @@ public class Item {
   public void onMouseEvent(MouseEvent e) {}
   public void onKeyboardEvent(KeyboardEvent e) {}
 
+  // Whether the mouse cursor is over the item when the event happened.
+  public boolean isMouseEventRelated(MouseEvent e) {
+    return getLeftX() < e.getX() && e.getX() < getRightX()
+      && getTopY() < e.getY() && e.getY() < getBottomY();
+  }
+
   // Update status for each game frame.
   // Generally the update here won't affect game logic,
   // but only affects visual effects, human-game interactions, etc.
   // This method can interact with other items.
   public void update() {}
 
-  public void delete() { page.deleteItem(getName()); }
+  public void delete() { page.deleteItem(getName()); System.out.println("delete " + getName()); }
 
   public PImage getImage() { return null; }
 
@@ -185,8 +191,11 @@ public class MovableItem extends SynchronizedItem {
     if (backMovement < 0 || backMovement > prevMovement) { return false; }
     backMovement = min(backMovement + epsilon, prevMovement);
     doMovement(-backMovement);
+    onStepback(target);
     return true;
   }
+
+  public void onStepback(Item target) {}
 
   private float getPenetrationDepthOf(Item target) {
     switch (getDirection()) {

@@ -4,16 +4,14 @@ static final int clientHostId = 2;
 // GameInfo holds some housekeeping information.
 // For example, the size of the window, the ip/port of the other player, etc.
 public class GameInfo {
+  private ArrayList<Timer> timers;
+
   private int hostId;
 
   // Coefficients used to transform sync-coordinates to local-coordinates.
-  private float mapScaleX;
-  private float mapScaleY;
-  private float mapOffsetX;
-  private float mapOffsetY;
-
-  private float mapWidth;
-  private float mapHeight;
+  private float mapScaleX, mapScaleY;
+  private float mapOffsetX, mapOffsetY;
+  private float mapWidth, mapHeight;
 
   private int frameRateConfig;
   private long gameStartTimeMs;
@@ -22,26 +20,26 @@ public class GameInfo {
   private int lastFrameIntervalMs;
 
   public GameInfo() {
-    hostId = 0;
+    this.hostId = 0;
 
-    mapScaleX = 1.0;
-    mapScaleY = 1.0;
-    mapOffsetX = 0.0;
-    mapOffsetY = 0.0;
+    this.mapScaleX = 1.0;
+    this.mapScaleY = 1.0;
+    this.mapOffsetX = 0.0;
+    this.mapOffsetY = 0.0;
 
-    mapWidth = 800.0;
-    mapHeight = 600.0;
+    this.mapWidth = 800.0;
+    this.mapHeight = 600.0;
 
-    frameRateConfig = 50;
-    gameStartTimeMs = System.currentTimeMillis();
+    this.frameRateConfig = 50;
+    this.gameStartTimeMs = System.currentTimeMillis();
   }
 
   public void update() {
     currentFrameCount += 1;
-    long lastFrameTimeMs = currentFrameTimeMs;
-    currentFrameTimeMs = System.currentTimeMillis();
+    long lastFrameTimeMs = this.currentFrameTimeMs;
+    this.currentFrameTimeMs = System.currentTimeMillis();
     if (currentFrameCount > 1) {
-      lastFrameIntervalMs = (int)(currentFrameTimeMs - lastFrameTimeMs);
+      lastFrameIntervalMs = (int)(this.currentFrameTimeMs - lastFrameTimeMs);
     }
   }
 
@@ -58,4 +56,5 @@ public class GameInfo {
   public int getFrameRateConfig() { return this.frameRateConfig; }
   public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
   public float getLastFrameIntervalS() { return this.getLastFrameIntervalMs() / 1000.0; }
+  public long getFrameTimeMs() { return this.currentFrameTimeMs; }
 }

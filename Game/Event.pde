@@ -56,7 +56,19 @@ public class MouseEvent extends Event {
 
 
 public class MouseClickedEvent extends MouseEvent {
-  public MouseClickedEvent(float x, float y) {
+  int button;
+
+  public MouseClickedEvent(float x, float y, int button) {
+    super(x, y);
+    this.button = button;
+  }
+
+  public int getButton() { return this.button; }
+}
+
+
+public class MouseMovedEvent extends MouseEvent {
+  public MouseMovedEvent(float x, float y) {
     super(x, y);
   }
 }

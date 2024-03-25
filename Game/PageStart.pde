@@ -12,12 +12,16 @@ public class StartPage extends Page {
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
     this.imageGameBanner = loadImage(imagePathGameBanner);
 
-    Button playButton = new Button("Play", 200, 40, "Play");
+    Button playButton = new Button("ButtonPlay", 200, 40, "Play", () -> {
+      trySwitchPage(new PlayPage(this));
+    });
     playButton.setX(300).setY(350);
     addLocalItem(playButton);
 
-    Button helpButton = new Button("Help", 200, 40, "Help");
-    helpButton.setX(300).setY(390);
+    Button helpButton = new Button("ButtonHelp", 200, 40, "Help", () -> {
+      trySwitchPage(new HelpPage(this));
+    });
+    helpButton.setX(300).setY(400);
     addLocalItem(helpButton);
   }
 

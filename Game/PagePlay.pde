@@ -10,12 +10,12 @@ final String mapPath = "data/map.csv";
 float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
-  private Pacman pac1;  
-
   public PlayPage(Page previousPage) {
     super(previousPage);
 
-    Button backButton = new Button("Back", 200, 40, "Back");
+    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
+      trySwitchPage(getPreviousPage());
+    });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
 
@@ -37,22 +37,23 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
-    pac1 = new Pacman(0, 20, 20);
-    pac1.setX(360).setY(350);
-    addSyncItem(pac1);
+    Pacman pacman1 = new Pacman(1, 20, 20);
+    pacman1.setX(360).setY(350);
+    addSyncItem(pacman1);
+
+    Label score1 = new Label("Score1", 180, 25, "0");
+    score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
+    addLocalItem(score1);
     
-    Ghost goo = new Ghost(20, 20);
-    goo.setX(30).setY(100);
-    addSyncItem(goo);
+    Ghost ghost1 = new Ghost(20, 20);
+    ghost1.setX(30).setY(100);
+    addSyncItem(ghost1);
   }
 
   @Override
   public void draw() {
     image(imagePlayPageBackground, 0, 0, 800, 600);
     super.draw();
-    
-    textSize(20);
-    text("Score: " + pac1.getScore(), 700, 40);
   }
 
   void loadMap(String mapPath) {
