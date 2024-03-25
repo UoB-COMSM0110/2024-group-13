@@ -17,9 +17,10 @@ public class GameInfo {
 
   private int frameRateConfig;
   private long gameStartTimeMs;
-  private int currentFrameCount;
+  private long currentFrameCount;
   private long currentFrameTimeMs;
-  private int lastFrameIntervalMs;
+  private long lastFrameIntervalMs;
+  private float avgFps;
 
   public GameInfo() {
     this.hostId = singleHostId;
@@ -35,14 +36,19 @@ public class GameInfo {
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();
+    this.currentFrameCount = 0;
+    this.avgFps = 1.0 / this.frameRateConfig;
   }
 
   public void update() {
-    currentFrameCount += 1;
+    this.currentFrameCount += 1;
     long lastFrameTimeMs = this.currentFrameTimeMs;
     this.currentFrameTimeMs = System.currentTimeMillis();
     if (currentFrameCount > 1) {
-      lastFrameIntervalMs = (int)(this.currentFrameTimeMs - lastFrameTimeMs);
+      this.lastFrameIntervalMs = this.currentFrameTimeMs - lastFrameTimeMs;
+      float intervalS = this.lastFrameIntervalMs / 1000.0;
+      float factor = exp(-intervalS);
+      this.avgFps = (this.avgFps * factor + 1.0 / intervalS) / (factor + 1.0);
     }
   }
 
@@ -59,7 +65,8 @@ public class GameInfo {
   public float getMapOffsetY() { return this.mapOffsetY; }
 
   public int getFrameRateConfig() { return this.frameRateConfig; }
-  public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
-  public float getLastFrameIntervalS() { return this.getLastFrameIntervalMs() / 1000.0; }
   public long getFrameTimeMs() { return this.currentFrameTimeMs; }
+  public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
+  public float getLastFrameIntervalS() { return getLastFrameIntervalMs() / 1000.0; }
+  public float getAvgFps() { return this.avgFps; }
 }

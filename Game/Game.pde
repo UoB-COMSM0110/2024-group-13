@@ -8,14 +8,10 @@ void setup(){
 
   // Create the top-level game objects.
   gameInfo = new GameInfo();
-  eventRecorder = new EventRecorder();
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
+  eventRecorder = new EventRecorder();
 
-  // Load resouces.
-  loadResoucesForGameItems();
-  loadResourcesForGui();
-  loadResourcesForPlayPage();
-  loadResoucesForFigures();
+  loadResouces();
 
   // Create the start page.
   page = new StartPage(null);
@@ -44,6 +40,18 @@ void draw() {
 }
 
 
+void loadResouces() {
+  loadResoucesForGameItems();
+  loadResourcesForGui();
+  loadResourcesForPlayPage();
+  loadResoucesForFigures();
+}
+
+
+// ********************************
+// User input evnets.
+// ********************************
+
 // keyTyped()
 
 void keyPressed() {
@@ -53,7 +61,6 @@ void keyPressed() {
 void keyReleased() {
   eventRecorder.recordKeyReleased();
 }
-
 
 // mousePressed()
 // mouseReleased()

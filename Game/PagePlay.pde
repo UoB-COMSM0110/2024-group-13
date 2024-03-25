@@ -1,8 +1,4 @@
-final String imagePathPlayPageBackground = "data/PlayPageBackground.png";
-PImage imagePlayPageBackground;
-
 void loadResourcesForPlayPage() {
-  imagePlayPageBackground = loadImage(imagePathPlayPageBackground);
 }
 
 
@@ -18,6 +14,13 @@ public class PlayPage extends Page {
     });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
+    Label fps = new Label("Fps", 200, 25, "");
+    fps.setPrefix("fps: ").setTextAlignHorizon(LEFT).setX(250).setY(10);
+    addLocalItem(fps);
+    addTimer(new Timer(0.0, 1.0, () -> {
+          Label fpsLabel = (Label)getLocalItem("Fps");
+          if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
+    }));
 
     loadMap(mapPath);
 
@@ -40,14 +43,14 @@ public class PlayPage extends Page {
     Pacman pacman1 = new Pacman(1, 18, 18);
     pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
-    Label score1 = new Label("Score1", 180, 25, "0");
+    Label score1 = new Label("Score1", 200, 25, "0");
     score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(15);
     addLocalItem(score1);
 
     Pacman pacman2 = new Pacman(2, 18, 18);
     pacman2.setX(360).setY(350);
     addSyncItem(pacman2);
-    Label score2 = new Label("Score2", 180, 25, "0");
+    Label score2 = new Label("Score2", 200, 25, "0");
     score2.setPrefix("Player 2: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
     addLocalItem(score2);
     
@@ -58,7 +61,7 @@ public class PlayPage extends Page {
 
   @Override
   public void draw() {
-    image(imagePlayPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    background(155, 82, 52);
     super.draw();
   }
 

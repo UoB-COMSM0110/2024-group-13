@@ -181,7 +181,7 @@ public class Pacman extends Figure {
   public boolean usingKeySetA() { // W A S D Space
     return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
   }
-  public boolean usingKeySetB() { // Arrows F
+  public boolean usingKeySetB() { // Arrows 0
     return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
   }
 
@@ -196,7 +196,7 @@ public class Pacman extends Figure {
 
   public void onKeyPressedEvent(KeyPressedEvent e) {
     if (e.getKey() == ' ' && usingKeySetA()) { fire(); return; }
-    if ((e.getKey() == 'f' || e.getKey() == 'F') && usingKeySetB()) { fire(); return; }
+    if (e.getKey() == '0' && usingKeySetB()) { fire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction != null) {
       setFacing(direction.intValue());
