@@ -78,7 +78,7 @@ public class Item {
   // This method can interact with other items.
   public void update() {}
 
-  public void delete() { page.deleteItem(getName()); System.out.println("delete " + getName()); }
+  public void delete() { page.deleteItem(getName()); }
 
   public PImage getImage() { return null; }
 

@@ -85,17 +85,15 @@ public class Ghost extends Figure {
     setSpeed(50.0); // set Ghost speed
     refreshHp(3);
     setLayer(2);
-    randomizeDirection();
-    startMoving();
   }
 
   @Override
   public void evolve() {
-    if (random(35) < 1.0) {
-      // probability of changing direction on each call
+    if (!isMoving()) {
       randomizeDirection();
+      startMoving();
     }
-    super.evolve(); // keep moving
+    super.evolve();
   }
 
   @Override
