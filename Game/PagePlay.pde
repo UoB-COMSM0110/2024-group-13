@@ -7,7 +7,7 @@ void loadResourcesForPlayPage() {
 
 
 final String mapPath = "data/map.csv";
-float CHARACTER_SIZE = 10.0;
+final float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
   public PlayPage(Page previousPage) {
@@ -37,16 +37,19 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
-    Pacman pacman1 = new Pacman(1, 20, 20);
-    pacman1.setX(350).setY(350);
+    Pacman pacman1 = new Pacman(1, 18, 18);
+    pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
-    Pacman pacman2 = new Pacman(2, 20, 20);
-    pacman2.setX(370).setY(350);
-    addSyncItem(pacman2);
-
     Label score1 = new Label("Score1", 180, 25, "0");
-    score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
+    score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(15);
     addLocalItem(score1);
+
+    Pacman pacman2 = new Pacman(2, 18, 18);
+    pacman2.setX(360).setY(350);
+    addSyncItem(pacman2);
+    Label score2 = new Label("Score2", 180, 25, "0");
+    score2.setPrefix("Player 2: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
+    addLocalItem(score2);
     
     Ghost ghost1 = new Ghost(20, 20);
     ghost1.setX(30).setY(100);

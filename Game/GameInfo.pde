@@ -9,6 +9,7 @@ public class GameInfo {
 
   private int hostId;
 
+  private float windowWidth, windowHeight;
   // Coefficients used to transform sync-coordinates to local-coordinates.
   private float mapScaleX, mapScaleY;
   private float mapOffsetX, mapOffsetY;
@@ -23,13 +24,15 @@ public class GameInfo {
   public GameInfo() {
     this.hostId = singleHostId;
 
+    this.windowWidth = 800.0;
+    this.windowHeight = 600.0;
+
     this.mapScaleX = 1.0;
     this.mapScaleY = 1.0;
     this.mapOffsetX = 0.0;
-    this.mapOffsetY = 0.0;
-
+    this.mapOffsetY = 80.0;
     this.mapWidth = 800.0;
-    this.mapHeight = 600.0;
+    this.mapHeight = this.windowHeight - this.mapOffsetY;
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();
