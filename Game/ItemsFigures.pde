@@ -157,10 +157,10 @@ public class Pacman extends Figure {
     Bullet bullet = new Bullet(10.0, 10.0);
     bullet.setDirection(getFacing());
     switch (getFacing()) {
-      case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY()); break; }
-      case RIGHTWARD: { bullet.setLeftX(getRightX()).setCenterY(getCenterY()); break; }
-      case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY()); break; }
-      case LEFTWARD: { bullet.setRightX(getLeftX()).setCenterY(getCenterY()); break; }
+      case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
+      case RIGHTWARD: { bullet.setLeftX(getRightX() + epsilon).setCenterY(getCenterY()); break; }
+      case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
+      case LEFTWARD: { bullet.setRightX(getLeftX() - epsilon).setCenterY(getCenterY()); break; }
     }
     page.addSyncItem(bullet);
   }
