@@ -21,7 +21,7 @@ public class PlayPage extends Page {
 
     loadMap(mapPath);
 
-    float borderSize = 10.0;
+    float borderSize = 3.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
     Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);
@@ -58,7 +58,7 @@ public class PlayPage extends Page {
 
   @Override
   public void draw() {
-    image(imagePlayPageBackground, 0, 0, 800, 600);
+    image(imagePlayPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     super.draw();
   }
 

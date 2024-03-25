@@ -4,11 +4,12 @@ EventRecorder eventRecorder;
 Page page;
 
 void setup(){
+  size(800, 680); // Needs to be the first line of `setup`.
+
   // Create the top-level game objects.
   gameInfo = new GameInfo();
   eventRecorder = new EventRecorder();
-
-  size(800, 600); // Use `windowResize` to resize window
+  windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
 
   // Load resouces.
   loadResoucesForGameItems();

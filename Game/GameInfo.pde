@@ -10,10 +10,10 @@ public class GameInfo {
   private int hostId;
 
   private float windowWidth, windowHeight;
+  private float mapWidth, mapHeight;
   // Coefficients used to transform sync-coordinates to local-coordinates.
   private float mapScaleX, mapScaleY;
   private float mapOffsetX, mapOffsetY;
-  private float mapWidth, mapHeight;
 
   private int frameRateConfig;
   private long gameStartTimeMs;
@@ -25,14 +25,13 @@ public class GameInfo {
     this.hostId = singleHostId;
 
     this.windowWidth = 800.0;
-    this.windowHeight = 600.0;
-
+    this.windowHeight = 680.0;
+    this.mapWidth = 800.0;
+    this.mapHeight = 600.0;
     this.mapScaleX = 1.0;
     this.mapScaleY = 1.0;
     this.mapOffsetX = 0.0;
     this.mapOffsetY = 80.0;
-    this.mapWidth = 800.0;
-    this.mapHeight = this.windowHeight - this.mapOffsetY;
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();
@@ -49,13 +48,15 @@ public class GameInfo {
 
   public int getHostId() { return this.hostId; }
 
+  public float getWinWidth() { return this.windowWidth; }
+  public float getWinHeight() { return this.windowHeight; }
+  public float getMapWidth() { return this.mapWidth; }
+  public float getMapHeight() { return this.mapHeight; }
+
   public float getMapScaleX() { return this.mapScaleX; }
   public float getMapScaleY() { return this.mapScaleY; }
   public float getMapOffsetX() { return this.mapOffsetX; }
   public float getMapOffsetY() { return this.mapOffsetY; }
-
-  public float getMapWidth() { return this.mapWidth; }
-  public float getMapHeight() { return this.mapHeight; }
 
   public int getFrameRateConfig() { return this.frameRateConfig; }
   public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }

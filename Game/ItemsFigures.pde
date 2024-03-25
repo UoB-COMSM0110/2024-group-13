@@ -171,9 +171,18 @@ public class Pacman extends Figure {
       decHp(1);
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
+    } else if (item instanceof Pacman) {
+      tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
       decLives(1);
     }
+  }
+
+  public boolean usingKeySetA() { // W A S D Space
+    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+  }
+  public boolean usingKeySetB() { // Arrows F
+    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
   }
 
   @Override
@@ -183,13 +192,6 @@ public class Pacman extends Figure {
     } else if (e instanceof KeyReleasedEvent) {
       onKeyReleasedEvent((KeyReleasedEvent)e);
     }
-  }
-
-  public boolean usingKeySetA() { // W A S D Space
-    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
-  }
-  public boolean usingKeySetB() { // Arrows F
-    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
   }
 
   public void onKeyPressedEvent(KeyPressedEvent e) {

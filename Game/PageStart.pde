@@ -27,8 +27,8 @@ public class StartPage extends Page {
 
   @Override
   public void draw() {
-    image(imageStartPageBackground, 0, 0, 800, 600);
-    image(this.imageGameBanner,145,150, 509, 165);
+    image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(this.imageGameBanner, 145, 150, 509, 165);
     super.draw();
   }
 }
