@@ -20,8 +20,8 @@ public class HelpPage extends Page {
 
   @Override
   public void draw() {
-    image(imageStartPageBackground, 0, 0, 800, 600);
-    image(this.imageOverlay, 0, 0, 800, 600);
+    image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
     fill(255);
     textSize(25);

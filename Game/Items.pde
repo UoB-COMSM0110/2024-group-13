@@ -150,7 +150,7 @@ public class Bullet extends MovableItem {
     setSpeed(200.0);
     startMoving();
   }
-  
+
   public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Wall){
       delete();

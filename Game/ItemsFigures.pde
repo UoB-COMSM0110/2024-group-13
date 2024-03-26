@@ -85,17 +85,15 @@ public class Ghost extends Figure {
     setSpeed(50.0); // set Ghost speed
     refreshHp(3);
     setLayer(2);
-    randomizeDirection();
-    startMoving();
   }
 
   @Override
   public void evolve() {
-    if (random(35) < 1.0) {
-      // probability of changing direction on each call
+    if (!isMoving()) {
       randomizeDirection();
+      startMoving();
     }
-    super.evolve(); // keep moving
+    super.evolve();
   }
 
   @Override
@@ -131,7 +129,7 @@ public class Ghost extends Figure {
 final String itemTypePacman = "Pacman";
 
 public class Pacman extends Figure {
-  private int playerId;
+  private int playerId; // Valid values: 1, 2
   private int score;
 
   public Pacman(int playerId, float w, float h) {
@@ -173,9 +171,18 @@ public class Pacman extends Figure {
       decHp(1);
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
+    } else if (item instanceof Pacman) {
+      tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
       decLives(1);
     }
+  }
+
+  public boolean usingKeySetA() { // W A S D Space
+    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+  }
+  public boolean usingKeySetB() { // Arrows 0
+    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
   }
 
   @Override
@@ -188,6 +195,8 @@ public class Pacman extends Figure {
   }
 
   public void onKeyPressedEvent(KeyPressedEvent e) {
+    if (e.getKey() == ' ' && usingKeySetA()) { fire(); return; }
+    if (e.getKey() == '0' && usingKeySetB()) { fire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction != null) {
       setFacing(direction.intValue());
@@ -195,8 +204,6 @@ public class Pacman extends Figure {
       startMoving();
       return;
     }
-    if (e.getKey() == CODED) { return; }
-    if (e.getKey() == ' ') { fire(); return; }
   }
 
   public void onKeyReleasedEvent(KeyReleasedEvent e) {
@@ -207,6 +214,7 @@ public class Pacman extends Figure {
 
   private Integer getDirectionFromKeyEvent(KeyboardEvent e) {
     if (e.getKey() == CODED) {
+      if(!usingKeySetB()) { return null; }
       switch (e.getKeyCode()) {
         case UP: return UPWARD;
         case LEFT: return LEFTWARD;
@@ -215,6 +223,7 @@ public class Pacman extends Figure {
         default: return null;
       }
     }
+    if(!usingKeySetA()) { return null; }
     switch (e.getKey()) {
       case 'w': case 'W': return UPWARD;
       case 'a': case 'A': return LEFTWARD;
@@ -228,5 +237,9 @@ public class Pacman extends Figure {
   void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
+    // gameInfo.setMapScaleX(5.0);
+    // gameInfo.setMapScaleY(5.0);
+    // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);
+    // gameInfo.setMapOffsetY(- getY() * 5.0 + 100 + 80);
   }
 }

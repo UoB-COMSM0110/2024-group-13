@@ -11,30 +11,30 @@ public class Event {
 
 // Base class for all keyboard events.
 public class KeyboardEvent extends Event {
-  private char key; // The key with which the event is associated.
+  private int key; // The key with which the event is associated.
   private int keyCode;
 
-  public KeyboardEvent(char key, int keyCode) {
+  public KeyboardEvent(int key, int keyCode) {
     super();
     this.key = key;
     this.keyCode = keyCode;
   }
 
-  public char getKey() { return key; }
+  public int getKey() { return key; }
 
   public int getKeyCode() { return keyCode; }
 }
 
 
 public class KeyPressedEvent extends KeyboardEvent {
-  public KeyPressedEvent(char key, int keyCode) {
+  public KeyPressedEvent(int key, int keyCode) {
     super(key, keyCode);
   }
 }
 
 
 public class KeyReleasedEvent extends KeyboardEvent {
-  public KeyReleasedEvent(char key, int keyCode) {
+  public KeyReleasedEvent(int key, int keyCode) {
     super(key, keyCode);
   }
 }

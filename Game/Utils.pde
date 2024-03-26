@@ -25,7 +25,7 @@ public class Timer {
   }
 
   public boolean due() {
-    return gameInfo.getFrameTimeMs() >= this.nextRunTimeMs && this.nextRunTimeMs > 0;
+    return gameInfo.getFrameTimeMs() >= this.nextRunTimeMs && !expired();
   }
 
   public void run() {

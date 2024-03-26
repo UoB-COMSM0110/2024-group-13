@@ -4,17 +4,14 @@ EventRecorder eventRecorder;
 Page page;
 
 void setup(){
+  size(800, 680); // Needs to be the first line of `setup`.
+
   // Create the top-level game objects.
   gameInfo = new GameInfo();
+  windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
   eventRecorder = new EventRecorder();
 
-  size(800, 600); // Use `windowResize` to resize window
-
-  // Load resouces.
-  loadResoucesForGameItems();
-  loadResourcesForGui();
-  loadResourcesForPlayPage();
-  loadResoucesForFigures();
+  loadResouces();
 
   // Create the start page.
   page = new StartPage(null);
@@ -43,6 +40,18 @@ void draw() {
 }
 
 
+void loadResouces() {
+  loadResoucesForGameItems();
+  loadResourcesForGui();
+  loadResourcesForPlayPage();
+  loadResoucesForFigures();
+}
+
+
+// ********************************
+// User input evnets.
+// ********************************
+
 // keyTyped()
 
 void keyPressed() {
@@ -52,7 +61,6 @@ void keyPressed() {
 void keyReleased() {
   eventRecorder.recordKeyReleased();
 }
-
 
 // mousePressed()
 // mouseReleased()

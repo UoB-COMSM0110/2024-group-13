@@ -12,7 +12,7 @@ public class StartPage extends Page {
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
     this.imageGameBanner = loadImage(imagePathGameBanner);
 
-    Button playButton = new Button("ButtonPlay", 200, 40, "Play", () -> {
+    Button playButton = new Button("ButtonPlay", 200, 40, "Start", () -> {
       trySwitchPage(new PlayPage(this));
     });
     playButton.setX(300).setY(350);
@@ -23,12 +23,24 @@ public class StartPage extends Page {
     });
     helpButton.setX(300).setY(400);
     addLocalItem(helpButton);
+
+    InputBox playerName1 = new InputBox("InputBoxPlayerName1", 300, 50, 15, (box) -> {
+      gameInfo.setPlayerName1(box.getText());
+    });
+    playerName1.setDefaultText("Happy Bunny").setPrefix(" Player 1 : ").setCenterX(400).setY(500);
+    addLocalItem(playerName1);
+
+    InputBox playerName2 = new InputBox("InputBoxPlayerName2", 300, 50, 15, (box) -> {
+      gameInfo.setPlayerName2(box.getText());
+    });
+    playerName2.setDefaultText("Merry Kitty").setPrefix(" Player 2 : ").setCenterX(400).setY(560);
+    addLocalItem(playerName2);
   }
 
   @Override
   public void draw() {
-    image(imageStartPageBackground, 0, 0, 800, 600);
-    image(this.imageGameBanner,145,150, 509, 165);
+    image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(this.imageGameBanner, 145, 150, 509, 165);
     super.draw();
   }
 }

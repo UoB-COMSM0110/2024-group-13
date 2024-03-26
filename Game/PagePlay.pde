@@ -1,13 +1,9 @@
-final String imagePathPlayPageBackground = "data/PlayPageBackground.png";
-PImage imagePlayPageBackground;
-
 void loadResourcesForPlayPage() {
-  imagePlayPageBackground = loadImage(imagePathPlayPageBackground);
 }
 
 
 final String mapPath = "data/map.csv";
-float CHARACTER_SIZE = 10.0;
+final float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
   public PlayPage(Page previousPage) {
@@ -18,10 +14,17 @@ public class PlayPage extends Page {
     });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
+    Label fps = new Label("Fps", 200, 25, "");
+    fps.setPrefix("fps: ").setX(250).setY(10);
+    addLocalItem(fps);
+    addTimer(new Timer(0.0, 1.0, () -> {
+          Label fpsLabel = (Label)getLocalItem("Fps");
+          if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
+    }));
 
     loadMap(mapPath);
 
-    float borderSize = 10.0;
+    float borderSize = 3.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
     Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);
@@ -37,13 +40,19 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
-    Pacman pacman1 = new Pacman(1, 20, 20);
-    pacman1.setX(360).setY(350);
+    Pacman pacman1 = new Pacman(1, 18, 18);
+    pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
-
-    Label score1 = new Label("Score1", 180, 25, "0");
-    score1.setPrefix("Player 1: ").setTextAlignHorizon(LEFT).setX(600).setY(40);
+    Label score1 = new Label("Score1", 200, 25, "0");
+    score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
     addLocalItem(score1);
+
+    Pacman pacman2 = new Pacman(2, 18, 18);
+    pacman2.setX(360).setY(350);
+    addSyncItem(pacman2);
+    Label score2 = new Label("Score2", 200, 25, "0");
+    score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
+    addLocalItem(score2);
     
     Ghost ghost1 = new Ghost(20, 20);
     ghost1.setX(30).setY(100);
@@ -52,7 +61,7 @@ public class PlayPage extends Page {
 
   @Override
   public void draw() {
-    image(imagePlayPageBackground, 0, 0, 800, 600);
+    background(155, 82, 52);
     super.draw();
   }
 
