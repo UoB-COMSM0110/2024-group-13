@@ -167,6 +167,7 @@ public class Pacman extends Figure {
       case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
       case LEFTWARD: { bullet.setRightX(getLeftX() - epsilon).setCenterY(getCenterY()); break; }
     }
+    bullet.setSpeed(getSpeed());
     page.addSyncItem(bullet);
   }
 

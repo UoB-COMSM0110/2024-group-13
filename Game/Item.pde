@@ -1,3 +1,4 @@
+// This file contains base abstract classes for items in the game.
 import java.util.Comparator;
 
 static final int UPWARD = 0;
@@ -7,7 +8,7 @@ static final int LEFTWARD = 270;
 
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
-public class Item {
+public abstract class Item {
   private String name;
   private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
@@ -109,14 +110,14 @@ public class ItemLayerComparator implements Comparator<Item> {
 
 // Local items don't need synchronize between two players.
 // For example: buttons, labels, etc.
-public class LocalItem extends Item {
+public abstract class LocalItem extends Item {
   public LocalItem(String name, float w, float h) { super(name, w, h); }
 }
 
 
 // Synchronized items need synchronize between two players.
 // For example: figures, bricks, bullets, etc.
-public class SynchronizedItem extends Item {
+public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
 
   // Additional method for sync items to update status.
@@ -148,7 +149,7 @@ public class SynchronizedItem extends Item {
 
 
 // Sync items that can move in the map, e.g., bullets, figures, etc.
-public class MovableItem extends SynchronizedItem {
+public abstract class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
   private boolean moving; // Whether the item is moving between two frames.
@@ -160,7 +161,10 @@ public class MovableItem extends SynchronizedItem {
     super(name, w, h);
   }
 
-  public MovableItem setSpeed(float speed) { this.speed = max(speed, 0.0); return this; }
+  public MovableItem setSpeed(float speed) {
+    this.speed = max(speed, 0.0);
+    return this;
+  }
   public MovableItem setDirection(int direction) {
     this.direction = direction;
     return this;
@@ -174,9 +178,7 @@ public class MovableItem extends SynchronizedItem {
   
   @Override
   public void evolve() {
-    if (isMoving()) {
-      move();
-    }
+    if (isMoving()) { move(); }
   }
 
   private MovableItem moveX(float dx) { setX(getX() + dx); return this; }

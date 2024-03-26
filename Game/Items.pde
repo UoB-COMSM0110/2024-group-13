@@ -155,15 +155,21 @@ public class PowerUp extends SynchronizedItem {
 
 final String itemTypeBullet = "Bullet";
 int itemCountBullet;
+final float defaultBulletSpeed = 200.0;
 
 public class Bullet extends MovableItem {
-  
   public Bullet(float w, float h) {
     super(itemTypeBullet + itemCountBullet++, w, h);
-    setSpeed(200.0);
     startMoving();
   }
 
+  @Override
+  public void move() {
+    super.move();
+    setSpeed(defaultBulletSpeed);
+  }
+
+  @Override
   public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Wall){
       delete();
