@@ -1,6 +1,14 @@
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.nio.channels.ServerSocketChannel;
+
 static final int singleHostId = 0;
 static final int serverHostId = 1;
 static final int clientHostId = 2;
+
+final int port = 2024;
 
 // GameInfo holds some housekeeping information.
 // For example, the size of the window, the ip/port of the other player, etc.
@@ -17,13 +25,14 @@ public class GameInfo {
 
   private int frameRateConfig;
   private long gameStartTimeMs;
-  private long currentFrameCount;
   private long currentFrameTimeMs;
   private long lastFrameIntervalMs;
-  private float avgFps;
 
   private String playerName1;
   private String playerName2;
+
+  private ServerSocket serverSocket;
+  private Socket socket;
 
   public GameInfo() {
     this.hostId = singleHostId;
@@ -39,8 +48,6 @@ public class GameInfo {
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();
-    this.currentFrameCount = 0;
-    this.avgFps = 1.0 / this.frameRateConfig;
 
     this.playerName1 = "Anonym1";
     this.playerName2 = "Anonym2";
@@ -55,14 +62,10 @@ public class GameInfo {
   public void setPlayerName2(String name) { this.playerName2 = name; }
 
   public void update() {
-    this.currentFrameCount += 1;
     long lastFrameTimeMs = this.currentFrameTimeMs;
     this.currentFrameTimeMs = System.currentTimeMillis();
-    if (currentFrameCount > 1) {
+    if (frameCount > 1) {
       this.lastFrameIntervalMs = this.currentFrameTimeMs - lastFrameTimeMs;
-      float intervalS = this.lastFrameIntervalMs / 1000.0;
-      float factor = exp(-intervalS);
-      this.avgFps = (this.avgFps * factor + 1.0 / intervalS) / (factor + 1.0);
     }
   }
 
@@ -82,8 +85,24 @@ public class GameInfo {
   public long getFrameTimeMs() { return this.currentFrameTimeMs; }
   public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
   public float getLastFrameIntervalS() { return getLastFrameIntervalMs() / 1000.0; }
-  public float getAvgFps() { return this.avgFps; }
 
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
+
+  public boolean startServerListening() {
+    try {
+      InetAddress hostIp = InetAddress.getLocalHost();
+      System.out.println("ip of local host: " + hostIp.getHostAddress());
+      this.serverSocket = new ServerSocket(port);
+      SocketAddress serverAddr = this.serverSocket.getLocalSocketAddress();
+      System.out.println("ip of server: " + serverAddr.toString());
+      this.serverSocket.close();
+
+      this.hostId = serverHostId;
+      return true;
+    } catch (Exception e) {
+      System.err.println(e.toString());
+      return false;
+    }
+  }
 }
