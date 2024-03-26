@@ -1,3 +1,6 @@
+// This file defines most map items in the game.
+// This items are Synchronized items.
+
 final String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
 final String imagePathIndestructableWall = "data/IndestructableWall.png";
@@ -53,10 +56,15 @@ public class BreakableWall extends Wall {
     super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
     strength = 3;
   }
-  
-  public int getStrength() {
-    return this.strength;
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("strength", getStrength());
+    return json;
   }
+  
+  public int getStrength() { return this.strength; }
   
   public BreakableWall decStrength() {
     this.strength -= 1;

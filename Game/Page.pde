@@ -10,12 +10,15 @@ public class Page {
   private Page previousPage; // With this attribute, we can form a page stack.
   private Page nextPage;
 
+  private JSONArray syncChangesRecord;
+
   public Page(Page previousPage) {
     this.syncItems = new HashMap<String, SynchronizedItem>();
     this.localItems = new HashMap<String, LocalItem>();
     this.timers = new ArrayList<Timer>();
     this.previousPage = previousPage;
     this.nextPage = null;
+    this.syncChangesRecord = new JSONArray();
   }
 
   public void onSwitchOut() {}
@@ -39,12 +42,16 @@ public class Page {
     return new ArrayList<LocalItem>(this.localItems.values());
   }
 
-  public boolean deleteItem(String name) {
-    Item deleted = this.syncItems.remove(name);
-    if (deleted  == null) {
-      deleted = this.localItems.remove(name);
-    }
-    return deleted != null;
+  public boolean deleteSyncItem(String name) {
+    if (this.syncItems.remove(name) == null) { return false; }
+    JSONObject deleted = new JSONObject();
+    deleted.setString("name", name);
+    this.syncChangesRecord.append(deleted);
+    return true;
+  }
+
+  public boolean deleteLocalItem(String name) {
+    return this.localItems.remove(name) != null;
   }
 
   public void addTimer(Timer timer) { this.timers.add(timer); }
@@ -52,8 +59,8 @@ public class Page {
   // Update all the items, including sync ones and local ones.
   public void update() {
     ArrayList<Event> events = eventRecorder.fetchEvents();
-    runTimers();
     dispatchEventsToLocalItems(events);
+    runTimers();
     evolveSyncItems(events);
     updateItems();
   }
@@ -82,6 +89,16 @@ public class Page {
     (new CollisionEngine()).solveCollisions();
     //   sendItems();
     // }
+    for (SynchronizedItem item : this.syncItems.values()) {
+      JSONObject json = item.getStateJson();
+      String str = json.toString();
+      if (!str.equals(item.getStoredStateStr())) {
+        item.storeStateStr(str);
+        this.syncChangesRecord.append(json);
+      }
+    }
+    this.syncChangesRecord.toString();
+    clearSyncChangeRecord();
   }
 
   public void dispatchEventsToLocalItems(ArrayList<Event> events) {
@@ -91,6 +108,10 @@ public class Page {
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
     getLocalItems().forEach((item) -> { item.update(); });
+  }
+
+  public void clearSyncChangeRecord() {
+    this.syncChangesRecord = new JSONArray();
   }
 
   // Draw all the items, including sync ones and local ones.

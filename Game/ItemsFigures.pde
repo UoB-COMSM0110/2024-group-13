@@ -16,6 +16,15 @@ public abstract class Figure extends MovableItem {
   private int maxHp;
   private int hp;
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("lives", getLives());
+    json.setInt("maxHp", getMaxHp());
+    json.setInt("hp", getHp());
+    return json;
+  }
+  
   public Figure(String name, float w, float h) {
     super(name, w, h);
     setLives(1);
@@ -133,6 +142,14 @@ public class Pacman extends Figure {
   private int score;
   private boolean isControlledByOpponent = false;
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("playerId", getPlayerId());
+    json.setInt("score", getScore());
+    return json;
+  }
+  
   public Pacman(int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
     this.playerId = playerId;
