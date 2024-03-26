@@ -16,11 +16,30 @@ public abstract class Item {
   private int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
+  private String storedStateStr;
+
   public Item(String name, float w, float h) {
     this.name = name;
     this.w = w;
     this.h = h;
+    this.storedStateStr = "";
   }
+
+  public JSONObject getStateJson() {
+    JSONObject json = new JSONObject();
+    json.setString("name", getName());
+    json.setString("class", getClass().getSimpleName());
+    json.setFloat("w", getW());
+    json.setFloat("h", getH());
+    json.setFloat("x", getX());
+    json.setFloat("y", getY());
+    json.setInt("facing", getFacing());
+    json.setInt("layer", getLayer());
+    json.setBoolean("discarded", isDiscarded());
+    return json;
+  }
+  public void storeStateStr(String str) { this.storedStateStr = str; }
+  public String getStoredStateStr() { return this.storedStateStr; }
   
   public Item setW(float w) { this.w = w; return this; }
   public Item setH(float h) { this.h = h; return this; }
@@ -87,7 +106,7 @@ public abstract class Item {
   // This method can interact with other items.
   public void update() {}
 
-  public void delete() { page.deleteItem(getName()); }
+  public abstract void delete();
 
   public PImage getImage() { return null; }
 
@@ -112,6 +131,9 @@ public class ItemLayerComparator implements Comparator<Item> {
 // For example: buttons, labels, etc.
 public abstract class LocalItem extends Item {
   public LocalItem(String name, float w, float h) { super(name, w, h); }
+
+  @Override
+  public void delete() { page.deleteLocalItem(getName()); }
 }
 
 
@@ -127,8 +149,8 @@ public abstract class SynchronizedItem extends Item {
   // Called when two sync items collide with each other.
   public void onCollisionWith(SynchronizedItem item) {}
 
-  // Serialize item status for transmission through network.
-  public String serialize() { return ""; }
+  @Override
+  public void delete() { page.deleteSyncItem(getName()); }
 
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
@@ -159,6 +181,15 @@ public abstract class MovableItem extends SynchronizedItem {
   
   public MovableItem(String name, float w, float h) {
     super(name, w, h);
+  }
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setFloat("speed", getSpeed());
+    json.setInt("direction", getDirection());
+    json.setBoolean("moving", isMoving());
+    return json;
   }
 
   public MovableItem setSpeed(float speed) {
