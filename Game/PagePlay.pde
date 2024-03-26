@@ -17,14 +17,15 @@ public class PlayPage extends Page {
     });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
+
     Label fps = new Label("Fps", 200, 25, "");
     fps.setPrefix("fps: ").setX(250).setY(10);
     addLocalItem(fps);
-    addTimer(new Timer(0.0, 1.0, () -> {
-          Label fpsLabel = (Label)getLocalItem("Fps");
-          if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
-    }));
-    
+    Timer fpsUpdater = new Timer(0.0, 1.0, () -> {
+          fps.setText(String.format("%.2f", frameRate));
+    });
+    addTimer(fpsUpdater);
+
     // generate powerups
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));

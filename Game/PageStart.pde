@@ -35,6 +35,16 @@ public class StartPage extends Page {
     });
     playerName2.setDefaultText("Merry Kitty").setPrefix(" Player 2 : ").setCenterX(400).setY(560);
     addLocalItem(playerName2);
+
+    Button createGameButton = new Button("CreateGame", 200, 40, "Create Game", () -> {
+      startSyncAsServer();
+    });
+    createGameButton.setX(550).setY(350);
+    addLocalItem(createGameButton);
+  }
+
+  private void startSyncAsServer() {
+    gameInfo.startServerListening();
   }
 
   @Override

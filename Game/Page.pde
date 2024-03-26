@@ -58,9 +58,9 @@ public class Page {
 
   // Update all the items, including sync ones and local ones.
   public void update() {
+    runTimers();
     ArrayList<Event> events = eventRecorder.fetchEvents();
     dispatchEventsToLocalItems(events);
-    runTimers();
     evolveSyncItems(events);
     updateItems();
   }
@@ -76,6 +76,10 @@ public class Page {
         addTimer(timer);
       }
     }
+  }
+
+  public void dispatchEventsToLocalItems(ArrayList<Event> events) {
+    getLocalItems().forEach((item) -> { item.onEvents(events); });
   }
 
   public void evolveSyncItems(ArrayList<Event> events) {
@@ -101,17 +105,13 @@ public class Page {
     clearSyncChangeRecord();
   }
 
-  public void dispatchEventsToLocalItems(ArrayList<Event> events) {
-    getLocalItems().forEach((item) -> { item.onEvents(events); });
+  public void clearSyncChangeRecord() {
+    this.syncChangesRecord = new JSONArray();
   }
 
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
     getLocalItems().forEach((item) -> { item.update(); });
-  }
-
-  public void clearSyncChangeRecord() {
-    this.syncChangesRecord = new JSONArray();
   }
 
   // Draw all the items, including sync ones and local ones.
