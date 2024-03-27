@@ -13,8 +13,6 @@ final int port = 2024;
 // GameInfo holds some housekeeping information.
 // For example, the size of the window, the ip/port of the other player, etc.
 public class GameInfo {
-  private ArrayList<Timer> timers;
-
   private int hostId;
 
   private float windowWidth, windowHeight;

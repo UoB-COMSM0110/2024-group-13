@@ -129,6 +129,13 @@ public class Ghost extends Figure {
   }
 
   @Override
+  public Item discard() {
+    stopMoving();
+    if (this.changeDirectionTimer != null) { this.changeDirectionTimer.destroy(); }
+    return super.discard();
+  }
+
+  @Override
   public PImage getImage() {
     return imageGhost;
   }
