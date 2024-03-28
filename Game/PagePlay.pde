@@ -6,9 +6,6 @@ final String mapPath = "data/map.csv";
 final float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
-  
-  private ArrayList<PowerUp> powerups = new ArrayList<>();
-  
   public PlayPage(Page previousPage) {
     super(previousPage);
 
@@ -24,10 +21,6 @@ public class PlayPage extends Page {
           Label fpsLabel = (Label)getLocalItem("Fps");
           if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
     }));
-    
-    // generate powerups
-    OpponentControlPowerUp oc = new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-    powerups.add(oc);
 
     loadMap(mapPath);
 
@@ -64,7 +57,6 @@ public class PlayPage extends Page {
     Ghost ghost1 = new Ghost(20, 20);
     ghost1.setX(30).setY(100);
     addSyncItem(ghost1);
-    
   }
 
   @Override
@@ -101,23 +93,11 @@ public class PlayPage extends Page {
           coin.setX(x).setY(y);
           addSyncItem(coin);
         }
-        //PowerUp
+        //indestructable walls
         else if (values[col].equals("4")) {
-           //PowerUp powerUp = new PowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-           //powerUp.setX(x).setY(y);
-           //addSyncItem(powerUp);
-           
-          PowerUp selectedPowerUp = null;
-          if (!powerups.isEmpty()) {
-            int randomIndex = (int) random(powerups.size());
-            selectedPowerUp = powerups.remove(randomIndex);
-          } else {
-            // temporary placeholder
-            selectedPowerUp = new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-          }
-          
-          selectedPowerUp.setX(x).setY(y);
-          addSyncItem(selectedPowerUp);
+          PowerUp powerUp = new PowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
+          powerUp.setX(x).setY(y);
+          addSyncItem(powerUp);
         }
       }
     }

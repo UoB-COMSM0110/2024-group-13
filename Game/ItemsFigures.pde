@@ -131,7 +131,6 @@ final String itemTypePacman = "Pacman";
 public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
   private int score;
-  private boolean isControlledByOpponent = false;
 
   public Pacman(int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
@@ -147,12 +146,6 @@ public class Pacman extends Figure {
   }
 
   public int getScore(){ return this.score; }
-  
-  public boolean getIsControlledByOpponent() {return this.isControlledByOpponent;}
-  
-  public void setIsControlledByOpponent(boolean controlled) {
-    this.isControlledByOpponent = controlled;
-  }
 
   public void incScore(int increment){
     this.score += increment;
@@ -186,15 +179,9 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (isControlledByOpponent) {
-      return getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
-    }
     return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (isControlledByOpponent) {
-      return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
-    }
     return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
   }
 
