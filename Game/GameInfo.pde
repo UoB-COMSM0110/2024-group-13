@@ -1,14 +1,18 @@
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
 
 static final int singleHostId = 0;
 static final int serverHostId = 1;
 static final int clientHostId = 2;
 
 final int port = 2024;
+final int bufferSize = 2 * 1024 * 1024; // 2MB
 
 // GameInfo holds some housekeeping information.
 // For example, the size of the window, the ip/port of the other player, etc.
@@ -29,8 +33,10 @@ public class GameInfo {
   private String playerName1;
   private String playerName2;
 
-  private ServerSocket serverSocket;
-  private Socket socket;
+  private ServerSocketChannel serverSocket;
+  private Selector selector;
+  private SocketChannel client;
+  private ByteBuffer buffer;
 
   public GameInfo() {
     this.hostId = singleHostId;
@@ -49,6 +55,8 @@ public class GameInfo {
 
     this.playerName1 = "Anonym1";
     this.playerName2 = "Anonym2";
+
+    this.buffer = ByteBuffer.allocate(bufferSize);
   }
 
   public void setMapScaleX(float scale) { this.mapScaleX = scale; }
@@ -89,18 +97,51 @@ public class GameInfo {
 
   public boolean startServerListening() {
     try {
-      InetAddress hostIp = InetAddress.getLocalHost();
-      System.out.println("ip of local host: " + hostIp.getHostAddress());
-      this.serverSocket = new ServerSocket(port);
-      SocketAddress serverAddr = this.serverSocket.getLocalSocketAddress();
-      System.out.println("ip of server: " + serverAddr.toString());
-      this.serverSocket.close();
-
-      this.hostId = serverHostId;
-      return true;
+      this.serverSocket = ServerSocketChannel.open()
+      this.serverSocket.bind(new InetSocketAddress("localhost", port));
+      this.serverSocket.configureBlocking(false);
+      this.selector = Selector.open();
+      this.serverSocket.register(this.selector, SelectionKey.OP_ACCEPT);
     } catch (Exception e) {
       System.err.println(e.toString());
       return false;
     }
+    this.hostId = serverHostId;
+    return true;
   }
+
+  public boolean stopServer() {
+    this.selector.close();
+    this.serverSocket.close();
+    this.buffer.clear();
+    this.hostId = singleHostId;
+  }
+
+  public boolean readSever() {
+    this.selector.select();
+    Set<SelectionKey> keys = this.selector.selectedKeys();
+    Iterator<SelectionKey> iter = keys.iterator();
+    while (iter.hasNext()) {
+      Selection key = iter.next();
+      if (key.isAcceptable()) {
+        SocketChannel client = this.serverSocket.accept();
+        client.configureBlocking(false);
+        client.register(this.selector, SelectionKey.OP_READ);
+      } else if (key.isReadable()) {
+        SocketChannel client = key.channel();
+        int r = client.read(this.buffer);
+        if (r == -1 || new String(this.buffer.array()).trim().equals(POISON_PILL)) { client.close();
+          System.err.println("client closed");
+        } else {
+          this.buffer.flip();
+          client.write(this.buffer);
+          this.buffer.clear();
+        }
+      }
+      iter.remove();
+    }
+    // selector, client, serverSocket .close()
+  }
+
+  // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
 }

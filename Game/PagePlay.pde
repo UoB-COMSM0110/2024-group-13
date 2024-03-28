@@ -10,7 +10,7 @@ public class PlayPage extends Page {
   private ArrayList<PowerUp> powerups = new ArrayList<>();
   
   public PlayPage(Page previousPage) {
-    super(previousPage);
+    super("play", previousPage);
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
       trySwitchPage(getPreviousPage());

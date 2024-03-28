@@ -3,7 +3,8 @@ import java.util.Collections;
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
 // and is responsible for updating and drawing them.
-public class Page {
+public abstract class Page {
+  private String name;
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
   private ArrayList<Timer> timers;
@@ -12,7 +13,8 @@ public class Page {
 
   private JSONArray syncChangesRecord;
 
-  public Page(Page previousPage) {
+  public Page(String name, Page previousPage) {
+    this.name = name;
     this.syncItems = new HashMap<String, SynchronizedItem>();
     this.localItems = new HashMap<String, LocalItem>();
     this.timers = new ArrayList<Timer>();
@@ -20,6 +22,8 @@ public class Page {
     this.nextPage = null;
     this.syncChangesRecord = new JSONArray();
   }
+
+  public String getName() { return this.name; }
 
   public void onSwitchOut() {}
   public void onSwitchIn() {}

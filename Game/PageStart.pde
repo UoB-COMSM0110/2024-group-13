@@ -8,7 +8,7 @@ public class StartPage extends Page {
   private PImage imageGameBanner;
 
   public StartPage(Page previousPage) {
-    super(previousPage);
+    super("start", previousPage);
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
     this.imageGameBanner = loadImage(imagePathGameBanner);
 
