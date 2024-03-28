@@ -7,6 +7,9 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+// https://jenkov.com/tutorials/java-nio/selectors.html
+// https://www.baeldung.com/java-nio-selector
+
 static final int singleHostId = 0;
 static final int serverHostId = 1;
 static final int clientHostId = 2;
@@ -33,9 +36,8 @@ public class GameInfo {
   private String playerName1;
   private String playerName2;
 
-  private ServerSocketChannel serverSocket;
   private Selector selector;
-  private SocketChannel client;
+  private SocketChannel socket;
   private ByteBuffer buffer;
 
   public GameInfo() {
@@ -95,13 +97,16 @@ public class GameInfo {
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
 
-  public boolean startServerListening() {
+  public boolean hasConnection() { return this.socket == null; }
+
+  public boolean startSyncAsServer() {
     try {
-      this.serverSocket = ServerSocketChannel.open()
-      this.serverSocket.bind(new InetSocketAddress("localhost", port));
-      this.serverSocket.configureBlocking(false);
       this.selector = Selector.open();
-      this.serverSocket.register(this.selector, SelectionKey.OP_ACCEPT);
+
+      ServerSocketChannel serverSocket = ServerSocketChannel.open()
+      serverSocket.bind(new InetSocketAddress("localhost", port));
+      serverSocket.configureBlocking(false);
+      serverSocket.register(this.selector, SelectionKey.OP_ACCEPT);
     } catch (Exception e) {
       System.err.println(e.toString());
       return false;
@@ -110,38 +115,65 @@ public class GameInfo {
     return true;
   }
 
-  public boolean stopServer() {
-    this.selector.close();
-    this.serverSocket.close();
-    this.buffer.clear();
-    this.hostId = singleHostId;
-  }
-
-  public boolean readSever() {
-    this.selector.select();
+  private boolean tryAcceptClient() { // Accept only one client.
+    this.selector.selectNow();
     Set<SelectionKey> keys = this.selector.selectedKeys();
     Iterator<SelectionKey> iter = keys.iterator();
+    if (!iter.hasNext()) { return false; }
+    Selection key = iter.next();
+    ServerSocketChannel serverSocket = key.channel();
+    this.socket = serverSocket.accept();
+    serverSocket.close();
+    this.selector.close();
+    this.selector = Selector.open();
+    this.socket.configureBlocking(false);
+    this.socket.register(this.selector, SelectionKey.OP_READ);
+    return true;
+  }
+
+  public boolean tryServerWriteSocket() {
+    if (!hasConnection() && !tryAcceptClient()) { return false; }
+    return tryWriteSocket();
+  }
+  public boolean tryServerReadSocket() {
+    if (!hasConnection() && !tryAcceptClient()) { return false; }
+    return tryReadSocket();
+  }
+
+  public boolean startSyncAsClient() {
+    // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+    this.socket = SocketChannel.open(new InetSocketAddress("localhost", port));
+    this.hostId = clientHostId;
+    return false;
+  }
+
+  public boolean tryWriteSocket() {
+    this.socket.write(this.buffer);
+    this.buffer.clear();
+  }
+
+  public boolean tryReadSocket() {
+    this.selector.selectNow();
+    Set<SelectionKey> keys = this.selector.selectedKeys();
+    Iterator<SelectionKey> iter = keys.iterator();
+    int i = 0;
     while (iter.hasNext()) {
-      Selection key = iter.next();
-      if (key.isAcceptable()) {
-        SocketChannel client = this.serverSocket.accept();
-        client.configureBlocking(false);
-        client.register(this.selector, SelectionKey.OP_READ);
-      } else if (key.isReadable()) {
-        SocketChannel client = key.channel();
-        int r = client.read(this.buffer);
-        if (r == -1 || new String(this.buffer.array()).trim().equals(POISON_PILL)) { client.close();
-          System.err.println("client closed");
-        } else {
-          this.buffer.flip();
-          client.write(this.buffer);
-          this.buffer.clear();
-        }
+      System.err.println("number of selected keys = " + ++i);
+      int r = this.socket.read(this.buffer);
+      if (r == -1) {
+        System.err.println("socket reading error");
       }
       iter.remove();
     }
-    // selector, client, serverSocket .close()
+    this.buffer.clear();
+    new String(this.buffer.array()).trim();
+    return true;
   }
 
-  // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+  public boolean stopSync() {
+    if (this.socket != null) { this.socket.close(); this.socket = null; }
+    if (this.selector != null) { this.selector.close(); this.selector = null; }
+    this.buffer.clear();
+    this.hostId = singleHostId;
+  }
 }
