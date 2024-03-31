@@ -122,9 +122,22 @@ final String itemTypePowerUp = "PowerUp";
 int itemCountPowerUp;
 
 public class PowerUp extends SynchronizedItem {
+  
+  private boolean inUse = false;
+  
   public PowerUp(float w, float h) {
     super(itemTypePowerUp + itemCountPowerUp++, w, h);
   }
+  
+  public boolean getInUse() {
+    return this.inUse;
+  }
+  
+  public PowerUp setInUse(boolean status) {
+    this.inUse = status;
+    return this;
+  }
+  
 
   @Override
   public void onCollisionWith(SynchronizedItem item) {

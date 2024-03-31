@@ -26,8 +26,14 @@ public class PlayPage extends Page {
     }));
     
     // generate powerups
-    OpponentControlPowerUp oc = new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-    powerups.add(oc);
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
 
     loadMap(mapPath);
 
@@ -102,23 +108,26 @@ public class PlayPage extends Page {
         }
         //power up
         else if (values[col].equals("4")) {
-          //PowerUp powerUp = new PowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-          //powerUp.setX(x).setY(y);
-          //addSyncItem(powerUp);
-
-          PowerUp selectedPowerUp = null;
-          if (!powerups.isEmpty()) {
-            int randomIndex = (int) random(powerups.size());
-            selectedPowerUp = powerups.remove(randomIndex);
-          } else {
-            // temporary placeholder
-            selectedPowerUp = new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-          }
-
-          selectedPowerUp.setX(x).setY(y);
-          addSyncItem(selectedPowerUp);
+          generatePowerUp(x, y);
         }
       }
     }
+  }
+  
+  private void generatePowerUp(float x, float y) {
+    PowerUp selectedPowerUp = null;
+    while (selectedPowerUp == null) {
+      int index = (int) random(powerups.size());
+      PowerUp powerup = powerups.get(index);
+      if (powerup.getInUse()) {
+        continue;
+      } else {
+        powerup.setInUse(true);
+        selectedPowerUp = powerup;
+      }
+    }
+          
+    selectedPowerUp.setX(x).setY(y);
+    addSyncItem(selectedPowerUp);
   }
 }
