@@ -37,14 +37,14 @@ public class StartPage extends Page {
     addLocalItem(playerName2);
 
     Button createGameButton = new Button("CreateGame", 200, 40, "Create Game", () -> {
-      startSyncAsServer();
+      try { gameInfo.startSyncAsServer(); }
+      catch (Exception e) {
+        System.out.println(e.toString());
+        gameInfo.stopSyncAsServer();
+      }
     });
     createGameButton.setX(550).setY(350);
     addLocalItem(createGameButton);
-  }
-
-  private void startSyncAsServer() {
-    gameInfo.startServerListening();
   }
 
   @Override
