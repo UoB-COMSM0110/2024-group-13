@@ -81,25 +81,6 @@ public abstract class Item {
     setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
   }
 
-  public void onEvents(ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(e); });
-  }
-
-  // Deals with events.
-  public void onEvent(Event e) {
-    if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
-    else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
-    else {}
-  }
-  public void onMouseEvent(MouseEvent e) {}
-  public void onKeyboardEvent(KeyboardEvent e) {}
-
-  // Whether the mouse cursor is over the item when the event happened.
-  public boolean isMouseEventRelated(MouseEvent e) {
-    return getLeftX() < e.getX() && e.getX() < getRightX()
-      && getTopY() < e.getY() && e.getY() < getBottomY();
-  }
-
   // Update status for each game frame.
   // Generally the update here won't affect game logic,
   // but only affects visual effects, human-game interactions, etc.
@@ -132,6 +113,25 @@ public class ItemLayerComparator implements Comparator<Item> {
 public abstract class LocalItem extends Item {
   public LocalItem(String name, float w, float h) { super(name, w, h); }
 
+  public void onEvents(ArrayList<Event> events) {
+    events.forEach((e) -> { onEvent(e); });
+  }
+
+  // Deals with events.
+  public void onEvent(Event e) {
+    if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
+    else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
+    else {}
+  }
+  public void onMouseEvent(MouseEvent e) {}
+  public void onKeyboardEvent(KeyboardEvent e) {}
+
+  // Whether the mouse cursor is over the item when the event happened.
+  public boolean isMouseEventRelated(MouseEvent e) {
+    return getLeftX() < e.getX() && e.getX() < getRightX()
+      && getTopY() < e.getY() && e.getY() < getBottomY();
+  }
+
   @Override
   public void delete() { page.deleteLocalItem(getName()); }
 }
@@ -141,6 +141,18 @@ public abstract class LocalItem extends Item {
 // For example: figures, bricks, bullets, etc.
 public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
+
+  public void onKeyboardEvents(ArrayList<KeyboardEvent> events) {
+    events.forEach((e) -> { onKeyboardEvent(e); });
+  }
+
+  public void onKeyboardEvent(KeyboardEvent e) {}
+
+  // Whether the mouse cursor is over the item when the event happened.
+  public boolean isMouseEventRelated(MouseEvent e) {
+    return getLeftX() < e.getX() && e.getX() < getRightX()
+      && getTopY() < e.getY() && e.getY() < getBottomY();
+  }
 
   // Additional method for sync items to update status.
   // Mainly update status which affects game logic, e.g., movement of figures.
@@ -222,7 +234,7 @@ public abstract class MovableItem extends SynchronizedItem {
 
   public void move() {
     saveRefPoint();
-    float distance = speed * gameInfo.getLastFrameIntervalS();
+    float distance = speed * gameInfo.getLastEvolveIntervalS();
     doMovement(distance);
   }
 

@@ -53,7 +53,8 @@ private class Cache {
 // For example, the size of the window, the ip/port of the other player, etc.
 public class GameInfo {
   private int hostId;
-  private boolean connected;
+  private boolean connectedToClient;
+  private boolean connectedToServer;
 
   private float windowWidth, windowHeight;
   private float mapWidth, mapHeight;
@@ -66,8 +67,13 @@ public class GameInfo {
   private long currentFrameTimeMs;
   private long lastFrameIntervalMs;
 
+  private long lastEvolveTimeMs;
+
   private String playerName1;
   private String playerName2;
+  private int playerScore1;
+  private int playerScore2;
+  private boolean networkSessionClosing;
 
   private Selector selectorServer;
   private SocketChannel socketServer;
@@ -81,7 +87,8 @@ public class GameInfo {
 
   public GameInfo() {
     this.hostId = singleHostId;
-    this.connected = false;
+    this.connectedToClient = false;
+    this.connectedToServer = false;
 
     this.windowWidth = 800.0;
     this.windowHeight = 680.0;
@@ -94,9 +101,12 @@ public class GameInfo {
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();
+    this.lastEvolveTimeMs = 0;
 
     this.playerName1 = "Anonym1";
     this.playerName2 = "Anonym2";
+    this.playerScore1 = 0;
+    this.playerScore2 = 0;
 
     this.sendCacheServer = new Cache(true);
     this.recvCacheServer = new Cache(false);
@@ -111,6 +121,8 @@ public class GameInfo {
 
   public void setPlayerName1(String name) { this.playerName1 = name; }
   public void setPlayerName2(String name) { this.playerName2 = name; }
+  public void setPlayerScore1(int score) { this.playerScore1 = score; }
+  public void setPlayerScore2(int score) { this.playerScore2 = score; }
 
   public void update() {
     long lastFrameTimeMs = this.currentFrameTimeMs;
@@ -121,7 +133,12 @@ public class GameInfo {
   }
 
   public int getHostId() { return this.hostId; }
-  public boolean isConnected() { return this.connected; }
+  public boolean isSingleHost() { return this.hostId == singleHostId; }
+  public boolean isClientHost() { return this.hostId == clientHostId; }
+  public boolean isServerHost() { return this.hostId == serverHostId; }
+
+  public boolean isConnectedToClient() { return this.connectedToClient; }
+  public boolean isConnectedToServer() { return this.connectedToServer; }
 
   public float getWinWidth() { return this.windowWidth; }
   public float getWinHeight() { return this.windowHeight; }
@@ -138,8 +155,19 @@ public class GameInfo {
   public long getLastFrameIntervalMs() { return this.lastFrameIntervalMs; }
   public float getLastFrameIntervalS() { return getLastFrameIntervalMs() / 1000.0; }
 
+  public long getLastEvolveTimeMs() { return this.lastEvolveTimeMs; }
+  public void resetEvolveTime() { this.lastEvolveTimeMs = 0; }
+  public void updateEvolveTime() { this.lastEvolveTimeMs = this.currentFrameTimeMs; }
+  public long getLastEvolveIntervalMs() {
+    if (this.lastEvolveTimeMs <= 0) { return 0; }
+    else { return this.currentFrameTimeMs - this.lastEvolveTimeMs; }
+  }
+  public float getLastEvolveIntervalS() { return getLastEvolveIntervalMs() / 1000.0; }
+
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
+  public int getPlayerScore1() { return this.playerScore1; }
+  public int getPlayerScore2() { return this.playerScore2; }
 
   public void startSyncAsServer() throws IOException {
     this.selectorServer = Selector.open();
@@ -163,7 +191,7 @@ public class GameInfo {
       this.selectorServer = Selector.open();
       this.socketServer.configureBlocking(false);
       this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
-      this.connected = true;
+      this.connectedToClient = true;
       return true;
   }
 
@@ -191,7 +219,7 @@ public class GameInfo {
     this.sendCacheServer.reset();
     this.recvCacheServer.reset();
     this.hostId = singleHostId;
-    this.connected = false;
+    this.connectedToClient = false;
   }
 
   public void startSyncAsClient() throws IOException {
@@ -203,8 +231,8 @@ public class GameInfo {
   }
 
   private boolean tryConnectServer() throws IOException {
-    this.connected = this.socketClient.finishConnect();
-    return this.connected;
+    this.connectedToServer = this.socketClient.finishConnect();
+    return this.connectedToServer;
   }
 
   public void writeSocketClient(String data) throws IOException {
@@ -231,7 +259,7 @@ public class GameInfo {
     this.sendCacheClient.reset();
     this.recvCacheClient.reset();
     this.hostId = singleHostId;
-    this.connected = false;
+    this.connectedToServer = false;
   }
 
   public void writeSocket(SocketChannel socket, Cache cache, String data) throws IOException {

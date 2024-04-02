@@ -1,4 +1,5 @@
 import java.util.Collections;
+import java.util.List;
 
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
@@ -48,9 +49,11 @@ public abstract class Page {
 
   public boolean deleteSyncItem(String name) {
     if (this.syncItems.remove(name) == null) { return false; }
-    JSONObject deleted = new JSONObject();
-    deleted.setString("name", name);
-    this.syncChangesRecord.append(deleted);
+    if (!gameInfo.isSingleHost()) { // TODO
+      JSONObject deleted = new JSONObject();
+      deleted.setString("name", name);
+      this.syncChangesRecord.append(deleted);
+    }
     return true;
   }
 
@@ -62,10 +65,14 @@ public abstract class Page {
 
   // Update all the items, including sync ones and local ones.
   public void update() {
-    runTimers();
     ArrayList<Event> events = eventRecorder.fetchEvents();
+    ArrayList<KeyboardEvent> keyboardEvents = new ArrayList<KeyboardEvent>();
+    for (Event e : events) {
+      if (e instanceof KeyboardEvent) { keyboardEvents.add((KeyboardEvent)e); }
+    }
+    runTimers();
     dispatchEventsToLocalItems(events);
-    evolveSyncItems(events);
+    evolveSyncItems(keyboardEvents);
     updateItems();
   }
 
@@ -86,32 +93,105 @@ public abstract class Page {
     getLocalItems().forEach((item) -> { item.onEvents(events); });
   }
 
-  public void evolveSyncItems(ArrayList<Event> events) {
-    // if (isClient) {
-    //   sendEvents();
-    //   receiveItems();
-    // } else { // isServer
-    //   receiveEvents();
-    getSyncItems().forEach((item) -> { item.onEvents(events); });
-    getSyncItems().forEach((item) -> { item.evolve(); });
-    (new CollisionEngine()).solveCollisions();
-    //   sendItems();
-    // }
-    for (SynchronizedItem item : this.syncItems.values()) {
-      JSONObject json = item.getStateJson();
-      String str = json.toString();
-      if (!str.equals(item.getStoredStateStr())) {
-        item.storeStateStr(str);
-        this.syncChangesRecord.append(json);
-      }
-    }
-    this.syncChangesRecord.toString();
-    clearSyncChangeRecord();
+  public JSONObject getSyncInfo() {
+    JSONObject json = new JSONObject();
+    json.setString("page", getName());
+    String nextPageName = "";
+    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
+    json.setString("nextPage", nextPageName);
+    json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
+    // json.setString("player1", gameInfo.getPlayerName1());
+    // json.setString("player2", gameInfo.getPlayerName2());
+    json.setBoolean("closing", false);
+    return json;
   }
 
-  public void clearSyncChangeRecord() {
-    this.syncChangesRecord = new JSONArray();
+  public void dispatchSyncInfo(JSONObject json) {}
+
+  public void evolveSyncItems(ArrayList<KeyboardEvent> events) {
+    if (gameInfo.isSingleHost()) {
+      doEvolve(events);
+      return;
+    }
+
+    JSONObject msgJson = new JSONObject();
+    msgJson.setJSONObject("info", getSyncInfo());
+    events.forEach((e) -> { e.setHostId(serverHostId); }); // TODO
+    msgJson.setJSONArray("events", keyboardEventsToJson(events));
+    gameInfo.writeSocketClient(msgJson.toString());
+
+    ArrayList<String> clientMessages = gameInfo.readSocketServer();
+    for (String str : clientMessages) {
+      if (str.length() <= 0) { continue; }
+      JSONObject msgJson = parseJSONObject(str);
+      JSONObject infoJson = msgJson.getJSONObject("info");
+      dispatchSyncInfo(infoJson);
+      if (!getName().equals(infoJson.getString("page"))) { continue; }
+      JSONArray eventsJson = msgJson.getJSONArray("events");
+      ArrayList<KeyboardEvent> clientEvents = keyboardEventsFromJson(eventsJson);
+      clientEvents.forEach((e) -> { e.setHostId(clientHostId); }); // TODO
+      events.addAll(clientEvents);
+    }
+    if (true) { // Game not over
+      doEvolve(events);
+    }
+    if (gameInfo.isServerSendBufferEmpty()) {
+      for (SynchronizedItem item : this.syncItems.values()) {
+        JSONObject json = item.getStateJson();
+        String str = json.toString();
+        if (!str.equals(item.getStoredStateStr())) {
+          item.storeStateStr(str);
+          this.syncChangesRecord.append(json);
+        }
+      }
+      JSONObject msgJson = new JSONObject();
+      msgJson.setJSONObject("info", getSyncInfo());
+      msgJson.setJSONArray("changes", this.syncChangesRecord);
+      gameInfo.writeSocketServer(msgJson.toString());
+      clearSyncChangeRecord();
+    }
+
+    ArrayList<String> serverMessages = gameInfo.readSocketClient();
+    for (String str : serverMessages) {
+      if (str.length() <= 0) { continue; }
+      JSONObject msgJson = parseJSONObject(str);
+      JSONObject infoJson = msgJson.getJSONObject("info");
+      dispatchSyncInfo(infoJson);
+      if (!getName().equals(infoJson.getString("page"))) { continue; }
+      JSONArray changesJson = msgJson.getJSONArray("changes");
+      applyChangesFromJson(changesJson);
+    }
   }
+
+  public void onConnectionClose() {}
+
+  public void doEvolve(ArrayList<KeyboardEvent> events) {
+    getSyncItems().forEach((item) -> { item.onKeyboardEvents(events); });
+    getSyncItems().forEach((item) -> { item.evolve(); });
+    (new CollisionEngine()).solveCollisions();
+    gameInfo.updateEvolveTime();
+  }
+
+  public void applyChangesFromJson(JSONArray changesJson) {
+    for (int i = 0; i < changesJson.size(); ++i) {
+      JSONObject json = changesJson.getObject(i);
+      String name = json.getString("name");
+      String type = json.getString("class", "");
+      if (type.length() <= 0) {
+        deleteSyncItem(name);
+        continue;
+      }
+      SynchronizedItem item = getSyncItem(name);
+      if (item == null) {
+        SynchronizedItem item = createSyncItemFromJson(json);
+        addSyncItem(item);
+      } else {
+        item.setStateFromJson(json);
+      }
+    }
+  }
+
+  public void clearSyncChangeRecord() { this.syncChangesRecord = new JSONArray(); }
 
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
@@ -120,9 +200,11 @@ public abstract class Page {
 
   // Draw all the items, including sync ones and local ones.
   public void draw() {
-    ArrayList<Item> items = new ArrayList<Item>();
-    items.addAll(getSyncItems());
-    items.addAll(getLocalItems());
+    drawItems(getSyncItems());
+    drawItems(getLocalItems());
+  }
+
+  private void drawItems(List<? extends Item> items) {
     Collections.sort(items, new ItemLayerComparator());
     for (Item item : items) {
       if (!item.isDiscarded()) { item.draw(); }
