@@ -26,7 +26,7 @@ static final int clientHostId = 2;
 final int port = 2024;
 
 final int bufferSize = 2 * MB;
-final String messageDelim = "<MSGEOF>";
+final String messageDelim = "[MSGEOF]";
 
 
 // A handy struct containing data cache for socket.
@@ -172,48 +172,59 @@ public class GameInfo {
   public void startSyncAsServer() throws IOException {
     this.selectorServer = Selector.open();
     ServerSocketChannel serverSocket = ServerSocketChannel.open();
-    serverSocket.bind(new InetSocketAddress("localhost", port));
     serverSocket.configureBlocking(false);
+    serverSocket.bind(new InetSocketAddress("localhost", port));
     serverSocket.register(this.selectorServer, SelectionKey.OP_ACCEPT);
     this.hostId = serverHostId;
   }
 
   private boolean tryAcceptClient() throws IOException { // Accept only one client.
+      if (this.connectedToClient) { return true; }
+      if (this.selectorServer == null) { return false; }
       this.selectorServer.selectNow();
       Set<SelectionKey> keys = this.selectorServer.selectedKeys();
       Iterator<SelectionKey> iter = keys.iterator();
-      if (!iter.hasNext()) { return false; }
-      SelectionKey key = iter.next();
-      ServerSocketChannel serverSocket = (ServerSocketChannel)key.channel();
-      this.socketServer = serverSocket.accept();
-      serverSocket.close();
-      this.selectorServer.close();
-      this.selectorServer = Selector.open();
-      this.socketServer.configureBlocking(false);
-      this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
-      this.connectedToClient = true;
-      return true;
+      while (iter.hasNext()) {
+        SelectionKey key = iter.next();
+        iter.remove();
+        if (!key.isValid()) { continue; }
+        if (!key.isAcceptable()) { continue; }
+        ServerSocketChannel serverSocket = (ServerSocketChannel)key.channel();
+        this.socketServer = serverSocket.accept();
+        this.socketServer.configureBlocking(false);
+        serverSocket.close();
+        this.selectorServer.close();
+        this.selectorServer = Selector.open();
+        this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
+        this.connectedToClient = true;
+        return true;
+      }
+      return false;
+  }
+
+  public boolean isServerSendBufferFull() {
+    return this.sendCacheServer.data.length() > bufferSize / 2;
   }
 
   public void writeSocketServer(String data) throws IOException {
-    if (!isConnected() && !tryAcceptClient()) { return; }
+    if (!isConnectedToClient() && !tryAcceptClient()) { return; }
     writeSocket(this.socketServer, this.sendCacheServer, data);
   }
 
   public ArrayList<String> readSocketServer() throws IOException {
-    if (!isConnected() && !tryAcceptClient()) { return new ArrayList<String>(); }
+    if (!isConnectedToClient() && !tryAcceptClient()) { return new ArrayList<String>(); }
     return readSocket(this.selectorServer, this.socketServer, this.recvCacheServer);
   }
 
   public void stopSyncAsServer() {
     if (this.socketServer != null) {
       try { this.socketServer.close(); }
-      catch (Exception e) { System.err.println(e.toString()); }
+      catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }
       this.socketServer = null;
     }
     if (this.selectorServer != null) {
       try { this.selectorServer.close(); }
-      catch (Exception e) { System.err.println(e.toString()); }
+      catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }
       this.selectorServer = null;
     }
     this.sendCacheServer.reset();
@@ -231,29 +242,34 @@ public class GameInfo {
   }
 
   private boolean tryConnectServer() throws IOException {
-    this.connectedToServer = this.socketClient.finishConnect();
-    return this.connectedToServer;
+    if (this.connectedToServer) { return true; }
+    if (this.socketClient == null) { return false; }
+    if (!this.socketClient.finishConnect()) { return false; }
+    this.selectorClient = Selector.open();
+    this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
+    this.connectedToServer = true;
+    return true;
   }
 
   public void writeSocketClient(String data) throws IOException {
-    if (!isConnected() && !tryConnectServer()) { return; }
+    if (!isConnectedToServer() && !tryConnectServer()) { return; }
     writeSocket(this.socketClient, this.sendCacheClient, data);
   }
 
   public ArrayList<String> readSocketClient() throws IOException {
-    if (!isConnected() && !tryConnectServer()) { return new ArrayList<String>(); }
+    if (!isConnectedToServer() && !tryConnectServer()) { return new ArrayList<String>(); }
     return readSocket(this.selectorClient, this.socketClient, this.recvCacheClient);
   }
 
   public void stopSyncAsClient() {
     if (this.socketClient != null) {
       try { this.socketClient.close(); }
-      catch (Exception e) { System.err.println(e.toString()); }
+      catch (Exception e) { System.err.println("when stoping sync as client: " + e.toString()); }
       this.socketClient = null;
     }
     if (this.selectorClient != null) {
       try { this.selectorClient.close(); }
-      catch (Exception e) { System.err.println(e.toString()); }
+      catch (Exception e) { System.err.println("when stoping sync as client: " + e.toString()); }
       this.selectorClient = null;
     }
     this.sendCacheClient.reset();
@@ -282,29 +298,34 @@ public class GameInfo {
     Iterator<SelectionKey> iter = keys.iterator();
     int numKey = 0;
     while (iter.hasNext()) {
+      SelectionKey key = iter.next();
+      iter.remove();
       ++numKey;
+      if (!key.isValid()) { continue; }
+      if (!key.isReadable()) { continue; }
       int bytesRead = socket.read(cache.buffer);
       if (bytesRead == -1) {
         System.err.println("socket eof");
       } else {
-        System.err.println("socket read bytes: " + bytesRead);
+        System.out.println("socket read bytes: " + bytesRead);
       }
-      iter.remove();
     }
     System.err.println("number of selected keys = " + numKey);
     cache.buffer.flip();
+    int dataLen = cache.buffer.remaining();
     byte[] bytes;
     if (cache.buffer.hasArray()) {
       bytes = cache.buffer.array();
-      System.err.println("buffer has array");
+      System.out.println("buffer has array");
     } else {
-      bytes = new byte[cache.buffer.remaining()];
+      bytes = new byte[dataLen];
       cache.buffer.get(bytes);
     }
     // Note:
     // Only ascii characters are used.
     // So the byte array can always be converted into a String.
-    cache.data = cache.data + new String(bytes);
+    System.out.println("bytes.length: " + bytes.length);
+    cache.data = cache.data + new String(bytes, 0, dataLen);
     cache.buffer.clear();
     boolean cacheLast = !cache.data.endsWith(messageDelim);
     String[] messages = cache.data.split(Pattern.quote(messageDelim));

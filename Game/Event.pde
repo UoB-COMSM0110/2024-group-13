@@ -9,13 +9,13 @@ public class Event {
     this.hostId = gameInfo.getHostId();
   }
 
-  protected JSONObject getJson() {
+  public JSONObject getJson() {
     JSONObject json = new JSONObject();
     json.setString("class", getClass().getSimpleName());
     json.setInt("hostId", getHostId());
     return json;
   }
-  protected void fromJson(JSONObject json) {
+  public void fromJson(JSONObject json) {
     this.hostId = json.getInt("hostId");
   }
 
@@ -38,7 +38,7 @@ public class KeyboardEvent extends Event {
 
   @Override
   public JSONObject getJson() {
-    JSONObject json = super.getStateJson();
+    JSONObject json = super.getJson();
     json.setInt("key", getKey());
     json.setInt("keyCode", getKeyCode());
     return json;
@@ -84,7 +84,7 @@ public class MouseEvent extends Event {
   @Override
   public final JSONObject getJson() { return null; }
   @Override
-  protected final void fromJson(JSONObject json) { return; }
+  public final void fromJson(JSONObject json) {}
 
   public float getX() { return x; }
   public float getY() { return y; }
@@ -120,10 +120,10 @@ static JSONArray keyboardEventsToJson(List<? extends KeyboardEvent> events) {
 }
 
 
-static ArrayList<KeyboardEvent> keyboardEventsFromJson(JSONArray eventsJson) {
+public ArrayList<KeyboardEvent> keyboardEventsFromJson(JSONArray eventsJson) {
   ArrayList<KeyboardEvent> events = new ArrayList<KeyboardEvent>();
   for (int i = 0; i < eventsJson.size(); ++i) {
-    JSONObject json = eventsJson.getObject(i);
+    JSONObject json = eventsJson.getJSONObject(i);
     KeyboardEvent e = null;
     String type = json.getString("class");
     if (type.equals("KeyPressedEvent")) {

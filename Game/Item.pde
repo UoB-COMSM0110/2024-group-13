@@ -27,8 +27,8 @@ public abstract class Item {
 
   public JSONObject getStateJson() {
     JSONObject json = new JSONObject();
-    json.setString("name", getName());
     json.setString("class", getClass().getSimpleName());
+    json.setString("name", getName());
     json.setFloat("w", getW());
     json.setFloat("h", getH());
     json.setFloat("x", getX());
@@ -37,6 +37,17 @@ public abstract class Item {
     json.setInt("layer", getLayer());
     json.setBoolean("discarded", isDiscarded());
     return json;
+  }
+  public void setStateJson(JSONObject json) {
+    this.name = json.getString("name");
+    setW(json.getFloat("w"));
+    setH(json.getFloat("h"));
+    setX(json.getFloat("x"));
+    setY(json.getFloat("y"));
+    setFacing(json.getInt("facing"));
+    setLayer(json.getInt("layer"));
+    if (json.getBoolean("discarded")) { discard(); }
+    else { restore(); }
   }
   public void storeStateStr(String str) { this.storedStateStr = str; }
   public String getStoredStateStr() { return this.storedStateStr; }
@@ -112,6 +123,11 @@ public class ItemLayerComparator implements Comparator<Item> {
 // For example: buttons, labels, etc.
 public abstract class LocalItem extends Item {
   public LocalItem(String name, float w, float h) { super(name, w, h); }
+
+  @Override
+  public final JSONObject getStateJson() { return null; }
+  @Override
+  public final void setStateJson(JSONObject json) {}
 
   public void onEvents(ArrayList<Event> events) {
     events.forEach((e) -> { onEvent(e); });
@@ -202,6 +218,14 @@ public abstract class MovableItem extends SynchronizedItem {
     json.setInt("direction", getDirection());
     json.setBoolean("moving", isMoving());
     return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setSpeed(json.getFloat("speed"));
+    setDirection(json.getInt("direction"));
+    if (json.getBoolean("moving")) { startMoving(); }
+    else { stopMoving(); }
   }
 
   public MovableItem setSpeed(float speed) {

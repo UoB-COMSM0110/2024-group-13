@@ -24,6 +24,13 @@ public abstract class Figure extends MovableItem {
     json.setInt("hp", getHp());
     return json;
   }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setLives(json.getInt("lives"));
+    setMaxHp(json.getInt("maxHp"));
+    setHp(json.getInt("hp"));
+  }
   
   public Figure(String name, float w, float h) {
     super(name, w, h);
@@ -149,14 +156,6 @@ public class Pacman extends Figure {
   private int score;
   private boolean isControlledByOpponent = false;
 
-  @Override
-  public JSONObject getStateJson() {
-    JSONObject json = super.getStateJson();
-    json.setInt("playerId", getPlayerId());
-    json.setInt("score", getScore());
-    return json;
-  }
-  
   public Pacman(int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
     this.playerId = playerId;
@@ -164,6 +163,20 @@ public class Pacman extends Figure {
     refreshHp(3);
   }
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("playerId", getPlayerId());
+    json.setInt("score", getScore());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.playerId = json.getInt("playerId");
+    this.score = json.getInt("score");
+  }
+  
   public int getPlayerId() { return this.playerId; }
 
   public PImage getImage() {

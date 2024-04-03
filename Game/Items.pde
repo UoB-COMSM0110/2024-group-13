@@ -63,8 +63,15 @@ public class BreakableWall extends Wall {
     json.setInt("strength", getStrength());
     return json;
   }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setStrength(json.getInt("strength"));
+  }
   
   public int getStrength() { return this.strength; }
+
+  public BreakableWall setStrength(int strength) { this.strength = strength; return this; }
   
   public BreakableWall decStrength() {
     this.strength -= 1;

@@ -36,8 +36,7 @@ public abstract class Page {
   }
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
- 
-  public SynchronizedItem getSyncItem(String name) {return this.syncItems.get(name);}
+  public SynchronizedItem getSyncItem(String name) { return this.syncItems.get(name); }
 
   public ArrayList<SynchronizedItem> getSyncItems() {
     return new ArrayList<SynchronizedItem>(this.syncItems.values());
@@ -99,7 +98,7 @@ public abstract class Page {
     String nextPageName = "";
     if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
     json.setString("nextPage", nextPageName);
-    json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
+    // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
     // json.setString("player1", gameInfo.getPlayerName1());
     // json.setString("player2", gameInfo.getPlayerName2());
     json.setBoolean("closing", false);
@@ -114,20 +113,23 @@ public abstract class Page {
       return;
     }
 
-    JSONObject msgJson = new JSONObject();
-    msgJson.setJSONObject("info", getSyncInfo());
+    try {
+
+    JSONObject msgJsonToServer = new JSONObject();
+    msgJsonToServer.setJSONObject("info", getSyncInfo());
     events.forEach((e) -> { e.setHostId(serverHostId); }); // TODO
-    msgJson.setJSONArray("events", keyboardEventsToJson(events));
-    gameInfo.writeSocketClient(msgJson.toString());
+    msgJsonToServer.setJSONArray("events", keyboardEventsToJson(events));
+    gameInfo.writeSocketClient(msgJsonToServer.toString());
 
     ArrayList<String> clientMessages = gameInfo.readSocketServer();
     for (String str : clientMessages) {
+      str = str.trim();
       if (str.length() <= 0) { continue; }
-      JSONObject msgJson = parseJSONObject(str);
-      JSONObject infoJson = msgJson.getJSONObject("info");
+      JSONObject msgJsonFromClient = parseJSONObject(str);
+      JSONObject infoJson = msgJsonFromClient.getJSONObject("info");
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
-      JSONArray eventsJson = msgJson.getJSONArray("events");
+      JSONArray eventsJson = msgJsonFromClient.getJSONArray("events");
       ArrayList<KeyboardEvent> clientEvents = keyboardEventsFromJson(eventsJson);
       clientEvents.forEach((e) -> { e.setHostId(clientHostId); }); // TODO
       events.addAll(clientEvents);
@@ -135,7 +137,9 @@ public abstract class Page {
     if (true) { // Game not over
       doEvolve(events);
     }
-    if (gameInfo.isServerSendBufferEmpty()) {
+    if (!gameInfo.isServerSendBufferFull()) {
+      JSONObject msgJsonToClient = new JSONObject();
+      msgJsonToClient.setJSONObject("info", getSyncInfo());
       for (SynchronizedItem item : this.syncItems.values()) {
         JSONObject json = item.getStateJson();
         String str = json.toString();
@@ -144,22 +148,28 @@ public abstract class Page {
           this.syncChangesRecord.append(json);
         }
       }
-      JSONObject msgJson = new JSONObject();
-      msgJson.setJSONObject("info", getSyncInfo());
-      msgJson.setJSONArray("changes", this.syncChangesRecord);
-      gameInfo.writeSocketServer(msgJson.toString());
+      msgJsonToClient.setJSONArray("changes", this.syncChangesRecord);
+      gameInfo.writeSocketServer(msgJsonToClient.toString());
       clearSyncChangeRecord();
     }
 
     ArrayList<String> serverMessages = gameInfo.readSocketClient();
     for (String str : serverMessages) {
+      str = str.trim();
       if (str.length() <= 0) { continue; }
-      JSONObject msgJson = parseJSONObject(str);
-      JSONObject infoJson = msgJson.getJSONObject("info");
+      JSONObject msgJsonFromServer = parseJSONObject(str);
+      JSONObject infoJson = msgJsonFromServer.getJSONObject("info");
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
-      JSONArray changesJson = msgJson.getJSONArray("changes");
+      JSONArray changesJson = msgJsonFromServer.getJSONArray("changes");
       applyChangesFromJson(changesJson);
+    }
+
+    } catch (Exception e) {
+      System.err.println("when communication: " + e.toString());
+      gameInfo.stopSyncAsServer();
+      gameInfo.stopSyncAsClient();
+      onConnectionClose();
     }
   }
 
@@ -174,7 +184,7 @@ public abstract class Page {
 
   public void applyChangesFromJson(JSONArray changesJson) {
     for (int i = 0; i < changesJson.size(); ++i) {
-      JSONObject json = changesJson.getObject(i);
+      JSONObject json = changesJson.getJSONObject(i);
       String name = json.getString("name");
       String type = json.getString("class", "");
       if (type.length() <= 0) {
@@ -182,12 +192,12 @@ public abstract class Page {
         continue;
       }
       SynchronizedItem item = getSyncItem(name);
-      if (item == null) {
-        SynchronizedItem item = createSyncItemFromJson(json);
-        addSyncItem(item);
-      } else {
-        item.setStateFromJson(json);
+      if (item != null) {
+        item.setStateJson(json);
+        continue;
       }
+      item = createSyncItemFromJson(json);
+      if (item != null) { addSyncItem(item); }
     }
   }
 
@@ -227,4 +237,30 @@ public abstract class Page {
     this.nextPage = null;
     return next;
   }
+}
+
+
+public SynchronizedItem createSyncItemFromJson(JSONObject json) {
+  SynchronizedItem item = null;
+  String type = json.getString("class");
+  if (type.equals("Border")) {
+    item = new Border("", 0, 0);
+  } else if (type.equals("BreakableWall")) {
+    item = new BreakableWall(0, 0);
+  } else if (type.equals("IndestructableWall")) {
+    item = new IndestructableWall(0, 0);
+  } else if (type.equals("Coin")) {
+    item = new Coin(0, 0);
+  } else if (type.equals("PowerUp")) {
+    item = new PowerUp(0, 0);
+  } else if (type.equals("Bullet")) {
+    item = new Bullet(0, 0);
+  } else if (type.equals("Ghost")) {
+    item = new Ghost(0, 0);
+  } else if (type.equals("Pacman")) {
+    item = new Pacman(0, 0, 0);
+  } else {
+    System.err.println("unknown item type " + type);
+  }
+  return item;
 }
