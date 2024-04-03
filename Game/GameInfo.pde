@@ -25,6 +25,7 @@ public class GameInfo {
   private String playerName1;
   private String playerName2;
 
+
   public GameInfo() {
     this.hostId = singleHostId;
 

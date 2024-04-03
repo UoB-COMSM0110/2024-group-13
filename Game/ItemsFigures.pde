@@ -131,9 +131,12 @@ final String itemTypePacman = "Pacman";
 public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
   private int score;
+  private int lives;
+  private Page page; // Add a Page field
 
-  public Pacman(int playerId, float w, float h) {
+  public Pacman(Page page, int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
+    this.page = page; // Store the Page reference
     this.playerId = playerId;
     setSpeed(100.0);
     refreshHp(3);
@@ -146,6 +149,8 @@ public class Pacman extends Figure {
   }
 
   public int getScore(){ return this.score; }
+  
+  public int getLives() { return this.lives; }
 
   public void incScore(int increment){
     this.score += increment;
@@ -175,6 +180,10 @@ public class Pacman extends Figure {
       tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
       decLives(1);
+      if(getLives() <= 0){
+            ((PlayPage)page).checkGameOver();
+        }
+        
     }
   }
 
