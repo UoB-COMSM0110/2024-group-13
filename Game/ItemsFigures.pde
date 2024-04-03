@@ -185,7 +185,7 @@ public class Pacman extends Figure {
 
   public int getScore(){ return this.score; }
   
-  public boolean getIsControlledByOpponent() {return this.isControlledByOpponent;}
+  public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
 
   public void setIsControlledByOpponent(boolean controlled) {
     this.isControlledByOpponent = controlled;
@@ -224,20 +224,27 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (isControlledByOpponent) {
-      return getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
+    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
+      return getPlayerId() != 1;
     }
-    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+    return getPlayerId() == 1;
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (isControlledByOpponent) {
-      return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
+      return getPlayerId() != 2;
     }
-    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
+    return  getPlayerId() == 2;
+  }
+
+  public boolean acceptKeyboardEvent(KeyboardEvent e) {
+    if (gameInfo.isSingleHost()) { return true; }
+    if (getIsControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
+    return e.getHostId() == getPlayerId();
   }
 
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
+    if (!acceptKeyboardEvent(e)) { return; }
     if (e instanceof KeyPressedEvent) {
       onKeyPressedEvent((KeyPressedEvent)e);
     } else if (e instanceof KeyReleasedEvent) {

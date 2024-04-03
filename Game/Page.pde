@@ -193,11 +193,13 @@ public abstract class Page {
       }
       SynchronizedItem item = getSyncItem(name);
       if (item != null) {
-        item.setStateJson(json);
+        // item.setStateJson(json);
         continue;
       }
       item = createSyncItemFromJson(json);
-      if (item != null) { addSyncItem(item); }
+      if (item != null) {
+        // addSyncItem(item);
+      }
     }
   }
 
@@ -251,14 +253,16 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
     item = new IndestructableWall(0, 0);
   } else if (type.equals("Coin")) {
     item = new Coin(0, 0);
-  } else if (type.equals("PowerUp")) {
-    item = new PowerUp(0, 0);
   } else if (type.equals("Bullet")) {
     item = new Bullet(0, 0);
   } else if (type.equals("Ghost")) {
     item = new Ghost(0, 0);
   } else if (type.equals("Pacman")) {
     item = new Pacman(0, 0, 0);
+  } else if (type.equals("PowerUp")) {
+    item = new PowerUp(0, 0);
+  } else if (type.equals("OpponentControlPowerUp")) {
+    item = new OpponentControlPowerUp(0, 0);
   } else {
     System.err.println("unknown item type " + type);
   }

@@ -7,17 +7,14 @@ final String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
 final String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
-final String imagePathPowerUp = "data/PowerUp.png";
-PImage imagePowerUp;
 final String imagePathBullet = "data/Bullet.JPG";
 PImage imageBullet;
 
 
-void loadResoucesForGameItems() {
+void loadResoucesForItems() {
   imageBreakableWall = loadImage(imagePathBreakableWall);
   imageIndestructableWall = loadImage(imagePathIndestructableWall);
   imageCoin = loadImage(imagePathCoin);
-  imagePowerUp = loadImage(imagePathPowerUp);
   imageBullet = loadImage(imagePathBullet);
 }
 
@@ -129,41 +126,6 @@ public class Coin extends SynchronizedItem {
   @Override
   public PImage getImage() {
     return imageCoin;
-  }
-}
-
-
-final String itemTypePowerUp = "PowerUp";
-int itemCountPowerUp;
-
-public class PowerUp extends SynchronizedItem {
-  
-  private boolean inUse = false;
-  
-  public PowerUp(float w, float h) {
-    super(itemTypePowerUp + itemCountPowerUp++, w, h);
-  }
-  
-  public boolean getInUse() {
-    return this.inUse;
-  }
-  
-  public PowerUp setInUse(boolean status) {
-    this.inUse = status;
-    return this;
-  }
-  
-
-  @Override
-  public void onCollisionWith(SynchronizedItem item) {
-    if(item instanceof Pacman){
-      discard();
-    }
-  }  
-
-  @Override
-  public PImage getImage() {
-    return imagePowerUp;
   }
 }
 

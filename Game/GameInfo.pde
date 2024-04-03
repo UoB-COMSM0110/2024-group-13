@@ -324,7 +324,6 @@ public class GameInfo {
     // Note:
     // Only ascii characters are used.
     // So the byte array can always be converted into a String.
-    System.out.println("bytes.length: " + bytes.length);
     cache.data = cache.data + new String(bytes, 0, dataLen);
     cache.buffer.clear();
     boolean cacheLast = !cache.data.endsWith(messageDelim);
