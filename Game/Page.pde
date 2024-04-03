@@ -28,6 +28,8 @@ public class Page {
   }
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
+ 
+  public SynchronizedItem getSyncItem(String name) {return this.syncItems.get(name);}
 
   public ArrayList<SynchronizedItem> getSyncItems() {
     return new ArrayList<SynchronizedItem>(this.syncItems.values());

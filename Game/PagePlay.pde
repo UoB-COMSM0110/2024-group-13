@@ -6,6 +6,9 @@ final String mapPath = "data/map.csv";
 final float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
+  
+  private ArrayList<PowerUp> powerups = new ArrayList<>();
+  
   public PlayPage(Page previousPage) {
     super(previousPage);
 
@@ -21,6 +24,16 @@ public class PlayPage extends Page {
           Label fpsLabel = (Label)getLocalItem("Fps");
           if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
     }));
+    
+    // generate powerups
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
 
     loadMap(mapPath);
 
@@ -93,13 +106,28 @@ public class PlayPage extends Page {
           coin.setX(x).setY(y);
           addSyncItem(coin);
         }
-        //indestructable walls
+        //power up
         else if (values[col].equals("4")) {
-          PowerUp powerUp = new PowerUp(CHARACTER_SIZE, CHARACTER_SIZE);
-          powerUp.setX(x).setY(y);
-          addSyncItem(powerUp);
+          generatePowerUp(x, y);
         }
       }
     }
+  }
+  
+  private void generatePowerUp(float x, float y) {
+    PowerUp selectedPowerUp = null;
+    while (selectedPowerUp == null) {
+      int index = (int) random(powerups.size());
+      PowerUp powerup = powerups.get(index);
+      if (powerup.getInUse()) {
+        continue;
+      } else {
+        powerup.setInUse(true);
+        selectedPowerUp = powerup;
+      }
+    }
+          
+    selectedPowerUp.setX(x).setY(y);
+    addSyncItem(selectedPowerUp);
   }
 }
