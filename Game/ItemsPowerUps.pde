@@ -101,6 +101,75 @@ public class OpponentControlPowerUp extends PowerUp {
 
 }
 
+public class TeleportPowerUp extends PowerUp {
+
+    public TeleportPowerUp(float w, float h) {
+      super(w, h);
+    }
+
+    @Override
+    public void onCollisionWith(SynchronizedItem item) {
+        if (item instanceof Pacman) {
+            Pacman pacman = (Pacman) item;
+            teleportPacman(pacman);
+            discard();
+        }
+    }
+
+    private void teleportPacman(Pacman pacman) {
+        float newX = random(0, width); 
+        float newY = random(0, height);
+        pacman.setX(newX);
+        pacman.setY(newY);
+    }
+
+    @Override
+    public PImage getImage() {
+      return super.getImage();
+    }
+}
+
+public class TimeFreezePowerUp extends PowerUp {
+    private int freezeDuration = 300; 
+
+    public TimeFreezePowerUp(float w, float h) {
+        super(w, h);
+    }
+    
+    @Override
+    public void onCollisionWith(SynchronizedItem item) {
+        if (item instanceof Pacman) {
+            Pacman pacman = (Pacman) item;
+            int currentPlayerId = pacman.getPlayerId();
+            int opponentId = (currentPlayerId == 1) ? 2 : 1;
+            Pacman opponentPacman = (Pacman) page.getSyncItem(itemTypePacman + opponentId);
+
+            if (opponentPacman != null) {
+                freezeOpponent(opponentPacman);
+            }
+            discard();
+        }
+    }
+
+    private void freezeOpponent(Pacman opponentPacman) {
+        System.out.println("Freezing opponent Pacman.");
+        opponentPacman.freeze();
+        
+        int delayMillis = (int)(freezeDuration / 60.0 * 1000);
+        new java.util.Timer().schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                unfreezeOpponent(opponentPacman);
+            }
+        }, delayMillis);
+    }
+    
+    private void unfreezeOpponent(Pacman opponentPacman) {
+        System.out.println("Unfreezing opponent Pacman.");
+        opponentPacman.unfreeze(); 
+    }
+}
+
 public class SizeModificationPowerUp_Pacman extends PowerUp {
   
     private int duration = 5;
