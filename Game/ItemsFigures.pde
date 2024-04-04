@@ -131,12 +131,9 @@ final String itemTypePacman = "Pacman";
 public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
   private int score;
-  private int lives;
-  private Page page; // Add a Page field
 
-  public Pacman(Page page, int playerId, float w, float h) {
+  public Pacman(int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
-    this.page = page; // Store the Page reference
     this.playerId = playerId;
     setSpeed(100.0);
     refreshHp(3);
@@ -150,7 +147,7 @@ public class Pacman extends Figure {
 
   public int getScore(){ return this.score; }
   
-  public int getLives() { return this.lives; }
+  public int getLives() { return super.lives; }
 
   public void incScore(int increment){
     this.score += increment;
@@ -246,6 +243,8 @@ public class Pacman extends Figure {
   void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
+    Label livesLabel = (Label)page.getLocalItem("Lives" + getPlayerId());
+    if (livesLabel != null) { livesLabel.setText(String.valueOf(getLives())); }
     // gameInfo.setMapScaleX(5.0);
     // gameInfo.setMapScaleY(5.0);
     // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);

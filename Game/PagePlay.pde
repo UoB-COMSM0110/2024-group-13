@@ -44,19 +44,26 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
-    pacman1 = new Pacman(this, 1, 18, 18);
+    pacman1 = new Pacman(1, 18, 18);
     pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
     Label score1 = new Label("Score1", 200, 25, "0");
     score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
     addLocalItem(score1);
+    Label lives1 = new Label("Lives1", 200, 25, "0");
+    lives1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(400).setY(15);
+    addLocalItem(lives1);
 
-    pacman2 = new Pacman(this, 2, 18, 18);
+    pacman2 = new Pacman(2, 18, 18);
     pacman2.setX(360).setY(350);
     addSyncItem(pacman2);
     Label score2 = new Label("Score2", 200, 25, "0");
     score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
     addLocalItem(score2);
+    Label lives2 = new Label("Lives2", 200, 25, "0");
+    lives2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(400).setY(40);
+    addLocalItem(lives2);
+    
     
     Ghost ghost1 = new Ghost(20, 20);
     ghost1.setX(30).setY(100);
@@ -64,7 +71,7 @@ public class PlayPage extends Page {
   }
   
  public void checkGameOver() {
-    if (pacman1.getLives() <= 0 && pacman2.getLives() <= 0) {
+    if (pacman1.getLives() == 0 && pacman2.getLives() == 0) {
         // Switch to the game over page
         Page gameOverPage = new GameOverPage(pacman1.getScore(), pacman2.getScore(), this);
         trySwitchPage(gameOverPage);
