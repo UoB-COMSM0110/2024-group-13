@@ -37,6 +37,13 @@ public abstract class Page {
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
   public SynchronizedItem getSyncItem(String name) { return this.syncItems.get(name); }
+  public ArrayList<SynchronizedItem> getSyncItemsByNameAndCount(String name, int itemCount) {
+     ArrayList<SynchronizedItem> res = new ArrayList<>();
+     for (int i = 0; i < itemCount; i++) {
+       res.add(syncItems.get(name + i));
+     }
+     return res;
+  }
 
   public ArrayList<SynchronizedItem> getSyncItems() {
     return new ArrayList<SynchronizedItem>(this.syncItems.values());

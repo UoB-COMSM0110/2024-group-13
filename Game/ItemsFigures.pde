@@ -2,7 +2,7 @@ import java.util.Random;
 
 final String imagePathPacman = "data/Coin.png";
 PImage imagePacman;
-final String imagePathGhost = "data/Ghost.jpg";
+final String imagePathGhost = "data/Ghost.png";
 PImage imageGhost;
 
 void loadResoucesForFigures() {

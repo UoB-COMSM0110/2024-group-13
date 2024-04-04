@@ -30,11 +30,11 @@ public class PlayPage extends Page {
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SizeModificationPowerUp_Pacman(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SizeModificationPowerUp_Pacman(CHARACTER_SIZE, CHARACTER_SIZE));
 
     loadMap(mapPath);
 
