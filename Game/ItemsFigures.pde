@@ -155,6 +155,7 @@ public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
   private int score;
   private boolean isControlledByOpponent = false;
+  private boolean isFrozen = false;
 
   public Pacman(int playerId, float w, float h) {
     super(itemTypePacman + playerId, w, h);
@@ -191,6 +192,15 @@ public class Pacman extends Figure {
     this.isControlledByOpponent = controlled;
   }
 
+  public void freeze() {
+    isFrozen = true;
+    stopMoving();
+  }
+
+  public void unfreeze(){
+    isFrozen = false;
+  }
+
   public void incScore(int increment){
     this.score += increment;
   }
@@ -224,12 +234,14 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
+    if (isFrozen){return false;}
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 1;
     }
     return getPlayerId() == 1;
   }
   public boolean usingKeySetB() { // Arrows 0
+    if (isFrozen){return false;}
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 2;
     }
