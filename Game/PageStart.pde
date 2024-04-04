@@ -8,7 +8,7 @@ public class StartPage extends Page {
   private PImage imageGameBanner;
 
   public StartPage(Page previousPage) {
-    super(previousPage);
+    super("start", previousPage);
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
     this.imageGameBanner = loadImage(imagePathGameBanner);
 
@@ -35,6 +35,25 @@ public class StartPage extends Page {
     });
     playerName2.setDefaultText("Merry Kitty").setPrefix(" Player 2 : ").setCenterX(400).setY(560);
     addLocalItem(playerName2);
+
+    Button createGameButton = new Button("CreateGame", 200, 40, "Create Game", () -> {
+      try { gameInfo.startSyncAsServer(); }
+      catch (Exception e) {
+        System.err.println("when creating game: " + e.toString());
+        gameInfo.stopSyncAsServer();
+      }
+    });
+    createGameButton.setX(550).setY(350);
+    addLocalItem(createGameButton);
+    Button joinGameButton = new Button("JoinGame", 200, 40, "Join Game", () -> {
+      try { gameInfo.startSyncAsClient(); }
+      catch (Exception e) {
+        System.err.println("when joining game: " + e.toString());
+        gameInfo.stopSyncAsClient();
+      }
+    });
+    joinGameButton.setX(550).setY(400);
+    addLocalItem(joinGameButton);
   }
 
   @Override

@@ -41,10 +41,11 @@ void draw() {
 
 
 void loadResouces() {
-  loadResoucesForGameItems();
+  loadResoucesForItems();
   loadResourcesForGui();
-  loadResourcesForPlayPage();
   loadResoucesForFigures();
+  loadResoucesForPowerUps();
+  loadResourcesForPlayPage();
 }
 
 

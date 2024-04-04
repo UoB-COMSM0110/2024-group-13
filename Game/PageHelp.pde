@@ -7,7 +7,7 @@ public class HelpPage extends Page {
   private PImage instructionImage;
   
   public HelpPage(Page previousPage) {
-    super(previousPage);
+    super("help", previousPage);
     this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet);
 

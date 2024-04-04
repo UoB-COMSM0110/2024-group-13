@@ -1,3 +1,50 @@
+// This file defines various power-ups on the game map.
+// Power-ups are Synchronized items.
+
+final String imagePathPowerUp = "data/PowerUp.png";
+PImage imagePowerUp;
+
+
+void loadResoucesForPowerUps() {
+  imagePowerUp = loadImage(imagePathPowerUp);
+}
+
+
+final String itemTypePowerUp = "PowerUp";
+int itemCountPowerUp;
+
+public class PowerUp extends SynchronizedItem {
+  
+  private boolean inUse = false;
+  
+  public PowerUp(float w, float h) {
+    super(itemTypePowerUp + itemCountPowerUp++, w, h);
+  }
+  
+  public boolean getInUse() {
+    return this.inUse;
+  }
+  
+  public PowerUp setInUse(boolean status) {
+    this.inUse = status;
+    return this;
+  }
+  
+
+  @Override
+  public void onCollisionWith(SynchronizedItem item) {
+    if(item instanceof Pacman){
+      discard();
+    }
+  }  
+
+  @Override
+  public PImage getImage() {
+    return imagePowerUp;
+  }
+}
+
+
 public class OpponentControlPowerUp extends PowerUp {
     private int duration = 5; 
 

@@ -10,21 +10,22 @@ public class PlayPage extends Page {
   private ArrayList<PowerUp> powerups = new ArrayList<>();
   
   public PlayPage(Page previousPage) {
-    super(previousPage);
+    super("play", previousPage);
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
       trySwitchPage(getPreviousPage());
     });
     backButton.setX(20).setY(10);
     addLocalItem(backButton);
+
     Label fps = new Label("Fps", 200, 25, "");
     fps.setPrefix("fps: ").setX(250).setY(10);
     addLocalItem(fps);
-    addTimer(new Timer(0.0, 1.0, () -> {
-          Label fpsLabel = (Label)getLocalItem("Fps");
-          if (fpsLabel != null) { fpsLabel.setText(String.format("%.2f", gameInfo.getAvgFps())); }
-    }));
-    
+    Timer fpsUpdater = new Timer(0.0, 1.0, () -> {
+          fps.setText(String.format("%.2f", frameRate));
+    });
+    addTimer(fpsUpdater);
+
     // generate powerups
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
@@ -37,7 +38,7 @@ public class PlayPage extends Page {
 
     loadMap(mapPath);
 
-    float borderSize = 3.0;
+    float borderSize = 5.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
     Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);

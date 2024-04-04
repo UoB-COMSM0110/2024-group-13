@@ -1,3 +1,4 @@
+// This file contains base abstract classes for items in the game.
 import java.util.Comparator;
 
 static final int UPWARD = 0;
@@ -7,7 +8,7 @@ static final int LEFTWARD = 270;
 
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
-public class Item {
+public abstract class Item {
   private String name;
   private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
@@ -15,11 +16,41 @@ public class Item {
   private int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
+  private String storedStateStr;
+
   public Item(String name, float w, float h) {
     this.name = name;
     this.w = w;
     this.h = h;
+    this.storedStateStr = "";
   }
+
+  public JSONObject getStateJson() {
+    JSONObject json = new JSONObject();
+    json.setString("class", getClass().getSimpleName());
+    json.setString("name", getName());
+    json.setFloat("w", getW());
+    json.setFloat("h", getH());
+    json.setFloat("x", getX());
+    json.setFloat("y", getY());
+    json.setInt("facing", getFacing());
+    json.setInt("layer", getLayer());
+    json.setBoolean("discarded", isDiscarded());
+    return json;
+  }
+  public void setStateJson(JSONObject json) {
+    this.name = json.getString("name");
+    setW(json.getFloat("w"));
+    setH(json.getFloat("h"));
+    setX(json.getFloat("x"));
+    setY(json.getFloat("y"));
+    setFacing(json.getInt("facing"));
+    setLayer(json.getInt("layer"));
+    if (json.getBoolean("discarded")) { discard(); }
+    else { restore(); }
+  }
+  public void storeStateStr(String str) { this.storedStateStr = str; }
+  public String getStoredStateStr() { return this.storedStateStr; }
   
   public Item setW(float w) { this.w = w; return this; }
   public Item setH(float h) { this.h = h; return this; }
@@ -61,32 +92,13 @@ public class Item {
     setW(newW).setH(newH).setCenterX(centerX).setCenterY(centerY);
   }
 
-  public void onEvents(ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(e); });
-  }
-
-  // Deals with events.
-  public void onEvent(Event e) {
-    if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
-    else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
-    else {}
-  }
-  public void onMouseEvent(MouseEvent e) {}
-  public void onKeyboardEvent(KeyboardEvent e) {}
-
-  // Whether the mouse cursor is over the item when the event happened.
-  public boolean isMouseEventRelated(MouseEvent e) {
-    return getLeftX() < e.getX() && e.getX() < getRightX()
-      && getTopY() < e.getY() && e.getY() < getBottomY();
-  }
-
   // Update status for each game frame.
   // Generally the update here won't affect game logic,
   // but only affects visual effects, human-game interactions, etc.
   // This method can interact with other items.
   public void update() {}
 
-  public void delete() { page.deleteItem(getName()); }
+  public abstract void delete();
 
   public PImage getImage() { return null; }
 
@@ -109,15 +121,54 @@ public class ItemLayerComparator implements Comparator<Item> {
 
 // Local items don't need synchronize between two players.
 // For example: buttons, labels, etc.
-public class LocalItem extends Item {
+public abstract class LocalItem extends Item {
   public LocalItem(String name, float w, float h) { super(name, w, h); }
+
+  @Override
+  public final JSONObject getStateJson() { return null; }
+  @Override
+  public final void setStateJson(JSONObject json) {}
+
+  public void onEvents(ArrayList<Event> events) {
+    events.forEach((e) -> { onEvent(e); });
+  }
+
+  // Deals with events.
+  public void onEvent(Event e) {
+    if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
+    else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
+    else {}
+  }
+  public void onMouseEvent(MouseEvent e) {}
+  public void onKeyboardEvent(KeyboardEvent e) {}
+
+  // Whether the mouse cursor is over the item when the event happened.
+  public boolean isMouseEventRelated(MouseEvent e) {
+    return getLeftX() < e.getX() && e.getX() < getRightX()
+      && getTopY() < e.getY() && e.getY() < getBottomY();
+  }
+
+  @Override
+  public void delete() { page.deleteLocalItem(getName()); }
 }
 
 
 // Synchronized items need synchronize between two players.
 // For example: figures, bricks, bullets, etc.
-public class SynchronizedItem extends Item {
+public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
+
+  public void onKeyboardEvents(ArrayList<KeyboardEvent> events) {
+    events.forEach((e) -> { onKeyboardEvent(e); });
+  }
+
+  public void onKeyboardEvent(KeyboardEvent e) {}
+
+  // Whether the mouse cursor is over the item when the event happened.
+  public boolean isMouseEventRelated(MouseEvent e) {
+    return getLeftX() < e.getX() && e.getX() < getRightX()
+      && getTopY() < e.getY() && e.getY() < getBottomY();
+  }
 
   // Additional method for sync items to update status.
   // Mainly update status which affects game logic, e.g., movement of figures.
@@ -126,8 +177,8 @@ public class SynchronizedItem extends Item {
   // Called when two sync items collide with each other.
   public void onCollisionWith(SynchronizedItem item) {}
 
-  // Serialize item status for transmission through network.
-  public String serialize() { return ""; }
+  @Override
+  public void delete() { page.deleteSyncItem(getName()); }
 
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
@@ -148,7 +199,7 @@ public class SynchronizedItem extends Item {
 
 
 // Sync items that can move in the map, e.g., bullets, figures, etc.
-public class MovableItem extends SynchronizedItem {
+public abstract class MovableItem extends SynchronizedItem {
   private float speed;
   private int direction;
   private boolean moving; // Whether the item is moving between two frames.
@@ -160,7 +211,27 @@ public class MovableItem extends SynchronizedItem {
     super(name, w, h);
   }
 
-  public MovableItem setSpeed(float speed) { this.speed = max(speed, 0.0); return this; }
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setFloat("speed", getSpeed());
+    json.setInt("direction", getDirection());
+    json.setBoolean("moving", isMoving());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setSpeed(json.getFloat("speed"));
+    setDirection(json.getInt("direction"));
+    if (json.getBoolean("moving")) { startMoving(); }
+    else { stopMoving(); }
+  }
+
+  public MovableItem setSpeed(float speed) {
+    this.speed = max(speed, 0.0);
+    return this;
+  }
   public MovableItem setDirection(int direction) {
     this.direction = direction;
     return this;
@@ -174,9 +245,7 @@ public class MovableItem extends SynchronizedItem {
   
   @Override
   public void evolve() {
-    if (isMoving()) {
-      move();
-    }
+    if (isMoving()) { move(); }
   }
 
   private MovableItem moveX(float dx) { setX(getX() + dx); return this; }
@@ -189,7 +258,7 @@ public class MovableItem extends SynchronizedItem {
 
   public void move() {
     saveRefPoint();
-    float distance = speed * gameInfo.getLastFrameIntervalS();
+    float distance = speed * gameInfo.getLastEvolveIntervalS();
     doMovement(distance);
   }
 

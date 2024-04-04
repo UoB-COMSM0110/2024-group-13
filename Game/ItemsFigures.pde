@@ -16,6 +16,22 @@ public abstract class Figure extends MovableItem {
   private int maxHp;
   private int hp;
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("lives", getLives());
+    json.setInt("maxHp", getMaxHp());
+    json.setInt("hp", getHp());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setLives(json.getInt("lives"));
+    setMaxHp(json.getInt("maxHp"));
+    setHp(json.getInt("hp"));
+  }
+  
   public Figure(String name, float w, float h) {
     super(name, w, h);
     setLives(1);
@@ -120,6 +136,13 @@ public class Ghost extends Figure {
   }
 
   @Override
+  public Item discard() {
+    stopMoving();
+    if (this.changeDirectionTimer != null) { this.changeDirectionTimer.destroy(); }
+    return super.discard();
+  }
+
+  @Override
   public PImage getImage() {
     return imageGhost;
   }
@@ -140,6 +163,20 @@ public class Pacman extends Figure {
     refreshHp(3);
   }
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("playerId", getPlayerId());
+    json.setInt("score", getScore());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.playerId = json.getInt("playerId");
+    this.score = json.getInt("score");
+  }
+  
   public int getPlayerId() { return this.playerId; }
 
   public PImage getImage() {
@@ -148,7 +185,7 @@ public class Pacman extends Figure {
 
   public int getScore(){ return this.score; }
   
-  public boolean getIsControlledByOpponent() {return this.isControlledByOpponent;}
+  public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
 
   public void setIsControlledByOpponent(boolean controlled) {
     this.isControlledByOpponent = controlled;
@@ -167,6 +204,7 @@ public class Pacman extends Figure {
       case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
       case LEFTWARD: { bullet.setRightX(getLeftX() - epsilon).setCenterY(getCenterY()); break; }
     }
+    bullet.setSpeed(getSpeed());
     page.addSyncItem(bullet);
   }
 
@@ -186,20 +224,27 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (isControlledByOpponent) {
-      return getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
+    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
+      return getPlayerId() != 1;
     }
-    return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+    return getPlayerId() == 1;
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (isControlledByOpponent) {
-      return getPlayerId() == 1 || gameInfo.getHostId() != singleHostId;
+    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
+      return getPlayerId() != 2;
     }
-    return  getPlayerId() != 1 || gameInfo.getHostId() != singleHostId;
+    return  getPlayerId() == 2;
+  }
+
+  public boolean acceptKeyboardEvent(KeyboardEvent e) {
+    if (gameInfo.isSingleHost()) { return true; }
+    if (getIsControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
+    return e.getHostId() == getPlayerId();
   }
 
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
+    if (!acceptKeyboardEvent(e)) { return; }
     if (e instanceof KeyPressedEvent) {
       onKeyPressedEvent((KeyPressedEvent)e);
     } else if (e instanceof KeyReleasedEvent) {

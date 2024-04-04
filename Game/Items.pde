@@ -1,20 +1,20 @@
+// This file defines most map items in the game.
+// This items are Synchronized items.
+
 final String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
 final String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
 final String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
-final String imagePathPowerUp = "data/PowerUp.png";
-PImage imagePowerUp;
 final String imagePathBullet = "data/Bullet.JPG";
 PImage imageBullet;
 
 
-void loadResoucesForGameItems() {
+void loadResoucesForItems() {
   imageBreakableWall = loadImage(imagePathBreakableWall);
   imageIndestructableWall = loadImage(imagePathIndestructableWall);
   imageCoin = loadImage(imagePathCoin);
-  imagePowerUp = loadImage(imagePathPowerUp);
   imageBullet = loadImage(imagePathBullet);
 }
 
@@ -53,10 +53,22 @@ public class BreakableWall extends Wall {
     super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
     strength = 3;
   }
-  
-  public int getStrength() {
-    return this.strength;
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("strength", getStrength());
+    return json;
   }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    setStrength(json.getInt("strength"));
+  }
+  
+  public int getStrength() { return this.strength; }
+
+  public BreakableWall setStrength(int strength) { this.strength = strength; return this; }
   
   public BreakableWall decStrength() {
     this.strength -= 1;
@@ -118,52 +130,23 @@ public class Coin extends SynchronizedItem {
 }
 
 
-final String itemTypePowerUp = "PowerUp";
-int itemCountPowerUp;
-
-public class PowerUp extends SynchronizedItem {
-  
-  private boolean inUse = false;
-  
-  public PowerUp(float w, float h) {
-    super(itemTypePowerUp + itemCountPowerUp++, w, h);
-  }
-  
-  public boolean getInUse() {
-    return this.inUse;
-  }
-  
-  public PowerUp setInUse(boolean status) {
-    this.inUse = status;
-    return this;
-  }
-  
-
-  @Override
-  public void onCollisionWith(SynchronizedItem item) {
-    if(item instanceof Pacman){
-      discard();
-    }
-  }  
-
-  @Override
-  public PImage getImage() {
-    return imagePowerUp;
-  }
-}
-
-
 final String itemTypeBullet = "Bullet";
 int itemCountBullet;
+final float defaultBulletSpeed = 200.0;
 
 public class Bullet extends MovableItem {
-  
   public Bullet(float w, float h) {
     super(itemTypeBullet + itemCountBullet++, w, h);
-    setSpeed(200.0);
     startMoving();
   }
 
+  @Override
+  public void move() {
+    super.move();
+    setSpeed(defaultBulletSpeed);
+  }
+
+  @Override
   public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Wall){
       delete();
