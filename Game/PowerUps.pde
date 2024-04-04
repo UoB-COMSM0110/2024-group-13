@@ -53,3 +53,31 @@ public class OpponentControlPowerUp extends PowerUp {
     }
 
 }
+
+public class TeleportPowerUp extends PowerUp {
+
+    public TeleportPowerUp(float w, float h) {
+      super(w, h);
+    }
+
+    @Override
+    public void onCollisionWith(SynchronizedItem item) {
+        if (item instanceof Pacman) {
+            Pacman pacman = (Pacman) item;
+            teleportPacman(pacman);
+            discard();
+        }
+    }
+
+    private void teleportPacman(Pacman pacman) {
+        float newX = random(0, width); 
+        float newY = random(0, height);
+        pacman.setX(newX);
+        pacman.setY(newY);
+    }
+
+    @Override
+    public PImage getImage() {
+      return super.getImage();
+    }
+}
