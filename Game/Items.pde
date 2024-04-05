@@ -7,7 +7,7 @@ final String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
 final String imagePathCoin = "data/Coin.png";
 PImage imageCoin;
-final String imagePathBullet = "data/Bullet.JPG";
+final String imagePathBullet = "data/Bullet.png";
 PImage imageBullet;
 
 
