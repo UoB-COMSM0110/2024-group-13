@@ -6,7 +6,10 @@ final String mapPath = "data/map.csv";
 final float CHARACTER_SIZE = 10.0;
 
 public class PlayPage extends Page {
-  
+
+  private Pacman pacman1;
+  private Pacman pacman2;
+
   private ArrayList<PowerUp> powerups = new ArrayList<>();
   
   public PlayPage(Page previousPage) {
