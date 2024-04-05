@@ -1,11 +1,16 @@
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -86,6 +91,8 @@ public class GameInfo {
   private Cache recvCacheClient;
 
   public GameInfo() {
+    System.out.println(getAllIpAddr());
+
     this.hostId = singleHostId;
     this.connectedToClient = false;
     this.connectedToServer = false;
@@ -340,3 +347,25 @@ public class GameInfo {
     return res;
   }
 }
+
+public static List<String> getAllIpAddr() {
+  ArrayList<String> res = new ArrayList<String>();
+  try {
+    Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+    if (interfaces == null) { return res; }
+    while (interfaces.hasMoreElements()) {
+      NetworkInterface iface = interfaces.nextElement();
+      if (iface.isLoopback() || !iface.isUp()) { continue; } // No loopback addresses.
+      Enumeration<InetAddress> enumIpAddr = iface.getInetAddresses();
+      while (enumIpAddr.hasMoreElements()) {
+        InetAddress addr = enumIpAddr.nextElement();
+        if (addr instanceof Inet6Address) { continue; } // No ipv6 addresses.
+        res.add(addr.getHostAddress());
+      }
+    }
+  } catch (Exception e) {
+    System.err.println("error retrieving network interface list");
+  }
+  return res;
+}
+
