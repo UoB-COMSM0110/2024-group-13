@@ -110,8 +110,6 @@ public abstract class Page {
     if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
     json.setString("nextPage", nextPageName);
     // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
-    // json.setString("player1", gameInfo.getPlayerName1());
-    // json.setString("player2", gameInfo.getPlayerName2());
     json.setBoolean("closing", false);
     return json;
   }
@@ -141,6 +139,7 @@ public abstract class Page {
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
       JSONArray eventsJson = msgJsonFromClient.getJSONArray("events");
+      if (eventsJson == null) { continue; }
       ArrayList<KeyboardEvent> clientEvents = keyboardEventsFromJson(eventsJson);
       clientEvents.forEach((e) -> { e.setHostId(clientHostId); }); // TODO
       events.addAll(clientEvents);
@@ -173,6 +172,7 @@ public abstract class Page {
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
       JSONArray changesJson = msgJsonFromServer.getJSONArray("changes");
+      if (changesJson == null) { continue; }
       applyChangesFromJson(changesJson);
     }
 

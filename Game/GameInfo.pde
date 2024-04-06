@@ -81,6 +81,7 @@ public class GameInfo {
   private boolean networkSessionClosing;
 
   private Selector selectorServer;
+  private ServerSocketChannel listenerServer;
   private SocketChannel socketServer;
   private Cache sendCacheServer;
   private Cache recvCacheServer;
@@ -178,10 +179,11 @@ public class GameInfo {
 
   public void startSyncAsServer() throws IOException {
     this.selectorServer = Selector.open();
-    ServerSocketChannel serverSocket = ServerSocketChannel.open();
-    serverSocket.configureBlocking(false);
-    serverSocket.bind(new InetSocketAddress("localhost", port));
-    serverSocket.register(this.selectorServer, SelectionKey.OP_ACCEPT);
+    this.listenerServer = ServerSocketChannel.open();
+    this.listenerServer.socket().setReuseAddress(true);
+    this.listenerServer.configureBlocking(false);
+    this.listenerServer.bind(new InetSocketAddress("localhost", port));
+    this.listenerServer.register(this.selectorServer, SelectionKey.OP_ACCEPT);
     this.hostId = serverHostId;
   }
 
@@ -196,12 +198,9 @@ public class GameInfo {
         iter.remove();
         if (!key.isValid()) { continue; }
         if (!key.isAcceptable()) { continue; }
-        ServerSocketChannel serverSocket = (ServerSocketChannel)key.channel();
-        this.socketServer = serverSocket.accept();
+        this.socketServer = this.listenerServer.accept();
+        this.socketServer.socket().setReuseAddress(true);
         this.socketServer.configureBlocking(false);
-        serverSocket.close();
-        this.selectorServer.close();
-        this.selectorServer = Selector.open();
         this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
         this.connectedToClient = true;
         return true;
@@ -224,6 +223,11 @@ public class GameInfo {
   }
 
   public void stopSyncAsServer() {
+    if (this.listenerServer != null) {
+      try { this.listenerServer.close(); }
+      catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }
+      this.listenerServer = null;
+    }
     if (this.socketServer != null) {
       try { this.socketServer.close(); }
       catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }

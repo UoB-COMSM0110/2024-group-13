@@ -1,4 +1,5 @@
 final int textColorDefault = color(100, 20, 20);
+final int textColorDisabled = color(100, 100, 100);
 final int textSizeDefault = 20;
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
@@ -44,6 +45,7 @@ public class Label extends LocalItem {
   public Label setUpdater(Action updater) { this.updater = updater; return this; }
 
   public String getText() { return this.text; }
+  public int getTextDrawColor() { return this.textColor; }
 
   @Override
   public void update() {
@@ -70,7 +72,7 @@ public class Label extends LocalItem {
       case BOTTOM: { alignPointY = getBottomY(); break; }
     }
     noStroke();
-    fill(this.textColor);
+    fill(getTextDrawColor());
     textFont(this.textFont, this.textSize);
     textAlign(this.textAlignHorizon, this.textAlignVertical);
     text(this.prefix + this.text, alignPointX, alignPointY);
@@ -90,6 +92,12 @@ public abstract class InteractiveWidget extends Label {
   public InteractiveWidget enable() { this.disabled = false; return this; }
 
   public boolean isDisabled() { return this.disabled; }
+
+  @Override
+  public int getTextDrawColor() {
+    if (isDisabled()) { return textColorDisabled; }
+    else { return super.getTextDrawColor(); }
+  }
 
   @Override
   public void onEvent(Event e) {
