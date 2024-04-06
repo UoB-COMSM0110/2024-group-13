@@ -4,13 +4,21 @@ void loadResourcesForPlayPage() {
 
 final String mapPath = "data/map.csv";
 final float CHARACTER_SIZE = 10.0;
+final int PlayPageBackgroundColor = color(155, 82, 52);
 
 public class PlayPage extends Page {
-  
   private ArrayList<PowerUp> powerups = new ArrayList<>();
   
   public PlayPage(Page previousPage) {
     super("play", previousPage);
+
+    RectArea localArea = new RectArea("LocalArea", gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
+    localArea.setDrawBox(true)
+      .setBoxStrokeWeight(5.0)
+      .setBoxStrokeColor(color(100, 100, 200))
+      .setBoxFillColor(PlayPageBackgroundColor)
+      .setLayer(-9);
+    addLocalItem(localArea);
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
       trySwitchPage(getPreviousPage());
@@ -77,10 +85,7 @@ public class PlayPage extends Page {
   }
 
   @Override
-  public void draw() {
-    background(155, 82, 52);
-    super.draw();
-  }
+  public void drawBackground() { background(PlayPageBackgroundColor); }
 
   void loadMap(String mapPath) {
     String[] lines = loadStrings(mapPath);

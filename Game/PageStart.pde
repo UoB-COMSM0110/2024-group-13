@@ -47,12 +47,10 @@ public class StartPage extends Page {
           adjustWidgets();
         } else {
           gameInfo.stopSyncAsServer();
-          adjustWidgets();
-          // exitSync();
+          onConnectionClose();
         }
       } catch (Exception e) {
-        System.err.println("when creating game: " + e.toString());
-        gameInfo.stopSyncAsServer();
+        onNetworkFailure("creating game", e);
       }
     });
     createGameButton.setX(550).setY(350);
@@ -64,36 +62,45 @@ public class StartPage extends Page {
           adjustWidgets();
         } else {
           gameInfo.stopSyncAsClient();
-          adjustWidgets();
-          // exitSync();
+          onConnectionClose();
         }
       } catch (Exception e) {
-        System.err.println("when joining game: " + e.toString());
-        gameInfo.stopSyncAsClient();
+        onNetworkFailure("joining game", e);
       }
     });
     joinGameButton.setX(550).setY(400);
     addLocalItem(joinGameButton);
+
+    adjustWidgets();
+  }
+
+  @Override
+  public void onConnectionClose() {
+    adjustWidgets();
   }
 
   public void adjustWidgets() {
     Button createGameButton = (Button)getLocalItem("CreateGame");
     Button joinGameButton = (Button)getLocalItem("JoinGame");
+    Button playButton = (Button)getLocalItem("ButtonPlay");
     InputBox playerName1 = (InputBox)getLocalItem("InputBoxPlayerName1");
     InputBox playerName2 = (InputBox)getLocalItem("InputBoxPlayerName2");
     if (gameInfo.isServerHost()) {
       createGameButton.enable().setText("Leave Game");
       joinGameButton.disable().setText("Join Game");
+      playButton.enable().setText("Start Online");
       playerName1.enable();
       playerName2.disable();
     } else if (gameInfo.isClientHost()) {
       createGameButton.disable().setText("Create Game");
       joinGameButton.enable().setText("Leave Game");
+      playButton.disable().setText("Start Online");
       playerName1.disable();
       playerName2.enable();
     } else {
       createGameButton.enable().setText("Create Game");
       joinGameButton.enable().setText("Join Game");
+      playButton.enable().setText("Start");
       playerName1.enable();
       playerName2.enable();
     }
@@ -121,9 +128,8 @@ public class StartPage extends Page {
   }
 
   @Override
-  public void draw() {
+  public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.imageGameBanner, 145, 150, 509, 165);
-    super.draw();
   }
 }

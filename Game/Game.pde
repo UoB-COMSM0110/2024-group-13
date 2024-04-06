@@ -35,7 +35,6 @@ void draw() {
   page.update();
 
   // Draw page.
-  background(0);
   page.draw();
 }
 

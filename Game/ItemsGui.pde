@@ -14,8 +14,50 @@ void loadResourcesForGui() {
   fontErikaType = createFont(fontPathErikaType, textSizeDefault, true);
 }
 
+
+public class RectArea extends LocalItem {
+  private boolean drawBox;
+  private float boxStrokeWeight;
+  private int boxStrokeColor;
+  private int boxFillColor;
+  private float boxRadius;
+  private PImage image;
+
+  public RectArea(String name, float w, float h) {
+    super(name, w, h);
+    this.boxFillColor = 255;
+  }
+
+  public RectArea setDrawBox(boolean drawBox) { this.drawBox = drawBox; return this; }
+  public RectArea setBoxStrokeWeight(float boxStrokeWeight) { this.boxStrokeWeight = boxStrokeWeight; return this; }
+  public RectArea setBoxStrokeColor(int boxStrokeColor) { this.boxStrokeColor = boxStrokeColor; return this; }
+  public RectArea setBoxFillColor(int boxFillColor) { this.boxFillColor = boxFillColor; return this; }
+  public RectArea setBoxRadius(float boxRadius) { this.boxRadius = boxRadius; return this; }
+  public RectArea setImage(PImage image) { this.image = image; return this; }
+
+  @Override
+  public PImage getImage() { return this.image; }
+
+  @Override
+  public void draw() {
+    if (this.drawBox) { drawBox(); }
+    super.draw();
+  }
+
+  public void drawBox() {
+    strokeWeight(this.boxStrokeWeight);
+    stroke(this.boxStrokeColor);
+    fill(this.boxFillColor);
+    float x = getX() + this.boxStrokeWeight / 2.0;
+    float y = getY() + this.boxStrokeWeight / 2.0;
+    float w = getW() - this.boxStrokeWeight;
+    float h = getH() - this.boxStrokeWeight;
+    rect(x, y, w, h, this.boxRadius);
+  }
+}
   
-public class Label extends LocalItem {
+
+public class Label extends RectArea {
   private String prefix;
   private String text;
   private int textColor;
@@ -58,7 +100,7 @@ public class Label extends LocalItem {
     drawTextContent();
   }
 
-  private void drawTextContent() {
+  public void drawTextContent() {
     float alignPointX = getX();
     float alignPointY = getY();
     switch (this.textAlignHorizon) {
@@ -119,6 +161,7 @@ public class Button extends InteractiveWidget {
 
   public Button(String name, float w, float h, String text, Action action) {
     super(name, w, h, text);
+    setImage(imageButton);
     setTextFont(fontMinecraft).setTextAlignHorizon(CENTER);
     this.action = action;
     this.hovering = false;
@@ -168,11 +211,6 @@ public class Button extends InteractiveWidget {
       zoom(1.0 / this.zoomRatio);
     }
   }
-
-  @Override
-  public PImage getImage() {
-    return imageButton;
-  }
 }
 
 
@@ -198,6 +236,8 @@ public class InputBox extends InteractiveWidget {
     this.maxLen = maxLen;
     this.callback = callback;
     this.onFocus = false;
+    setDrawBox(true);
+    setBoxRadius(3.0);
   }
 
   public InputBox setDefaultText(String defaultText) {
@@ -281,12 +321,9 @@ public class InputBox extends InteractiveWidget {
   }
 
   @Override
-  public void draw() {
-    strokeWeight(0.0);
-    fill(255);
-    rect(getX(), getY(), getW(), getH(), 3);
+  public void drawTextContent() {
     if (isOnFocus()) { shade(); }
-    super.draw();
+    super.drawTextContent();
   }
 
   public void shade() {

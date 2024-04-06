@@ -26,17 +26,19 @@ public abstract class Page {
 
   public String getName() { return this.name; }
 
-  public void onSwitchOut() {}
-  public void onSwitchIn() {}
-
-  public void addLocalItem(LocalItem item) { localItems.put(item.getName(), item); }
-
-  public void addSyncItem(SynchronizedItem item) {
-    syncItems.put(item.getName(), item);
-  }
+  public void addLocalItem(LocalItem item) { this.localItems.put(item.getName(), item); }
+  public void addSyncItem(SynchronizedItem item) { this.syncItems.put(item.getName(), item); }
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
   public SynchronizedItem getSyncItem(String name) { return this.syncItems.get(name); }
+
+  public ArrayList<LocalItem> getLocalItems() {
+    return new ArrayList<LocalItem>(this.localItems.values());
+  }
+  public ArrayList<SynchronizedItem> getSyncItems() {
+    return new ArrayList<SynchronizedItem>(this.syncItems.values());
+  }
+
   public ArrayList<SynchronizedItem> getSyncItemsByNameAndCount(String name, int itemCount) {
      ArrayList<SynchronizedItem> res = new ArrayList<>();
      for (int i = 0; i < itemCount; i++) {
@@ -45,14 +47,9 @@ public abstract class Page {
      return res;
   }
 
-  public ArrayList<SynchronizedItem> getSyncItems() {
-    return new ArrayList<SynchronizedItem>(this.syncItems.values());
+  public boolean deleteLocalItem(String name) {
+    return this.localItems.remove(name) != null;
   }
-
-  public ArrayList<LocalItem> getLocalItems() {
-    return new ArrayList<LocalItem>(this.localItems.values());
-  }
-
   public boolean deleteSyncItem(String name) {
     if (this.syncItems.remove(name) == null) { return false; }
     if (!gameInfo.isSingleHost()) { // TODO
@@ -61,10 +58,6 @@ public abstract class Page {
       this.syncChangesRecord.append(deleted);
     }
     return true;
-  }
-
-  public boolean deleteLocalItem(String name) {
-    return this.localItems.remove(name) != null;
   }
 
   public void addTimer(Timer timer) { this.timers.add(timer); }
@@ -102,19 +95,6 @@ public abstract class Page {
       }
     }
   }
-
-  public JSONObject getSyncInfo() {
-    JSONObject json = new JSONObject();
-    json.setString("page", getName());
-    String nextPageName = "";
-    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
-    json.setString("nextPage", nextPageName);
-    // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
-    json.setBoolean("closing", false);
-    return json;
-  }
-
-  public void dispatchSyncInfo(JSONObject json) {}
 
   public void evolveSyncItems(ArrayList<KeyboardEvent> events) {
     if (gameInfo.isSingleHost()) {
@@ -177,14 +157,9 @@ public abstract class Page {
     }
 
     } catch (Exception e) {
-      System.err.println("when communication: " + e.toString());
-      gameInfo.stopSyncAsServer();
-      gameInfo.stopSyncAsClient();
-      onConnectionClose();
+      onNetworkFailure("communication", e);
     }
   }
-
-  public void onConnectionClose() {}
 
   public void doEvolve(ArrayList<KeyboardEvent> events) {
     ArrayList<SynchronizedItem> items = getSyncItems();
@@ -198,22 +173,37 @@ public abstract class Page {
     gameInfo.updateEvolveTime();
   }
 
+  public JSONObject getSyncInfo() {
+    JSONObject json = new JSONObject();
+    json.setString("page", getName());
+    String nextPageName = "";
+    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
+    json.setString("nextPage", nextPageName);
+    // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
+    json.setBoolean("closing", false);
+    return json;
+  }
+
+  public void dispatchSyncInfo(JSONObject json) {}
+
   public void applyChangesFromJson(JSONArray changesJson) {
     for (int i = 0; i < changesJson.size(); ++i) {
       JSONObject json = changesJson.getJSONObject(i);
       String name = json.getString("name");
-      String type = json.getString("class", "");
-      if (type.length() <= 0) {
+      String type = json.getString("class");
+      if (type == null || type.length() <= 0) {
         deleteSyncItem(name);
         continue;
       }
       SynchronizedItem item = getSyncItem(name);
       if (item != null) {
+        // TODO
         // item.setStateJson(json);
         continue;
       }
       item = createSyncItemFromJson(json);
       if (item != null) {
+        // TODO
         // addSyncItem(item);
       }
     }
@@ -221,22 +211,18 @@ public abstract class Page {
 
   public void clearSyncChangeRecord() { this.syncChangesRecord = new JSONArray(); }
 
+  public void onNetworkFailure(String where, Exception e) {
+      System.err.println(where + " : " + e.toString());
+      gameInfo.stopSyncAsServer();
+      gameInfo.stopSyncAsClient();
+      onConnectionClose();
+  }
+
+  public void onConnectionClose() {}
+
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
     getLocalItems().forEach((item) -> { item.update(); });
-  }
-
-  // Draw all the items, including sync ones and local ones.
-  public void draw() {
-    drawItems(getSyncItems());
-    drawItems(getLocalItems());
-  }
-
-  private void drawItems(List<? extends Item> items) {
-    Collections.sort(items, new ItemLayerComparator());
-    for (Item item : items) {
-      if (!item.isDiscarded()) { item.draw(); }
-    }
   }
 
   public Page getPreviousPage() { return this.previousPage; }
@@ -254,6 +240,26 @@ public abstract class Page {
     Page next = this.nextPage;
     this.nextPage = null;
     return next;
+  }
+
+  public void onSwitchOut() {}
+  public void onSwitchIn() {}
+
+  // Draw all the items, including sync ones and local ones.
+  public void draw() {
+    drawBackground();
+    drawSyncItems();
+    drawLocalItems();
+  }
+  public void drawBackground() { background(255); }
+  public void drawSyncItems() { drawItems(getSyncItems()); }
+  public void drawLocalItems() { drawItems(getLocalItems()); }
+
+  private void drawItems(List<? extends Item> items) {
+    Collections.sort(items, new ItemLayerComparator());
+    for (Item item : items) {
+      if (!item.isDiscarded()) { item.draw(); }
+    }
   }
 }
 

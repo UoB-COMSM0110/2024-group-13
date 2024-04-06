@@ -19,13 +19,17 @@ public class HelpPage extends Page {
   }
 
   @Override
-  public void draw() {
+  public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
+  }
+
+  @Override
+  public void draw() {
+    super.draw();
     fill(255);
     textSize(25);
     text("Pac-miner: A Subterranean Adventure", 300, 110);
-    super.draw();
   }
 }
