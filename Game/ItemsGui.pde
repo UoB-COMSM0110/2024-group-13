@@ -22,6 +22,7 @@ public class Label extends LocalItem {
   private PFont textFont;
   private int textAlignHorizon;
   private int textAlignVertical;
+  private Action updater;
 
   public Label(String name, float w, float h, String text) {
     super(name, w, h);
@@ -40,8 +41,14 @@ public class Label extends LocalItem {
   public Label setTextSize(int textSize) { this.textSize = textSize; return this; }
   public Label setTextFont(PFont textFont) { this.textFont = textFont; return this; }
   public Label setTextAlignHorizon(int align) { this.textAlignHorizon = align; return this; }
+  public Label setUpdater(Action updater) { this.updater = updater; return this; }
 
   public String getText() { return this.text; }
+
+  @Override
+  public void update() {
+    if (this.updater != null) { this.updater.run(); }
+  }
 
   @Override
   public void draw() {
@@ -71,7 +78,22 @@ public class Label extends LocalItem {
 }
 
 
-public class Button extends Label {
+public abstract class InteractiveWidget extends Label {
+  boolean disabled;
+
+  public InteractiveWidget(String name, float w, float h, String text) {
+    super(name, w, h, text);
+    this.disabled = false;
+  }
+
+  public InteractiveWidget disable() { this.disabled = true; return this; }
+  public InteractiveWidget enable() { this.disabled = false; return this; }
+
+  public boolean isDisabled() { return this.disabled; }
+}
+
+
+public class Button extends InteractiveWidget {
   private Action action;
 
   private boolean hovering;
@@ -134,36 +156,35 @@ public class Button extends Label {
 
 
 @FunctionalInterface
-public static interface InputBoxCallback {
+public static interface TextChangeCallback {
   void onTextChange(InputBox inputBox);
 }
 
-public class InputBox extends Label {
+public class InputBox extends InteractiveWidget {
   private String defaultText;
   private int maxLen;
-  private InputBoxCallback callback;
+  private TextChangeCallback callback;
 
   private boolean onFocus;
-  private String prevText;
 
   public InputBox(String name, float w, float h, int maxLen) {
     this(name, w, h, maxLen, null);
   }
 
-  public InputBox(String name, float w, float h, int maxLen, InputBoxCallback callback) {
+  public InputBox(String name, float w, float h, int maxLen, TextChangeCallback callback) {
     super(name, w, h, "");
     this.defaultText = "";
     this.maxLen = maxLen;
     this.callback = callback;
     this.onFocus = false;
-    this.prevText = "";
   }
 
-  @Override
-  public InputBox setText(String text) {
-    this.prevText = getText();
-    super.setText(text);
-    if (!text.equals(this.prevText) && this.callback != null) { this.callback.onTextChange(this); }
+  public InputBox changeText(String text) {
+    String prevText = getText();
+    setText(text);
+    if (!text.equals(prevText) && this.callback != null) {
+      this.callback.onTextChange(this);
+    }
     return this;
   }
 
@@ -173,9 +194,9 @@ public class InputBox extends Label {
     return this;
   }
 
-  public InputBox setTextToDefault() { setText(getDefaultText()); return this; }
+  public InputBox setTextToDefault() { return changeText(getDefaultText()); }
 
-  public InputBox setCallback(InputBoxCallback callback) { this.callback = callback; return this; }
+  public InputBox setCallback(TextChangeCallback callback) { this.callback = callback; return this; }
   public InputBox catchFocus() { this.onFocus = true; return this; }
   public InputBox dropFocus() {
     this.onFocus = false;
@@ -188,7 +209,6 @@ public class InputBox extends Label {
   public boolean isEmpty() { return length() <= 0; }
   public String getDefaultText() { return this.defaultText; }
   public boolean isOnFocus() { return this.onFocus; }
-  public String getPrevText() { return this.prevText; }
 
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
@@ -211,13 +231,13 @@ public class InputBox extends Label {
   public void tryDeleteLast() {
     if (isEmpty()) { return; }
     String newStr = getText().substring(0, length() - 1);
-    setText(newStr);
+    changeText(newStr);
   }
 
   public void tryAppend(int key) {
     if (length() >= getMaxLen()) { return; }
     String newStr = getText() + (char)key;
-    setText(newStr);
+    changeText(newStr);
   }
 
   @Override

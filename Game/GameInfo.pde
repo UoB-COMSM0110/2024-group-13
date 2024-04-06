@@ -91,7 +91,7 @@ public class GameInfo {
   private Cache recvCacheClient;
 
   public GameInfo() {
-    System.out.println(getAllIpAddr());
+    System.out.println("ip: " + getIpAddr());
 
     this.hostId = singleHostId;
     this.connectedToClient = false;
@@ -348,6 +348,12 @@ public class GameInfo {
   }
 }
 
+public static String getIpAddr() {
+  List<String> allIps = getAllIpAddr();
+  if (allIps.size() <= 0) { return null; }
+  return allIps.get(0);
+}
+
 public static List<String> getAllIpAddr() {
   ArrayList<String> res = new ArrayList<String>();
   try {
@@ -366,6 +372,6 @@ public static List<String> getAllIpAddr() {
   } catch (Exception e) {
     System.err.println("error retrieving network interface list");
   }
+  System.out.println("all ip addresses: " + res);
   return res;
 }
-

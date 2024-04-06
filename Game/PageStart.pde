@@ -24,16 +24,20 @@ public class StartPage extends Page {
     helpButton.setX(300).setY(400);
     addLocalItem(helpButton);
 
-    InputBox playerName1 = new InputBox("InputBoxPlayerName1", 300, 50, 15, (box) -> {
-      gameInfo.setPlayerName1(box.getText());
-    });
-    playerName1.setDefaultText("Happy Bunny").setPrefix(" Player 1 : ").setCenterX(400).setY(500);
+    InputBox playerName1 = new InputBox("InputBoxPlayerName1", 300, 50, 15);
+    playerName1.setCallback((box) -> { gameInfo.setPlayerName1(box.getText()); })
+      .setDefaultText("Happy Bunny")
+      .setPrefix(" Player 1 : ")
+      .setUpdater(() -> { playerName1.setText(gameInfo.getPlayerName1()); })
+      .setCenterX(400).setY(500);
     addLocalItem(playerName1);
 
-    InputBox playerName2 = new InputBox("InputBoxPlayerName2", 300, 50, 15, (box) -> {
-      gameInfo.setPlayerName2(box.getText());
-    });
-    playerName2.setDefaultText("Merry Kitty").setPrefix(" Player 2 : ").setCenterX(400).setY(560);
+    InputBox playerName2 = new InputBox("InputBoxPlayerName2", 300, 50, 15);
+    playerName2.setCallback((box) -> { gameInfo.setPlayerName2(box.getText()); })
+      .setDefaultText("Merry Kitty")
+      .setPrefix(" Player 2 : ")
+      .setUpdater(() -> { playerName2.setText(gameInfo.getPlayerName2()); })
+      .setCenterX(400).setY(560);
     addLocalItem(playerName2);
 
     Button createGameButton = new Button("CreateGame", 200, 40, "Create Game", () -> {
