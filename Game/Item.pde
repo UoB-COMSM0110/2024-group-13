@@ -129,11 +129,6 @@ public abstract class LocalItem extends Item {
   @Override
   public final void setStateJson(JSONObject json) {}
 
-  public void onEvents(ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(e); });
-  }
-
-  // Deals with events.
   public void onEvent(Event e) {
     if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
     else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
@@ -157,10 +152,6 @@ public abstract class LocalItem extends Item {
 // For example: figures, bricks, bullets, etc.
 public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
-
-  public void onKeyboardEvents(ArrayList<KeyboardEvent> events) {
-    events.forEach((e) -> { onKeyboardEvent(e); });
-  }
 
   public void onKeyboardEvent(KeyboardEvent e) {}
 

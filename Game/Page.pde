@@ -96,7 +96,11 @@ public abstract class Page {
   }
 
   public void dispatchEventsToLocalItems(ArrayList<Event> events) {
-    getLocalItems().forEach((item) -> { item.onEvents(events); });
+    for (Event e : events) {
+      for (LocalItem item : getLocalItems()) {
+        item.onEvent(e);
+      }
+    }
   }
 
   public JSONObject getSyncInfo() {
@@ -183,8 +187,13 @@ public abstract class Page {
   public void onConnectionClose() {}
 
   public void doEvolve(ArrayList<KeyboardEvent> events) {
-    getSyncItems().forEach((item) -> { item.onKeyboardEvents(events); });
-    getSyncItems().forEach((item) -> { item.evolve(); });
+    ArrayList<SynchronizedItem> items = getSyncItems();
+    for (KeyboardEvent e : events) {
+      for (SynchronizedItem item : items) {
+        item.onKeyboardEvent(e);
+      }
+    }
+    items.forEach((item) -> { item.evolve(); });
     (new CollisionEngine()).solveCollisions();
     gameInfo.updateEvolveTime();
   }

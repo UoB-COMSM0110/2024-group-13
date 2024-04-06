@@ -90,6 +90,12 @@ public abstract class InteractiveWidget extends Label {
   public InteractiveWidget enable() { this.disabled = false; return this; }
 
   public boolean isDisabled() { return this.disabled; }
+
+  @Override
+  public void onEvent(Event e) {
+    if (isDisabled()) { return; }
+    else { super.onEvent(e); }
+  }
 }
 
 
@@ -112,6 +118,13 @@ public class Button extends InteractiveWidget {
   }
 
   Button setAction(Action action) { this.action = action; return this; }
+
+  @Override
+  public Button disable() {
+    super.disable();
+    onHoverOff();
+    return this;
+  }
 
   @Override
   public void onMouseEvent(MouseEvent e) {
@@ -179,6 +192,17 @@ public class InputBox extends InteractiveWidget {
     this.onFocus = false;
   }
 
+  public InputBox setDefaultText(String defaultText) {
+    this.defaultText = defaultText;
+    if (isEmpty()) { setTextToDefault(); }
+    return this;
+  }
+
+  public InputBox setCallback(TextChangeCallback callback) {
+    this.callback = callback;
+    return this;
+  }
+
   public InputBox changeText(String text) {
     String prevText = getText();
     setText(text);
@@ -188,20 +212,12 @@ public class InputBox extends InteractiveWidget {
     return this;
   }
 
-  public InputBox setDefaultText(String defaultText) {
-    this.defaultText = defaultText;
-    if (isEmpty()) { setTextToDefault(); }
-    return this;
-  }
-
   public InputBox setTextToDefault() { return changeText(getDefaultText()); }
 
-  public InputBox setCallback(TextChangeCallback callback) { this.callback = callback; return this; }
-  public InputBox catchFocus() { this.onFocus = true; return this; }
-  public InputBox dropFocus() {
+  public void catchFocus() { this.onFocus = true; }
+  public void dropFocus() {
     this.onFocus = false;
     if (isEmpty()) { setTextToDefault(); }
-    return this;
   }
 
   public int length() { return getText().length(); }
@@ -209,6 +225,13 @@ public class InputBox extends InteractiveWidget {
   public boolean isEmpty() { return length() <= 0; }
   public String getDefaultText() { return this.defaultText; }
   public boolean isOnFocus() { return this.onFocus; }
+
+  @Override
+  public InputBox disable() {
+    super.disable();
+    dropFocus();
+    return this;
+  }
 
   @Override
   public void onKeyboardEvent(KeyboardEvent e) {
