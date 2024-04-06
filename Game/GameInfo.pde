@@ -28,6 +28,10 @@ final int port = 2024;
 final int bufferSize = 2 * MB;
 final String messageDelim = "[MSGEOF]";
 
+static boolean ghostMagnetActive = false;
+static float magnetX = 0;
+static float magnetY = 0;
+
 
 // A handy struct containing data cache for socket.
 private class Cache {
@@ -74,6 +78,10 @@ public class GameInfo {
   private int playerScore1;
   private int playerScore2;
   private boolean networkSessionClosing;
+  
+  private boolean ghostMagnetActive = false;
+  private float magnetX = 0.0;
+  private float magnetY = 0.0;
 
   private Selector selectorServer;
   private SocketChannel socketServer;
@@ -168,6 +176,20 @@ public class GameInfo {
   public String getPlayerName2() { return this.playerName2; }
   public int getPlayerScore1() { return this.playerScore1; }
   public int getPlayerScore2() { return this.playerScore2; }
+  
+  public boolean getGhostMagnetActive() {return this.ghostMagnetActive;}
+  public float getMagnetX() {return this.magnetX;}
+  public float getMagnetY() {return this.magnetY;}
+
+  public void activateGhostMagnet(float x, float y) {
+    ghostMagnetActive = true;
+    magnetX = x;
+    magnetY = y;
+  }
+
+  public void deactivateGhostMagnet() {
+    ghostMagnetActive = false;
+  }
 
   public void startSyncAsServer() throws IOException {
     this.selectorServer = Selector.open();

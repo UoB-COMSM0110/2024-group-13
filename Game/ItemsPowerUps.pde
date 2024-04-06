@@ -223,7 +223,6 @@ public class SizeModificationPowerUp_Ghost extends PowerUp {
       if (item instanceof Pacman) {
         ArrayList<SynchronizedItem> ghosts = page.getSyncItemsByNameAndCount(itemTypeGhost, itemCountGhost);
         if (ghosts != null) {
-          print(ghosts);
           enlargeGhost(ghosts);
           Timer changeEndTimer = new OneOffTimer(duration, () -> resetGhostSize(ghosts));
           page.addTimer(changeEndTimer);
@@ -329,4 +328,61 @@ public class Trap extends TrapPowerUp {
     private void resetSpeed(MovableItem item) {
       item.setSpeed(item.getSpeed() * 2);
     }    
+}
+
+public class GhostMagnetPowerUp extends PowerUp {
+    
+    private int duration = 5;
+    
+    public GhostMagnetPowerUp(float w, float h) {
+        super(w, h);
+    }
+    
+    @Override
+    public void onCollisionWith(SynchronizedItem item) {
+      if (item instanceof Pacman) {
+        gameInfo.activateGhostMagnet(this.getX(), this.getY());
+        Timer changeEndTimer = new OneOffTimer(duration, () -> gameInfo.deactivateGhostMagnet());
+        page.addTimer(changeEndTimer);        
+        discard();
+      }
+    }
+    
+    @Override
+    public PImage getImage() {
+      return super.getImage();
+    }      
+}
+
+public class SpeedSurgePowerUp extends PowerUp {
+    
+    private int duration = 5;
+    
+    public SpeedSurgePowerUp(float w, float h) {
+        super(w, h);
+    }
+    
+    @Override
+    public void onCollisionWith(SynchronizedItem item) {
+      if (item instanceof Pacman) {
+        Pacman pacman = (Pacman) item;
+        increaseSpeed(pacman);
+        Timer changeEndTimer = new OneOffTimer(duration, () -> resetSpeed(pacman));
+        page.addTimer(changeEndTimer);        
+        discard();
+      }
+    }
+    
+    @Override
+    public PImage getImage() {
+      return super.getImage();
+    }
+    
+    private void increaseSpeed(MovableItem item) {
+      item.setSpeed(item.getSpeed() * 2.0);
+    }
+    
+    private void resetSpeed(MovableItem item) {
+      item.setSpeed(item.getSpeed() * 0.5);
+    }
 }
