@@ -70,7 +70,11 @@ public class StartPage extends Page {
     });
     joinGameButton.setX(550).setY(400);
     addLocalItem(joinGameButton);
+  }
 
+  @Override
+  public void onSwitchIn() {
+    super.onSwitchIn();
     adjustWidgets();
   }
 

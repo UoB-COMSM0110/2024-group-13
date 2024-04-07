@@ -211,13 +211,13 @@ public abstract class Page {
 
   public void clearSyncChangeRecord() { this.syncChangesRecord = new JSONArray(); }
 
+  public void onConnectionStart() {}
   public void onNetworkFailure(String where, Exception e) {
       System.err.println(where + " : " + e.toString());
       gameInfo.stopSyncAsServer();
       gameInfo.stopSyncAsClient();
       onConnectionClose();
   }
-
   public void onConnectionClose() {}
 
   public void updateItems() {
