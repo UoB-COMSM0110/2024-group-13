@@ -216,7 +216,7 @@ public class Button extends InteractiveWidget {
 
 @FunctionalInterface
 public static interface TextChangeCallback {
-  void onTextChange(InputBox inputBox);
+  void onTextChange(InputBox inputBox, String oldStr, String newStr);
 }
 
 public class InputBox extends InteractiveWidget {
@@ -255,7 +255,7 @@ public class InputBox extends InteractiveWidget {
     String prevText = getText();
     setText(text);
     if (!text.equals(prevText) && this.callback != null) {
-      this.callback.onTextChange(this);
+      this.callback.onTextChange(this, prevText, text);
     }
     return this;
   }

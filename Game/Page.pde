@@ -60,7 +60,7 @@ public abstract class Page {
     for (Event e : events) {
       if (e instanceof KeyboardEvent) { keyboardEvents.add((KeyboardEvent)e); }
     }
-    runTimers();
+    runTimers(); // Run timers for both local and sync items.
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
@@ -99,8 +99,7 @@ public abstract class Page {
 
   public void evolveSyncItemsServerSide(ArrayList<KeyboardEvent> events) {
     ArrayList<String> clientMessages = null;
-    try { clientMessages = gameInfo.readSocketServer(); }
-    catch (Exception e) { onNetworkFailure("reading events", e); return; }
+    clientMessages = gameInfo.readSocketServer();
     for (String str : clientMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -119,8 +118,7 @@ public abstract class Page {
     String msgToClient = null;
     JSONObject msgJsonToClient = getMsgJsonToClient();
     if (msgJsonToClient != null) { msgToClient = msgJsonToClient.toString(); }
-    try { gameInfo.writeSocketClient(msgToClient); }
-    catch (Exception e) { onNetworkFailure("writing changes", e); return; }
+    gameInfo.writeSocketClient(msgToClient);
   }
 
   public JSONObject getMsgJsonToClient() {
@@ -138,12 +136,10 @@ public abstract class Page {
     String msgToServer = null;
     JSONObject msgJsonToServer = getMsgJsonToServer(events);
     if (msgJsonToServer != null) { msgToServer = msgJsonToServer.toString(); }
-    try { gameInfo.writeSocketClient(msgToServer); }
-    catch (Exception e) { onNetworkFailure("writing events", e); return; }
+    gameInfo.writeSocketClient(msgToServer);
 
     ArrayList<String> serverMessages = null;
-    try { serverMessages = gameInfo.readSocketClient(); }
-    catch (Exception e) { onNetworkFailure("reading changes", e); return; }
+    serverMessages = gameInfo.readSocketClient();
     for (String str : serverMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -209,19 +205,24 @@ public abstract class Page {
     String nextPageName = "";
     if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
     json.setString("nextPage", nextPageName);
+    json.setString("player1", gameInfo.getPlayerName1());
+    json.setString("player2", gameInfo.getPlayerName2());
     json.setBoolean("closing", false);
     return json;
   }
 
-  public void dispatchSyncInfo(JSONObject json) {}
-
-  public void onConnectionStart() {}
-  public void onNetworkFailure(String where, Exception e) {
-      System.err.println(where + " : " + e.toString());
-      if (gameInfo.isServerHost()) { gameInfo.stopSyncAsServer(); }
-      if (gameInfo.isClientHost()) { gameInfo.stopSyncAsClient(); }
-      onConnectionClose();
+  public void dispatchSyncInfo(JSONObject json) {
+    if (gameInfo.isServerHost()) {
+      gameInfo.setPlayerName2(json.getString("player2"));
+    }
+    if (gameInfo.isClientHost()) {
+      gameInfo.setPlayerName1(json.getString("player1"));
+    }
   }
+
+  public void onSyncStart() {}
+  public void onConnectionStart() {}
+  public void onNetworkFailure(String where, Exception e) {}
   public void onConnectionClose() {}
 
   public void updateItems() {

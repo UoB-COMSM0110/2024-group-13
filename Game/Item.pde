@@ -115,7 +115,9 @@ public abstract class Item {
 // Compare items based on its layer.
 // Used when deciding drawing order of items.
 public class ItemLayerComparator implements Comparator<Item> {
-  public int compare(Item i1, Item i2) { return  i1.getLayer() - i2.getLayer(); }
+  public int compare(Item i1, Item i2) {
+    return  i1.getLayer() - i2.getLayer();
+  }
 }
 
 
@@ -165,8 +167,15 @@ public abstract class SynchronizedItem extends Item {
   // Mainly update status which affects game logic, e.g., movement of figures.
   public void evolve() {}
 
+  public boolean noCollisionCheck() { return isDiscarded(); }
+
   // Called when two sync items collide with each other.
-  public void onCollisionWith(SynchronizedItem item) {}
+  public void onCollisionWith(SynchronizedItem target) {}
+
+  public boolean isOverlapWith(SynchronizedItem target) {
+    return getLeftX() < target.getRightX() && target.getLeftX() < getRightX() &&
+      getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
+  }
 
   @Override
   public void delete() { page.deleteSyncItem(getName()); }

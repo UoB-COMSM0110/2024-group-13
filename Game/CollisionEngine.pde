@@ -4,7 +4,7 @@ public class CollisionEngine {
     solveCollisions(() -> false);
   }
   public void solveCollisions(Condition stopCond) {
-    (new SimpleCollisionEngine()).solveCollisions(Condition stopCond);
+    (new SimpleCollisionEngine()).solveCollisions(stopCond);
   }
 }
 
@@ -36,9 +36,9 @@ public class SimpleCollisionEngine {
   public void solveCollisionsForItem(MovableItem item,
       ArrayList<SynchronizedItem> targets, Condition stopCond) {
     int i = 0;
-    while (!stopCond.eval() && !item.isDiscarded() && i < targets.size()) {
+    while (!stopCond.eval() && !item.noCollisionCheck() && i < targets.size()) {
       SynchronizedItem target = targets.get(i++);
-      if (!target.isDiscarded() && isOverlap(item, target)) {
+      if (!target.noCollisionCheck() && isOverlap(item, target)) {
         item.onCollisionWith(target);
         target.onCollisionWith(item);
       }
@@ -47,7 +47,6 @@ public class SimpleCollisionEngine {
 
   // Currently only works for rectangular items.
   public boolean isOverlap(SynchronizedItem item, SynchronizedItem target) {
-    return item.getLeftX() < target.getRightX() && target.getLeftX() < item.getRightX() &&
-      item.getTopY() < target.getBottomY() && target.getTopY() < item.getBottomY();
+    return item.isOverlapWith(target);
   }
 }

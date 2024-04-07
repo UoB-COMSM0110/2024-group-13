@@ -36,6 +36,75 @@ public class PlayPage extends Page {
     });
     addTimer(fpsUpdater);
 
+    if (!gameInfo.isClientHost()) {
+      loadMap(mapPath);
+    }
+  }
+
+  @Override
+  public boolean deleteSyncItem(String name) {
+    boolean deleted = super.deleteSyncItem(name);
+    if (deleted && gameInfo.isServerHost()) {
+      JSONObject record = new JSONObject();
+      record.setString("name", name);
+      this.syncDeletesRecord.append(record);
+    }
+    return deleted;
+  }
+
+  @Override
+  public JSONObject getMsgJsonToClient() {
+    if (gameInfo.isServerSendBufferFull()) { return null; }
+    return super.getMsgJsonToClient();
+  }
+
+  @Override
+  public JSONArray getChangesJsonArray() {
+    JSONArray changesJson = this.syncDeletesRecord;
+    this.syncDeletesRecord = new JSONArray();
+    for (SynchronizedItem item : getSyncItems()) {
+      JSONObject json = item.getStateJson();
+      String str = json.toString();
+      if (!str.equals(item.getStoredStateStr())) { // not an efficient way
+        item.storeStateStr(str);
+        changesJson.append(json);
+      }
+    }
+    return changesJson;
+  }
+
+  @Override
+  public JSONArray getEventsJsonArray(List<KeyboardEvent> events) {
+    return keyboardEventsToJson(events);
+  }
+
+  @Override
+  public void doEvolve(ArrayList<KeyboardEvent> events) {
+    if (!isGameOver()) {
+      super.doEvolve(events);
+    }
+  }
+
+  @Override
+  public void solveCollisions() {
+    (new CollisionEngine()).solveCollisions(() -> isGameOver());
+  }
+
+  public boolean isGameOver() { return false; }
+
+  @Override
+  public void dispatchSyncInfo(JSONObject json) {
+    super.dispatchSyncInfo(json);
+    if (gameInfo.isClientHost()) {
+      gameInfo.setPlayerName2(json.getString("player2"));
+    }
+  }
+
+  @Override
+  public void drawBackground() { background(PlayPageBackgroundColor); }
+
+  void loadMap(String mapPath) {
+
     // generate powerups
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
@@ -47,9 +116,6 @@ public class PlayPage extends Page {
     powerups.add(new TrapPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-
-
-    loadMap(mapPath);
 
     float borderSize = 5.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
@@ -84,63 +150,7 @@ public class PlayPage extends Page {
     Ghost ghost1 = new Ghost(20, 20);
     ghost1.setX(30).setY(100);
     addSyncItem(ghost1);
-  }
 
-  @Override
-  public boolean deleteSyncItem(String name) {
-    boolean deleted = super.deleteSyncItem(name);
-    if (deleted && gameInfo.isServerHost()) {
-      JSONObject record = new JSONObject();
-      record.setString("name", name);
-      this.syncDeletesRecord.append(record);
-    }
-    return deleted;
-  }
-
-  @Override
-  public JSONObject getMsgJsonToClient() {
-    if (gameInfo.isServerSendBufferFull()) { return null; }
-    return super.getMsgJsonToClient();
-  }
-
-  @Override
-  public JSONArray getChangesJsonArray() {
-    JSONArray changesJson = this.syncDeletesRecord;
-    this.syncDeletesRecord = new JSONArray();
-    for (SynchronizedItem item : this.syncItems.values()) {
-      JSONObject json = item.getStateJson();
-      String str = json.toString();
-      if (!str.equals(item.getStoredStateStr())) { // not an efficient way
-        item.storeStateStr(str);
-        changesJson.append(json);
-      }
-    }
-    return changesJson;
-  }
-
-  @Override
-  public JSONArray getEventsJsonArray(List<KeyboardEvent> events) {
-    return keyboardEventsToJson(events);
-  }
-
-  @Override
-  public void doEvolve(ArrayList<KeyboardEvent> events) {
-    if (!isGameOver()) {
-      super.doEvolve(events);
-    }
-  }
-
-  @Override
-  public void solveCollisions() {
-    (new CollisionEngine()).solveCollisions(() -> isGameOver());
-  }
-
-  public boolean isGameOver() { return false; }
-
-  @Override
-  public void drawBackground() { background(PlayPageBackgroundColor); }
-
-  void loadMap(String mapPath) {
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
       String[] values = split(lines[row], ",");
