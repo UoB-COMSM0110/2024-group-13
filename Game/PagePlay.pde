@@ -7,10 +7,12 @@ final float CHARACTER_SIZE = 10.0;
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
 public class PlayPage extends Page {
+  private JSONArray syncDeletesRecord;
   private ArrayList<PowerUp> powerups = new ArrayList<>();
   
   public PlayPage(Page previousPage) {
     super("play", previousPage);
+    this.syncDeletesRecord = new JSONArray();
 
     RectArea localArea = new RectArea("LocalArea", gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
@@ -83,6 +85,57 @@ public class PlayPage extends Page {
     ghost1.setX(30).setY(100);
     addSyncItem(ghost1);
   }
+
+  @Override
+  public boolean deleteSyncItem(String name) {
+    boolean deleted = super.deleteSyncItem(name);
+    if (deleted && gameInfo.isServerHost()) {
+      JSONObject record = new JSONObject();
+      record.setString("name", name);
+      this.syncDeletesRecord.append(record);
+    }
+    return deleted;
+  }
+
+  @Override
+  public JSONObject getMsgJsonToClient() {
+    if (gameInfo.isServerSendBufferFull()) { return null; }
+    return super.getMsgJsonToClient();
+  }
+
+  @Override
+  public JSONArray getChangesJsonArray() {
+    JSONArray changesJson = this.syncDeletesRecord;
+    this.syncDeletesRecord = new JSONArray();
+    for (SynchronizedItem item : this.syncItems.values()) {
+      JSONObject json = item.getStateJson();
+      String str = json.toString();
+      if (!str.equals(item.getStoredStateStr())) { // not an efficient way
+        item.storeStateStr(str);
+        changesJson.append(json);
+      }
+    }
+    return changesJson;
+  }
+
+  @Override
+  public JSONArray getEventsJsonArray(List<KeyboardEvent> events) {
+    return keyboardEventsToJson(events);
+  }
+
+  @Override
+  public void doEvolve(ArrayList<KeyboardEvent> events) {
+    if (!isGameOver()) {
+      super.doEvolve(events);
+    }
+  }
+
+  @Override
+  public void solveCollisions() {
+    (new CollisionEngine()).solveCollisions(() -> isGameOver());
+  }
+
+  public boolean isGameOver() { return false; }
 
   @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }

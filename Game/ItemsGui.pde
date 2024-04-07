@@ -242,7 +242,7 @@ public class InputBox extends InteractiveWidget {
 
   public InputBox setDefaultText(String defaultText) {
     this.defaultText = defaultText;
-    if (isEmpty()) { setTextToDefault(); }
+    if (isEmpty() && !isDisabled()) { changeText(getDefaultText()); }
     return this;
   }
 
@@ -260,12 +260,10 @@ public class InputBox extends InteractiveWidget {
     return this;
   }
 
-  public InputBox setTextToDefault() { return changeText(getDefaultText()); }
-
   public void catchFocus() { this.onFocus = true; }
   public void dropFocus() {
     this.onFocus = false;
-    if (isEmpty()) { setTextToDefault(); }
+    if (isEmpty() && !isDisabled()) { changeText(getDefaultText()); }
   }
 
   public int length() { return getText().length(); }
@@ -278,6 +276,13 @@ public class InputBox extends InteractiveWidget {
   public InputBox disable() {
     super.disable();
     dropFocus();
+    return this;
+  }
+
+  @Override
+  public InputBox enable() {
+    super.enable();
+    if (isEmpty()) { changeText(getDefaultText()); }
     return this;
   }
 

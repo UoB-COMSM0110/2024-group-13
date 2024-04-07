@@ -1,7 +1,10 @@
 // Class for detecting and solving collisions between items.
 public class CollisionEngine {
   public void solveCollisions() {
-    (new SimpleCollisionEngine()).solveCollisions();
+    solveCollisions(() -> false);
+  }
+  public void solveCollisions(Condition stopCond) {
+    (new SimpleCollisionEngine()).solveCollisions(Condition stopCond);
   }
 }
 
@@ -12,7 +15,7 @@ public class CollisionEngine {
 // No multiple-object collision.
 public class SimpleCollisionEngine {
   // Solve all collisions between items.
-  public void solveCollisions() {
+  public void solveCollisions(Condition stopCond) {
     ArrayList<SynchronizedItem> checked = new ArrayList<SynchronizedItem>();
     ArrayList<MovableItem> unchecked = new ArrayList<MovableItem>();
     for (SynchronizedItem item : page.getSyncItems()) {
@@ -22,17 +25,18 @@ public class SimpleCollisionEngine {
         checked.add(item);
       }
     }
-    while (unchecked.size() > 0) {
+    while (!stopCond.eval() && unchecked.size() > 0) {
       MovableItem item = unchecked.remove(unchecked.size() - 1);
-      solveCollisionsForItem(item, checked);
+      solveCollisionsForItem(item, checked, stopCond);
       checked.add(item);
     }
   }
 
   // Solve collisions between a specific item and other items.
-  public void solveCollisionsForItem(MovableItem item, ArrayList<SynchronizedItem> targets) {
+  public void solveCollisionsForItem(MovableItem item,
+      ArrayList<SynchronizedItem> targets, Condition stopCond) {
     int i = 0;
-    while (!item.isDiscarded() && i < targets.size()) {
+    while (!stopCond.eval() && !item.isDiscarded() && i < targets.size()) {
       SynchronizedItem target = targets.get(i++);
       if (!target.isDiscarded() && isOverlap(item, target)) {
         item.onCollisionWith(target);

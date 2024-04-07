@@ -92,22 +92,23 @@ public class StartPage extends Page {
     if (gameInfo.isServerHost()) {
       createGameButton.enable().setText("Leave Game");
       joinGameButton.disable().setText("Join Game");
-      playButton.enable().setText("Start Online");
+      playButton.disable().setText("Start Online");
       playerName1.enable();
-      playerName2.disable();
+      playerName2.disable().setText("");
     } else if (gameInfo.isClientHost()) {
       createGameButton.disable().setText("Create Game");
       joinGameButton.enable().setText("Leave Game");
-      playButton.disable().setText("Start Online");
-      playerName1.disable();
+      playButton.disable().setText("Start");
+      playerName1.disable().setText("");
       playerName2.enable();
     } else {
       createGameButton.enable().setText("Create Game");
       joinGameButton.enable().setText("Join Game");
-      playButton.enable().setText("Start");
+      playButton.disable().setText("Start");
       playerName1.enable();
       playerName2.enable();
     }
+    if ( && && ) { playButton.enable(); }
   }
 
   @Override

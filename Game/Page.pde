@@ -12,8 +12,6 @@ public abstract class Page {
   private Page previousPage; // With this attribute, we can form a page stack.
   private Page nextPage;
 
-  private JSONArray syncChangesRecord;
-
   public Page(String name, Page previousPage) {
     this.name = name;
     this.syncItems = new HashMap<String, SynchronizedItem>();
@@ -21,7 +19,6 @@ public abstract class Page {
     this.timers = new ArrayList<Timer>();
     this.previousPage = previousPage;
     this.nextPage = null;
-    this.syncChangesRecord = new JSONArray();
   }
 
   public String getName() { return this.name; }
@@ -51,13 +48,7 @@ public abstract class Page {
     return this.localItems.remove(name) != null;
   }
   public boolean deleteSyncItem(String name) {
-    if (this.syncItems.remove(name) == null) { return false; }
-    if (!gameInfo.isSingleHost()) { // TODO
-      JSONObject deleted = new JSONObject();
-      deleted.setString("name", name);
-      this.syncChangesRecord.append(deleted);
-    }
-    return true;
+    return this.syncItems.remove(name) != null;
   }
 
   public void addTimer(Timer timer) { this.timers.add(timer); }
@@ -97,20 +88,19 @@ public abstract class Page {
   }
 
   public void evolveSyncItems(ArrayList<KeyboardEvent> events) {
-    if (gameInfo.isSingleHost()) {
+    if (gameInfo.isServerHost()) {
+      evolveSyncItemsServerSide(events);
+    } else if (gameInfo.isClientHost()) {
+      evolveSyncItemsClientSide(events);
+    } else {
       doEvolve(events);
-      return;
     }
+  }
 
-    try {
-
-    JSONObject msgJsonToServer = new JSONObject();
-    msgJsonToServer.setJSONObject("info", getSyncInfo());
-    events.forEach((e) -> { e.setHostId(serverHostId); }); // TODO
-    msgJsonToServer.setJSONArray("events", keyboardEventsToJson(events));
-    gameInfo.writeSocketClient(msgJsonToServer.toString());
-
-    ArrayList<String> clientMessages = gameInfo.readSocketServer();
+  public void evolveSyncItemsServerSide(ArrayList<KeyboardEvent> events) {
+    ArrayList<String> clientMessages = null;
+    try { clientMessages = gameInfo.readSocketServer(); }
+    catch (Exception e) { onNetworkFailure("reading events", e); return; }
     for (String str : clientMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -121,29 +111,39 @@ public abstract class Page {
       JSONArray eventsJson = msgJsonFromClient.getJSONArray("events");
       if (eventsJson == null) { continue; }
       ArrayList<KeyboardEvent> clientEvents = keyboardEventsFromJson(eventsJson);
-      clientEvents.forEach((e) -> { e.setHostId(clientHostId); }); // TODO
       events.addAll(clientEvents);
     }
-    if (true) { // Game not over
-      doEvolve(events);
-    }
-    if (!gameInfo.isServerSendBufferFull()) {
-      JSONObject msgJsonToClient = new JSONObject();
-      msgJsonToClient.setJSONObject("info", getSyncInfo());
-      for (SynchronizedItem item : this.syncItems.values()) {
-        JSONObject json = item.getStateJson();
-        String str = json.toString();
-        if (!str.equals(item.getStoredStateStr())) {
-          item.storeStateStr(str);
-          this.syncChangesRecord.append(json);
-        }
-      }
-      msgJsonToClient.setJSONArray("changes", this.syncChangesRecord);
-      gameInfo.writeSocketServer(msgJsonToClient.toString());
-      clearSyncChangeRecord();
-    }
 
-    ArrayList<String> serverMessages = gameInfo.readSocketClient();
+    doEvolve(events);
+
+    String msgToClient = null;
+    JSONObject msgJsonToClient = getMsgJsonToClient();
+    if (msgJsonToClient != null) { msgToClient = msgJsonToClient.toString(); }
+    try { gameInfo.writeSocketClient(msgToClient); }
+    catch (Exception e) { onNetworkFailure("writing changes", e); return; }
+  }
+
+  public JSONObject getMsgJsonToClient() {
+    JSONObject msgJsonToClient = new JSONObject();
+    msgJsonToClient.setJSONObject("info", getSyncInfo());
+    msgJsonToClient.setJSONArray("changes", getChangesJsonArray());
+    return msgJsonToClient;
+  }
+
+  public JSONArray getChangesJsonArray() {
+    return new JSONArray();
+  }
+
+  public void evolveSyncItemsClientSide(ArrayList<KeyboardEvent> events) {
+    String msgToServer = null;
+    JSONObject msgJsonToServer = getMsgJsonToServer(events);
+    if (msgJsonToServer != null) { msgToServer = msgJsonToServer.toString(); }
+    try { gameInfo.writeSocketClient(msgToServer); }
+    catch (Exception e) { onNetworkFailure("writing events", e); return; }
+
+    ArrayList<String> serverMessages = null;
+    try { serverMessages = gameInfo.readSocketClient(); }
+    catch (Exception e) { onNetworkFailure("reading changes", e); return; }
     for (String str : serverMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -155,36 +155,18 @@ public abstract class Page {
       if (changesJson == null) { continue; }
       applyChangesFromJson(changesJson);
     }
-
-    } catch (Exception e) {
-      onNetworkFailure("communication", e);
-    }
   }
 
-  public void doEvolve(ArrayList<KeyboardEvent> events) {
-    ArrayList<SynchronizedItem> items = getSyncItems();
-    for (KeyboardEvent e : events) {
-      for (SynchronizedItem item : items) {
-        item.onKeyboardEvent(e);
-      }
-    }
-    items.forEach((item) -> { item.evolve(); });
-    (new CollisionEngine()).solveCollisions();
-    gameInfo.updateEvolveTime();
+  public JSONObject getMsgJsonToServer(ArrayList<KeyboardEvent> events) {
+    JSONObject msgJsonToServer = new JSONObject();
+    msgJsonToServer.setJSONObject("info", getSyncInfo());
+    msgJsonToServer.setJSONArray("events", getEventsJsonArray(events));
+    return msgJsonToServer;
   }
 
-  public JSONObject getSyncInfo() {
-    JSONObject json = new JSONObject();
-    json.setString("page", getName());
-    String nextPageName = "";
-    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
-    json.setString("nextPage", nextPageName);
-    // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
-    json.setBoolean("closing", false);
-    return json;
+  public JSONArray getEventsJsonArray(List<KeyboardEvent> events) {
+    return new JSONArray();
   }
-
-  public void dispatchSyncInfo(JSONObject json) {}
 
   public void applyChangesFromJson(JSONArray changesJson) {
     for (int i = 0; i < changesJson.size(); ++i) {
@@ -197,25 +179,47 @@ public abstract class Page {
       }
       SynchronizedItem item = getSyncItem(name);
       if (item != null) {
-        // TODO
-        // item.setStateJson(json);
+        item.setStateJson(json);
         continue;
       }
       item = createSyncItemFromJson(json);
       if (item != null) {
-        // TODO
-        // addSyncItem(item);
+        addSyncItem(item);
       }
     }
   }
 
-  public void clearSyncChangeRecord() { this.syncChangesRecord = new JSONArray(); }
+  public void doEvolve(ArrayList<KeyboardEvent> events) {
+    ArrayList<SynchronizedItem> items = getSyncItems();
+    for (KeyboardEvent e : events) {
+      for (SynchronizedItem item : items) {
+        item.onKeyboardEvent(e);
+      }
+    }
+    items.forEach((item) -> { item.evolve(); });
+    solveCollisions();
+    gameInfo.updateEvolveTime();
+  }
+
+  public void solveCollisions() {}
+
+  public JSONObject getSyncInfo() {
+    JSONObject json = new JSONObject();
+    json.setString("page", getName());
+    String nextPageName = "";
+    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
+    json.setString("nextPage", nextPageName);
+    json.setBoolean("closing", false);
+    return json;
+  }
+
+  public void dispatchSyncInfo(JSONObject json) {}
 
   public void onConnectionStart() {}
   public void onNetworkFailure(String where, Exception e) {
       System.err.println(where + " : " + e.toString());
-      gameInfo.stopSyncAsServer();
-      gameInfo.stopSyncAsClient();
+      if (gameInfo.isServerHost()) { gameInfo.stopSyncAsServer(); }
+      if (gameInfo.isClientHost()) { gameInfo.stopSyncAsClient(); }
       onConnectionClose();
   }
   public void onConnectionClose() {}
@@ -287,6 +291,8 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
     item = new OpponentControlPowerUp(0, 0);
   } else {
     System.err.println("unknown item type " + type);
+    return null;
   }
+  item.setStateJson(json);
   return item;
 }

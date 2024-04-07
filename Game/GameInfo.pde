@@ -3,6 +3,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -199,7 +200,9 @@ public class GameInfo {
         if (!key.isValid()) { continue; }
         if (!key.isAcceptable()) { continue; }
         this.socketServer = this.listenerServer.accept();
-        this.socketServer.socket().setReuseAddress(true);
+        Socket socket = this.socketServer.socket();
+        socket.setReuseAddress(true);
+        System.out.println("client from: " + socket.getRemoteSocketAddress().toString());
         this.socketServer.configureBlocking(false);
         this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
         this.connectedToClient = true;
@@ -210,6 +213,10 @@ public class GameInfo {
 
   public boolean isServerSendBufferFull() {
     return this.sendCacheServer.data.length() > bufferSize / 2;
+  }
+  public boolean isServerSendBufferEmpty() {
+    return this.sendCacheServer.data.length() == 0 &&
+      !this.sendCacheServer.buffer.hasRemaining();
   }
 
   public void writeSocketServer(String data) throws IOException {
@@ -248,7 +255,7 @@ public class GameInfo {
     // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
     this.socketClient = SocketChannel.open();
     this.socketClient.configureBlocking(false);
-    this.socketClient.connect(new InetSocketAddress("localhost", port));
+    this.socketClient.connect(new InetSocketAddress("172.23.25.12", port));
     this.hostId = clientHostId;
   }
 
@@ -290,8 +297,10 @@ public class GameInfo {
   }
 
   public void writeSocket(SocketChannel socket, Cache cache, String data) throws IOException {
-    cache.data = cache.data + data + messageDelim;
-    if (!cache.buffer.hasRemaining()) {
+    if (data != null) {
+      cache.data = cache.data + data + messageDelim;
+    }
+    if (!cache.buffer.hasRemaining() && 0 < cache.data.length()) {
       cache.buffer.clear();
       cache.buffer.put(cache.data.getBytes());
       cache.buffer.flip();
