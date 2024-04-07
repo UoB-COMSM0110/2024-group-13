@@ -105,8 +105,14 @@ public class Ghost extends Figure {
 
   @Override
   public void evolve() {
-    if (gameInfo.getGhostMagnetActive()) {
-      setDirectionTowards(gameInfo.getMagnetX(), gameInfo.getMagnetY());
+    ArrayList<SynchronizedItem> magnets = page.getSyncItemsByNameAndCount(itemTypeMagnet, itemCountMagnet);
+    if (magnets != null && magnets.size() != 0) {
+      for (SynchronizedItem magnet : magnets) {
+        if (!magnet.isDiscarded()) {
+          setDirectionTowards(magnet.getX(), magnet.getY());
+          break;
+        }
+      }
     } else {
       if (!isMoving()) {
         randomizeDirection();

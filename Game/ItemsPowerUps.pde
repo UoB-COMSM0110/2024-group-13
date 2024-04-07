@@ -5,11 +5,14 @@ final String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
 final String imagePathTrap = "data/Trap.png";
 PImage imageTrap;
+final String imagePathMagnet = "data/magnet.png";
+PImage imageMagnet;
 
 
 void loadResoucesForPowerUps() {
   imagePowerUp = loadImage(imagePathPowerUp);
   imageTrap = loadImage(imagePathTrap);
+  imageMagnet = loadImage(imagePathMagnet);
 }
 
 
@@ -332,8 +335,6 @@ public class Trap extends TrapPowerUp {
 
 public class GhostMagnetPowerUp extends PowerUp {
     
-    private int duration = 5;
-    
     public GhostMagnetPowerUp(float w, float h) {
         super(w, h);
     }
@@ -341,9 +342,9 @@ public class GhostMagnetPowerUp extends PowerUp {
     @Override
     public void onCollisionWith(SynchronizedItem item) {
       if (item instanceof Pacman) {
-        gameInfo.activateGhostMagnet(this.getX(), this.getY());
-        Timer changeEndTimer = new OneOffTimer(duration, () -> gameInfo.deactivateGhostMagnet());
-        page.addTimer(changeEndTimer);        
+        Magnet magnet = new Magnet(CHARACTER_SIZE, CHARACTER_SIZE);
+        magnet.setX(this.getX()).setY(this.getY());
+        page.addSyncItem(magnet);
         discard();
       }
     }
@@ -352,6 +353,36 @@ public class GhostMagnetPowerUp extends PowerUp {
     public PImage getImage() {
       return super.getImage();
     }      
+}
+
+final String itemTypeMagnet = "Magnet";
+int itemCountMagnet;
+
+public class Magnet extends SynchronizedItem {
+    
+    private int duration = 5;
+    
+    public Magnet(float w, float h) {
+      super(itemTypeMagnet + itemCountMagnet++, w, h);
+      Timer changeEndTimer = new OneOffTimer(duration, () -> this.discard());
+      page.addTimer(changeEndTimer); 
+    }
+    
+    //@Override
+    //public void onCollisionWith(SynchronizedItem item) {
+    //  if (item instanceof Pacman) {
+    //    gameInfo.activateGhostMagnet(this.getX(), this.getY());
+    //    Timer changeEndTimer = new OneOffTimer(duration, () -> gameInfo.deactivateGhostMagnet());
+    //    page.addTimer(changeEndTimer);        
+    //    discard();
+    //  }
+    //}
+    
+    @Override
+    public PImage getImage() {
+      return imageMagnet;
+    }  
+    
 }
 
 public class SpeedSurgePowerUp extends PowerUp {
