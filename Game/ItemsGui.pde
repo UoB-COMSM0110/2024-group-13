@@ -35,6 +35,8 @@ public class RectArea extends LocalItem {
   public RectArea setBoxRadius(float boxRadius) { this.boxRadius = boxRadius; return this; }
   public RectArea setImage(PImage image) { this.image = image; return this; }
 
+  public float getBoxRadius() { return this.boxRadius; }
+
   @Override
   public PImage getImage() { return this.image; }
 
@@ -52,7 +54,7 @@ public class RectArea extends LocalItem {
     float y = getY() + this.boxStrokeWeight / 2.0;
     float w = getW() - this.boxStrokeWeight;
     float h = getH() - this.boxStrokeWeight;
-    rect(x, y, w, h, this.boxRadius);
+    rect(x, y, w, h, getBoxRadius());
   }
 }
   
@@ -337,14 +339,14 @@ public class InputBox extends InteractiveWidget {
     strokeWeight(step);
     noFill();
     for (int i = 0; i < nStep; ++i) {
-      float x = getX() + step * i;
-      float y = getY() + step * i;
-      float w = getW() - 2 * step * i;
-      float h = getH() - 2 * step * i;
+      float x = getX() + step * (i + 0.5);
+      float y = getY() + step * (i + 0.5);
+      float w = getW() - (2 * i + 1) * step;
+      float h = getH() - (2 * i + 1) * step;
       int c = color(0, 200, 200);
       float alpha = 255.0 * (1.0 - i * 1.0 / nStep);
       stroke(c, alpha);
-      rect(x, y, w, h, 3);
+      rect(x, y, w, h, getBoxRadius());
     }
   }
 }

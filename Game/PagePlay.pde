@@ -35,6 +35,13 @@ public class PlayPage extends Page {
     });
     addTimer(fpsUpdater);
 
+    Label score1 = new Label("Score1", 200, 25, "0");
+    score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
+    addLocalItem(score1);
+    Label score2 = new Label("Score2", 200, 25, "0");
+    score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
+    addLocalItem(score2);
+    
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
     }
@@ -102,7 +109,8 @@ public class PlayPage extends Page {
   @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }
 
-  void loadMap(String mapPath) {
+  private void loadMap(String mapPath) {
+    generateMapBorders();
 
     // generate powerups
     powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
@@ -116,6 +124,49 @@ public class PlayPage extends Page {
     powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
 
+    Pacman pacman2 = new Pacman(2);
+    pacman2.setX(360).setY(350);
+    addSyncItem(pacman2);
+
+    String[] lines = loadStrings(mapPath);
+    for (int row = 0; row <lines.length; row++) {
+      String[] values = split(lines[row], ",");
+      for (int col = 0; col < values.length; col++) {
+        float x = CHARACTER_SIZE / 2 + col * CHARACTER_SIZE;
+        float y = CHARACTER_SIZE / 2 + row * CHARACTER_SIZE;
+        String value = values[col];
+        if (value.equals("1")) { // breakable walls
+          BreakableWall breakableWall = new BreakableWall();
+          breakableWall.setX(x).setY(y);
+          addSyncItem(breakableWall);
+        } else if (value.equals("2")) { // indestructable walls
+          IndestructableWall indestructableWall = new IndestructableWall();
+          indestructableWall.setX(x).setY(y);
+          addSyncItem(indestructableWall);
+        } else if (value.equals("3")) { // coins
+          Coin coin = new Coin();
+          coin.setX(x).setY(y);
+          addSyncItem(coin);
+        } else if (value.equals("4")) { // power-ups
+          generatePowerUp(x, y);
+        } else if (value.equals("g")) { // ghosts
+          Ghost ghost = new Ghost();
+          ghost.setX(x).setY(y);
+          addSyncItem(ghost);
+        } else if (value.equals("p") || value.equals("q")) { // pacmans
+          int playerId = value.equals("p") ? 1 : 2;
+          Pacman pacman = new Pacman(playerId);
+          pacman.setX(x).setY(y);
+          addSyncItem(pacman);
+          PacmanShelter pacmanShelter = new PacmanShelter(pacman.getPlayerId());
+          pacmanShelter.setCenterX(pacman.getCenterX()).setCenterY(pacman.getCenterY());
+          addSyncItem(pacmanShelter);
+        }
+      }
+    }
+  }
+  
+  private void generateMapBorders() {
     float borderSize = 5.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
@@ -131,50 +182,8 @@ public class PlayPage extends Page {
     Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize);
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
-
-    Pacman pacman1 = new Pacman(1);
-    pacman1.setX(360).setY(270);
-    addSyncItem(pacman1);
-    Label score1 = new Label("Score1", 200, 25, "0");
-    score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
-    addLocalItem(score1);
-
-    Pacman pacman2 = new Pacman(2);
-    pacman2.setX(360).setY(350);
-    addSyncItem(pacman2);
-    Label score2 = new Label("Score2", 200, 25, "0");
-    score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
-    addLocalItem(score2);
-    
-    Ghost ghost1 = new Ghost();
-    ghost1.setX(30).setY(100);
-    addSyncItem(ghost1);
-
-    String[] lines = loadStrings(mapPath);
-    for (int row = 0; row <lines.length; row++) {
-      String[] values = split(lines[row], ",");
-      for (int col = 0; col < values.length; col++) {
-        float x = CHARACTER_SIZE / 2 + col * CHARACTER_SIZE;
-        float y = CHARACTER_SIZE / 2 + row * CHARACTER_SIZE;
-        if (values[col].equals("1")) { // breakable walls
-          BreakableWall breakableWall = new BreakableWall();
-          breakableWall.setX(x).setY(y);
-          addSyncItem(breakableWall);
-        } else if (values[col].equals("2")) { // indestructable walls
-          IndestructableWall indestructableWall = new IndestructableWall();
-          indestructableWall.setX(x).setY(y);
-          addSyncItem(indestructableWall);
-        } else if (values[col].equals("3")) { // coins
-          Coin coin = new Coin();
-          coin.setX(x).setY(y);
-          addSyncItem(coin);
-        } else if (values[col].equals("4")) { // power-ups
-          generatePowerUp(x, y);
-        }
-      }
-    }
   }
-  
+
   private void generatePowerUp(float x, float y) {
     PowerUp selectedPowerUp = null;
     while (selectedPowerUp == null) {

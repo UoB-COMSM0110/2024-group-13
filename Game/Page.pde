@@ -285,7 +285,9 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
   } else if (type.equals("Coin")) {
     item = new Coin();
   } else if (type.equals("Bullet")) {
-    item = new Bullet();
+    item = new Bullet(-1);
+  } else if (type.equals("PacmanShelter")) {
+    item = new PacmanShelter(-1);
   } else if (type.equals("Ghost")) {
     item = new Ghost();
   } else if (type.equals("Pacman")) {

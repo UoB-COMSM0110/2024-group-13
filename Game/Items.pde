@@ -136,11 +136,30 @@ int itemCountBullet;
 final float defaultBulletSpeed = 200.0;
 
 public class Bullet extends MovableItem {
-  public Bullet() {
+  private int owner;
+
+  public Bullet(int owner) {
     super(itemTypeBullet + itemCountBullet++, CHARACTER_SIZE, CHARACTER_SIZE);
+    this.owner = owner;
     startMoving();
   }
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("owner", getOwner());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.owner = json.getInt("owner");
+  }
+
+  public boolean isFiredBy(Pacman pacman) { return isFiredBy(pacman.getPlayerId()); }
+  public boolean isFiredBy(int playerId) { return getOwner() == playerId; }
+  public int getOwner() { return this.owner; }
+  
   @Override
   public void move() {
     super.move();
@@ -158,5 +177,62 @@ public class Bullet extends MovableItem {
   
   public PImage getImage() {
     return imageBullet;
+  }
+}
+
+
+final String itemTypePacmanShelter = "PacmanShelter";
+
+public class PacmanShelter extends SynchronizedItem {
+  private int owner;
+
+  public PacmanShelter(int owner) {
+    super(itemTypePacmanShelter + owner, 2.5 * CHARACTER_SIZE, 2.5 * CHARACTER_SIZE);
+    this.owner = owner;
+  }
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("owner", getOwner());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.owner = json.getInt("owner");
+  }
+
+  public boolean isUsedBy(Pacman pacman) { return isUsedBy(pacman.getPlayerId()); }
+  public boolean isUsedBy(int playerId) { return getOwner() == playerId; }
+  public int getOwner() { return this.owner; }
+  
+  @Override
+  public void onCollisionWith(SynchronizedItem item) {
+    // `item` can only be instance of MovableItem
+    if (item instanceof Figure) {
+      if (item instanceof Pacman) {
+        if (isUsedBy((Pacman)item)) { return; }
+      }
+      ((Figure)item).tryStepbackFrom(this);
+    } else {
+      if (item instanceof Bullet) {
+        if (((Bullet)item).isFiredBy(getOwner())) { return; }
+      }
+      item.discard().delete();
+    }
+  }
+
+  @Override
+  public void draw(float x, float y, float w, float h) {
+    int fillColor;
+    switch (getOwner()) {
+      case 1: { fillColor = color(255, 102, 178); break; }
+      case 2: { fillColor = color(204, 255, 153); break; }
+      default: fillColor = color(255);
+    }
+    noStroke();
+    fill(fillColor, 200.0);
+    rect(x, y, w, h, 2.0);
   }
 }

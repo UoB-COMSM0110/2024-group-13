@@ -160,6 +160,7 @@ public class Pacman extends Figure {
   public Pacman(int playerId) {
     super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
     this.playerId = playerId;
+    setLayer(1);
     setSpeed(100.0);
     refreshHp(3);
   }
@@ -206,7 +207,7 @@ public class Pacman extends Figure {
   }
 
   public void fire() {
-    Bullet bullet = new Bullet();
+    Bullet bullet = new Bullet(getPlayerId());
     bullet.setDirection(getFacing());
     switch (getFacing()) {
       case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
@@ -223,7 +224,8 @@ public class Pacman extends Figure {
     if (item instanceof Coin){
       incScore(1);
     } else if (item instanceof Bullet) {
-      decHp(1);
+      Bullet bullet = (Bullet)item;
+      if (!bullet.isFiredBy(this)) { decHp(1); }
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
     } else if (item instanceof Pacman) {
