@@ -89,6 +89,7 @@ public class Label extends RectArea {
   public Label setUpdater(Action updater) { this.updater = updater; return this; }
 
   public String getText() { return this.text; }
+  public String getPrefix() { return this.prefix; }
   public int getTextDrawColor() { return this.textColor; }
 
   @Override
@@ -103,12 +104,13 @@ public class Label extends RectArea {
   }
 
   public void drawTextContent() {
+    float margin = 5.0;
     float alignPointX = getX();
     float alignPointY = getY();
     switch (this.textAlignHorizon) {
-      case LEFT: { alignPointX = getLeftX(); break; }
+      case LEFT: { alignPointX = getLeftX() + margin; break; }
       case CENTER: { alignPointX = getCenterX(); break; }
-      case RIGHT: { alignPointX = getRightX(); break; }
+      case RIGHT: { alignPointX = getRightX() - margin; break; }
     }
     switch (this.textAlignVertical) {
       case TOP: { alignPointY = getTopY(); break; }
@@ -119,8 +121,10 @@ public class Label extends RectArea {
     fill(getTextDrawColor());
     textFont(this.textFont, this.textSize);
     textAlign(this.textAlignHorizon, this.textAlignVertical);
-    text(this.prefix + this.text, alignPointX, alignPointY);
+    text(getDrawnTextContent(), alignPointX, alignPointY);
   }
+
+  public String getDrawnTextContent() { return this.prefix + this.text; }
 }
 
 
@@ -223,6 +227,7 @@ public static interface TextChangeCallback {
 
 public class InputBox extends InteractiveWidget {
   private String defaultText;
+  private String promptText;
   private int maxLen;
   private TextChangeCallback callback;
 
@@ -235,6 +240,7 @@ public class InputBox extends InteractiveWidget {
   public InputBox(String name, float w, float h, int maxLen, TextChangeCallback callback) {
     super(name, w, h, "");
     this.defaultText = "";
+    this.promptText = "";
     this.maxLen = maxLen;
     this.callback = callback;
     this.onFocus = false;
@@ -245,6 +251,11 @@ public class InputBox extends InteractiveWidget {
   public InputBox setDefaultText(String defaultText) {
     this.defaultText = defaultText;
     if (isEmpty() && !isDisabled()) { changeText(getDefaultText()); }
+    return this;
+  }
+
+  public InputBox setPromptText(String promptText) {
+    this.promptText = promptText;
     return this;
   }
 
@@ -272,6 +283,7 @@ public class InputBox extends InteractiveWidget {
   public int getMaxLen() { return this.maxLen; }
   public boolean isEmpty() { return length() <= 0; }
   public String getDefaultText() { return this.defaultText; }
+  public String getPromptText() { return this.promptText; }
   public boolean isOnFocus() { return this.onFocus; }
 
   @Override
@@ -325,6 +337,13 @@ public class InputBox extends InteractiveWidget {
       if (isMouseEventRelated(click)) { catchFocus(); }
       else { dropFocus(); }
     }
+  }
+
+  @Override
+  public String getDrawnTextContent() {
+    String text = getText();
+    if (text.length() <= 0 && !isOnFocus()) { text = getPromptText(); }
+    return getPrefix() + text;
   }
 
   @Override

@@ -13,34 +13,44 @@ public class PlayPage extends Page {
     super("play", previousPage);
     this.syncDeletesRecord = new JSONArray();
 
-    RectArea localArea = new RectArea("LocalArea", gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
+    RectArea localArea = new RectArea("LocalArea",
+        gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
       .setBoxStrokeWeight(5.0)
-      .setBoxStrokeColor(color(100, 100, 200))
+      .setBoxStrokeColor(color(102, 51, 0))
       .setBoxFillColor(PlayPageBackgroundColor)
       .setLayer(-9);
     addLocalItem(localArea);
 
-    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
-      trySwitchPage(getPreviousPage());
-    });
-    backButton.setX(20).setY(10);
+    Button backButton = new Button("ButtonBack", 120, 35, "End Game",
+        () -> { trySwitchPage(getPreviousPage()); });
+    backButton.setX(10).setY(5);
     addLocalItem(backButton);
 
-    Label fps = new Label("Fps", 200, 25, "");
-    fps.setPrefix("fps: ").setX(250).setY(10);
+    Label fps = new Label("Fps", backButton.getW(), backButton.getH(), "");
+    fps.setPrefix("fps:").setX(backButton.getX()).setTopY(backButton.getBottomY());
     addLocalItem(fps);
-    Timer fpsUpdater = new Timer(0.0, 1.0, () -> {
-          fps.setText(String.format("%.2f", frameRate));
-    });
-    addTimer(fpsUpdater);
+    addTimer(new Timer(0.0, 1.0,
+          () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
-    Label score1 = new Label("Score1", 200, 25, "0");
-    score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
+    // Player 1 status
+    Label score1 = new Label("Score1", 120, 25, "0");
+    score1.setX(350).setY(10);
     addLocalItem(score1);
-    Label score2 = new Label("Score2", 200, 25, "0");
-    score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
+    Label playerName1 = new Label("PlayerName1", 120, score1.getH(),
+        gameInfo.getPlayerName1() + ":");
+    playerName1.setTextAlignHorizon(RIGHT).setRightX(score1.getLeftX()).setY(score1.getY());
+    addLocalItem(playerName1);
+
+    int offset = 30;
+    // Player 2 status
+    Label score2 = new Label("Score2", score1.getW(), score1.getH(), "0");
+    score2.setX(score1.getX()).setY(score1.getY() + offset);
     addLocalItem(score2);
+    Label playerName2 = new Label("PlayerName2", playerName1.getW(), score2.getH(),
+        gameInfo.getPlayerName2() + ":");
+    playerName2.setTextAlignHorizon(RIGHT).setRightX(score2.getLeftX()).setY(score2.getY());
+    addLocalItem(playerName2);
     
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
