@@ -135,10 +135,9 @@ public class PlayPage extends Page {
     powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
     powerups.add(new TrapPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TrapPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new GhostMagnetPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    powerups.add(new SpeedSurgePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
+    
 
     Pacman pacman2 = new Pacman(2);
     pacman2.setX(360).setY(350);

@@ -105,10 +105,20 @@ public class Ghost extends Figure {
 
   @Override
   public void evolve() {
-    if (!isMoving()) {
-      randomizeDirection();
-      startMoving();
+    ArrayList<SynchronizedItem> magnets = page.getSyncItemsByNameAndCount(itemTypeMagnet, itemCountMagnet);
+    if (magnets != null && magnets.size() != 0) {
+      for (SynchronizedItem magnet : magnets) {
+        if (!magnet.isDiscarded()) {
+          setDirectionTowards(magnet.getX(), magnet.getY());
+          break;
+        }
+      }
+    } else {
+      if (!isMoving()) {
+        randomizeDirection();
+      }
     }
+    startMoving();
     super.evolve();
   }
 
@@ -133,6 +143,27 @@ public class Ghost extends Figure {
     float timeS = 1.0 + random(4.0); // [1.0s, 5.0s)
     this.changeDirectionTimer = new OneOffTimer(timeS, () -> { randomizeDirection(); });
     page.addTimer(this.changeDirectionTimer);
+  }
+  
+  public void setDirectionTowards(float targetX, float targetY) {
+  
+    float deltaX = targetX - getX();
+    float deltaY = targetY - getY();
+  
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+  
+      if (deltaX > 0) {
+        setDirection(RIGHTWARD);
+      } else {
+        setDirection(LEFTWARD);
+      }
+    } else {
+      if (deltaY > 0) {
+        setDirection(DOWNWARD);
+      } else {
+        setDirection(UPWARD);
+      }
+    }
   }
 
   @Override
