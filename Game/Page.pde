@@ -12,8 +12,6 @@ public abstract class Page {
   private Page previousPage; // With this attribute, we can form a page stack.
   private Page nextPage;
 
-  private JSONArray syncChangesRecord;
-
   public Page(String name, Page previousPage) {
     this.name = name;
     this.syncItems = new HashMap<String, SynchronizedItem>();
@@ -21,22 +19,23 @@ public abstract class Page {
     this.timers = new ArrayList<Timer>();
     this.previousPage = previousPage;
     this.nextPage = null;
-    this.syncChangesRecord = new JSONArray();
   }
 
   public String getName() { return this.name; }
 
-  public void onSwitchOut() {}
-  public void onSwitchIn() {}
-
-  public void addLocalItem(LocalItem item) { localItems.put(item.getName(), item); }
-
-  public void addSyncItem(SynchronizedItem item) {
-    syncItems.put(item.getName(), item);
-  }
+  public void addLocalItem(LocalItem item) { this.localItems.put(item.getName(), item); }
+  public void addSyncItem(SynchronizedItem item) { this.syncItems.put(item.getName(), item); }
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }
   public SynchronizedItem getSyncItem(String name) { return this.syncItems.get(name); }
+
+  public ArrayList<LocalItem> getLocalItems() {
+    return new ArrayList<LocalItem>(this.localItems.values());
+  }
+  public ArrayList<SynchronizedItem> getSyncItems() {
+    return new ArrayList<SynchronizedItem>(this.syncItems.values());
+  }
+
   public ArrayList<SynchronizedItem> getSyncItemsByNameAndCount(String name, int itemCount) {
      ArrayList<SynchronizedItem> res = new ArrayList<>();
      for (int i = 0; i < itemCount; i++) {
@@ -45,26 +44,11 @@ public abstract class Page {
      return res;
   }
 
-  public ArrayList<SynchronizedItem> getSyncItems() {
-    return new ArrayList<SynchronizedItem>(this.syncItems.values());
-  }
-
-  public ArrayList<LocalItem> getLocalItems() {
-    return new ArrayList<LocalItem>(this.localItems.values());
-  }
-
-  public boolean deleteSyncItem(String name) {
-    if (this.syncItems.remove(name) == null) { return false; }
-    if (!gameInfo.isSingleHost()) { // TODO
-      JSONObject deleted = new JSONObject();
-      deleted.setString("name", name);
-      this.syncChangesRecord.append(deleted);
-    }
-    return true;
-  }
-
   public boolean deleteLocalItem(String name) {
     return this.localItems.remove(name) != null;
+  }
+  public boolean deleteSyncItem(String name) {
+    return this.syncItems.remove(name) != null;
   }
 
   public void addTimer(Timer timer) { this.timers.add(timer); }
@@ -76,7 +60,7 @@ public abstract class Page {
     for (Event e : events) {
       if (e instanceof KeyboardEvent) { keyboardEvents.add((KeyboardEvent)e); }
     }
-    runTimers();
+    runTimers(); // Run timers for both local and sync items.
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
@@ -96,39 +80,27 @@ public abstract class Page {
   }
 
   public void dispatchEventsToLocalItems(ArrayList<Event> events) {
-    getLocalItems().forEach((item) -> { item.onEvents(events); });
+    for (Event e : events) {
+      for (LocalItem item : getLocalItems()) {
+        item.onEvent(e);
+      }
+    }
   }
-
-  public JSONObject getSyncInfo() {
-    JSONObject json = new JSONObject();
-    json.setString("page", getName());
-    String nextPageName = "";
-    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
-    json.setString("nextPage", nextPageName);
-    // json.setInt("lastEvolveTimeMs", gameInfo.getLastEvolveTimeMs());
-    // json.setString("player1", gameInfo.getPlayerName1());
-    // json.setString("player2", gameInfo.getPlayerName2());
-    json.setBoolean("closing", false);
-    return json;
-  }
-
-  public void dispatchSyncInfo(JSONObject json) {}
 
   public void evolveSyncItems(ArrayList<KeyboardEvent> events) {
-    if (gameInfo.isSingleHost()) {
+    if (gameInfo.isServerHost()) {
+      evolveSyncItemsServerSide(events);
+    } else if (gameInfo.isClientHost()) {
+      evolveSyncItemsClientSide(events);
+    } else {
       doEvolve(events);
-      return;
     }
+  }
 
-    try {
-
-    JSONObject msgJsonToServer = new JSONObject();
-    msgJsonToServer.setJSONObject("info", getSyncInfo());
-    events.forEach((e) -> { e.setHostId(serverHostId); }); // TODO
-    msgJsonToServer.setJSONArray("events", keyboardEventsToJson(events));
-    gameInfo.writeSocketClient(msgJsonToServer.toString());
-
-    ArrayList<String> clientMessages = gameInfo.readSocketServer();
+  public void evolveSyncItemsServerSide(ArrayList<KeyboardEvent> events) {
+    ArrayList<String> clientMessages = null;
+    clientMessages = gameInfo.readSocketServer();
+    if (clientMessages == null) { return; } // Exception
     for (String str : clientMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -137,30 +109,41 @@ public abstract class Page {
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
       JSONArray eventsJson = msgJsonFromClient.getJSONArray("events");
+      if (eventsJson == null) { continue; }
       ArrayList<KeyboardEvent> clientEvents = keyboardEventsFromJson(eventsJson);
-      clientEvents.forEach((e) -> { e.setHostId(clientHostId); }); // TODO
       events.addAll(clientEvents);
     }
-    if (true) { // Game not over
-      doEvolve(events);
-    }
-    if (!gameInfo.isServerSendBufferFull()) {
-      JSONObject msgJsonToClient = new JSONObject();
-      msgJsonToClient.setJSONObject("info", getSyncInfo());
-      for (SynchronizedItem item : this.syncItems.values()) {
-        JSONObject json = item.getStateJson();
-        String str = json.toString();
-        if (!str.equals(item.getStoredStateStr())) {
-          item.storeStateStr(str);
-          this.syncChangesRecord.append(json);
-        }
-      }
-      msgJsonToClient.setJSONArray("changes", this.syncChangesRecord);
-      gameInfo.writeSocketServer(msgJsonToClient.toString());
-      clearSyncChangeRecord();
-    }
 
-    ArrayList<String> serverMessages = gameInfo.readSocketClient();
+    doEvolve(events);
+
+    String msgToClient = null;
+    JSONObject msgJsonToClient = getMsgJsonToClient();
+    if (msgJsonToClient != null) { msgToClient = msgJsonToClient.toString(); }
+    Integer writeBytes = gameInfo.writeSocketServer(msgToClient);
+    if (writeBytes == null) { return; } // Exception
+  }
+
+  public JSONObject getMsgJsonToClient() {
+    JSONObject msgJsonToClient = new JSONObject();
+    msgJsonToClient.setJSONObject("info", getSyncInfo());
+    msgJsonToClient.setJSONArray("changes", getChangesJsonArray());
+    return msgJsonToClient;
+  }
+
+  public JSONArray getChangesJsonArray() {
+    return new JSONArray();
+  }
+
+  public void evolveSyncItemsClientSide(ArrayList<KeyboardEvent> events) {
+    String msgToServer = null;
+    JSONObject msgJsonToServer = getMsgJsonToServer(events);
+    if (msgJsonToServer != null) { msgToServer = msgJsonToServer.toString(); }
+    Integer writeBytes = gameInfo.writeSocketClient(msgToServer);
+    if (writeBytes == null) { return; } // Exception
+
+    ArrayList<String> serverMessages = null;
+    serverMessages = gameInfo.readSocketClient();
+    if (serverMessages == null) { return; } // Exception
     for (String str : serverMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -169,72 +152,94 @@ public abstract class Page {
       dispatchSyncInfo(infoJson);
       if (!getName().equals(infoJson.getString("page"))) { continue; }
       JSONArray changesJson = msgJsonFromServer.getJSONArray("changes");
+      if (changesJson == null) { continue; }
       applyChangesFromJson(changesJson);
-    }
-
-    } catch (Exception e) {
-      System.err.println("when communication: " + e.toString());
-      gameInfo.stopSyncAsServer();
-      gameInfo.stopSyncAsClient();
-      onConnectionClose();
     }
   }
 
-  public void onConnectionClose() {}
+  public JSONObject getMsgJsonToServer(ArrayList<KeyboardEvent> events) {
+    JSONObject msgJsonToServer = new JSONObject();
+    msgJsonToServer.setJSONObject("info", getSyncInfo());
+    msgJsonToServer.setJSONArray("events", getEventsJsonArray(events));
+    return msgJsonToServer;
+  }
 
-  public void doEvolve(ArrayList<KeyboardEvent> events) {
-    getSyncItems().forEach((item) -> { item.onKeyboardEvents(events); });
-    getSyncItems().forEach((item) -> { item.evolve(); });
-    (new CollisionEngine()).solveCollisions();
-    gameInfo.updateEvolveTime();
+  public JSONArray getEventsJsonArray(List<KeyboardEvent> events) {
+    return new JSONArray();
   }
 
   public void applyChangesFromJson(JSONArray changesJson) {
     for (int i = 0; i < changesJson.size(); ++i) {
       JSONObject json = changesJson.getJSONObject(i);
       String name = json.getString("name");
-      String type = json.getString("class", "");
-      if (type.length() <= 0) {
+      String type = json.getString("class");
+      if (type == null || type.length() <= 0) {
         deleteSyncItem(name);
         continue;
       }
       SynchronizedItem item = getSyncItem(name);
       if (item != null) {
-        // item.setStateJson(json);
+        item.setStateJson(json);
         continue;
       }
       item = createSyncItemFromJson(json);
       if (item != null) {
-        // addSyncItem(item);
+        addSyncItem(item);
       }
     }
   }
 
-  public void clearSyncChangeRecord() { this.syncChangesRecord = new JSONArray(); }
+  public void doEvolve(ArrayList<KeyboardEvent> events) {
+    ArrayList<SynchronizedItem> items = getSyncItems();
+    for (KeyboardEvent e : events) {
+      for (SynchronizedItem item : items) {
+        item.onKeyboardEvent(e);
+      }
+    }
+    items.forEach((item) -> { item.evolve(); });
+    solveCollisions();
+    gameInfo.updateEvolveTime();
+  }
+
+  public void solveCollisions() {}
+
+  public JSONObject getSyncInfo() {
+    JSONObject json = new JSONObject();
+    json.setString("page", getName());
+    String nextPageName = "";
+    if (this.nextPage != null) { nextPageName = this.nextPage.getName(); }
+    json.setString("nextPage", nextPageName);
+    json.setString("player1", gameInfo.getPlayerName1());
+    json.setString("player2", gameInfo.getPlayerName2());
+    json.setBoolean("closing", false);
+    return json;
+  }
+
+  public void dispatchSyncInfo(JSONObject json) {
+    if (gameInfo.isServerHost()) {
+      gameInfo.setPlayerName2(json.getString("player2"));
+    }
+    if (gameInfo.isClientHost()) {
+      gameInfo.setPlayerName1(json.getString("player1"));
+    }
+  }
+
+  public void onSyncStart() {}
+  public void onConnectionStart() {}
+  public void onNetworkFailure(String where, Exception e) {}
+  public void onConnectionClose() {}
 
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
     getLocalItems().forEach((item) -> { item.update(); });
   }
 
-  // Draw all the items, including sync ones and local ones.
-  public void draw() {
-    drawItems(getSyncItems());
-    drawItems(getLocalItems());
-  }
-
-  private void drawItems(List<? extends Item> items) {
-    Collections.sort(items, new ItemLayerComparator());
-    for (Item item : items) {
-      if (!item.isDiscarded()) { item.draw(); }
-    }
-  }
-
   public Page getPreviousPage() { return this.previousPage; }
 
   public void trySwitchPage(Page nextPage) {
-    if (this.nextPage == null) { this.nextPage = nextPage; }
+    if (this.nextPage == null) { switchPage(nextPage); }
   }
+  public void switchPage(Page nextPage) { this.nextPage = nextPage; }
 
   // Whether the page should be replaced with next one.
   public boolean isObsolete() { return this.nextPage != null; }
@@ -246,6 +251,26 @@ public abstract class Page {
     this.nextPage = null;
     return next;
   }
+
+  public void onSwitchOut() {}
+  public void onSwitchIn() {}
+
+  // Draw all the items, including sync ones and local ones.
+  public void draw() {
+    drawBackground();
+    drawSyncItems();
+    drawLocalItems();
+  }
+  public void drawBackground() { background(255); }
+  public void drawSyncItems() { drawItems(getSyncItems()); }
+  public void drawLocalItems() { drawItems(getLocalItems()); }
+
+  private void drawItems(List<? extends Item> items) {
+    Collections.sort(items, new ItemLayerComparator());
+    for (Item item : items) {
+      if (!item.isDiscarded()) { item.draw(); }
+    }
+  }
 }
 
 
@@ -255,23 +280,27 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
   if (type.equals("Border")) {
     item = new Border("", 0, 0);
   } else if (type.equals("BreakableWall")) {
-    item = new BreakableWall(0, 0);
+    item = new BreakableWall();
   } else if (type.equals("IndestructableWall")) {
-    item = new IndestructableWall(0, 0);
+    item = new IndestructableWall();
   } else if (type.equals("Coin")) {
-    item = new Coin(0, 0);
+    item = new Coin();
   } else if (type.equals("Bullet")) {
-    item = new Bullet(0, 0);
+    item = new Bullet(-1);
+  } else if (type.equals("PacmanShelter")) {
+    item = new PacmanShelter(-1);
   } else if (type.equals("Ghost")) {
-    item = new Ghost(0, 0);
+    item = new Ghost();
   } else if (type.equals("Pacman")) {
-    item = new Pacman(0, 0, 0);
+    item = new Pacman(-1);
   } else if (type.equals("PowerUp")) {
     item = new PowerUp(0, 0);
   } else if (type.equals("OpponentControlPowerUp")) {
     item = new OpponentControlPowerUp(0, 0);
   } else {
     System.err.println("unknown item type " + type);
+    return null;
   }
+  item.setStateJson(json);
   return item;
 }

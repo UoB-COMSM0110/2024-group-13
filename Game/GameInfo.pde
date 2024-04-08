@@ -1,20 +1,22 @@
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 // https://jenkov.com/tutorials/java-nio/selectors.html
 // https://www.baeldung.com/java-nio-selector
-
-// TODO: last evolve time instead of last frame time.
-// TODO: reset username, user score, ..., after stop sync.
-// TODO: page.onConnectionLost
 
 static final int KB = 1024;
 static final int MB = 1024 * KB;
@@ -28,12 +30,15 @@ final int port = 2024;
 final int bufferSize = 2 * MB;
 final String messageDelim = "[MSGEOF]";
 
+static final int networkTimeoutMs = 3000;
+
 
 // A handy struct containing data cache for socket.
 private class Cache {
   private boolean isSendingCache;
   public String data;
   public ByteBuffer buffer;
+  public long lastActiveTimeMs;
 
   public Cache(boolean isSendingCache) {
     this.isSendingCache = isSendingCache;
@@ -45,12 +50,13 @@ private class Cache {
     this.data = "";
     this.buffer.clear();
     if (this.isSendingCache) { this.buffer.flip(); }
+    this.lastActiveTimeMs = 0;
   }
 }
 
 
 // GameInfo holds some housekeeping information.
-// For example, the size of the window, the ip/port of the other player, etc.
+// For example, the size of the window, player names, etc.
 public class GameInfo {
   private int hostId;
   private boolean connectedToClient;
@@ -76,6 +82,7 @@ public class GameInfo {
   private boolean networkSessionClosing;
 
   private Selector selectorServer;
+  private ServerSocketChannel listenerServer;
   private SocketChannel socketServer;
   private Cache sendCacheServer;
   private Cache recvCacheServer;
@@ -86,6 +93,8 @@ public class GameInfo {
   private Cache recvCacheClient;
 
   public GameInfo() {
+    System.out.println("ip: " + getIpAddr());
+
     this.hostId = singleHostId;
     this.connectedToClient = false;
     this.connectedToServer = false;
@@ -169,18 +178,28 @@ public class GameInfo {
   public int getPlayerScore1() { return this.playerScore1; }
   public int getPlayerScore2() { return this.playerScore2; }
 
-  public void startSyncAsServer() throws IOException {
-    this.selectorServer = Selector.open();
-    ServerSocketChannel serverSocket = ServerSocketChannel.open();
-    serverSocket.configureBlocking(false);
-    serverSocket.bind(new InetSocketAddress("localhost", port));
-    serverSocket.register(this.selectorServer, SelectionKey.OP_ACCEPT);
-    this.hostId = serverHostId;
+  public boolean startSyncAsServer() {
+    try {
+      this.selectorServer = Selector.open();
+      this.listenerServer = ServerSocketChannel.open();
+      this.listenerServer.socket().setReuseAddress(true);
+      this.listenerServer.configureBlocking(false);
+      this.listenerServer.bind(new InetSocketAddress("localhost", port));
+      this.listenerServer.register(this.selectorServer, SelectionKey.OP_ACCEPT);
+      this.hostId = serverHostId;
+      page.onSyncStart();
+      return true;
+    } catch (Exception e) {
+      onNetworkFailure("startSyncAsServer", e);
+      return false;
+    }
   }
 
-  private boolean tryAcceptClient() throws IOException { // Accept only one client.
-      if (this.connectedToClient) { return true; }
-      if (this.selectorServer == null) { return false; }
+  // Accept only one client.
+  private Boolean tryAcceptClient() {
+    if (this.connectedToClient) { return Boolean.TRUE; }
+    if (this.selectorServer == null) { return Boolean.FALSE; }
+    try {
       this.selectorServer.selectNow();
       Set<SelectionKey> keys = this.selectorServer.selectedKeys();
       Iterator<SelectionKey> iter = keys.iterator();
@@ -189,34 +208,62 @@ public class GameInfo {
         iter.remove();
         if (!key.isValid()) { continue; }
         if (!key.isAcceptable()) { continue; }
-        ServerSocketChannel serverSocket = (ServerSocketChannel)key.channel();
-        this.socketServer = serverSocket.accept();
+        this.socketServer = this.listenerServer.accept();
+        Socket socket = this.socketServer.socket();
+        socket.setReuseAddress(true);
+        System.out.println("client from: " + socket.getRemoteSocketAddress().toString());
         this.socketServer.configureBlocking(false);
-        serverSocket.close();
-        this.selectorServer.close();
-        this.selectorServer = Selector.open();
         this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
         this.connectedToClient = true;
-        return true;
+        page.onConnectionStart();
+        return Boolean.TRUE;
       }
-      return false;
+      return Boolean.FALSE;
+    } catch (Exception e) {
+      onNetworkFailure("tryAcceptClient", e);
+      return null;
+    }
   }
 
   public boolean isServerSendBufferFull() {
     return this.sendCacheServer.data.length() > bufferSize / 2;
   }
-
-  public void writeSocketServer(String data) throws IOException {
-    if (!isConnectedToClient() && !tryAcceptClient()) { return; }
-    writeSocket(this.socketServer, this.sendCacheServer, data);
+  public boolean isServerSendBufferEmpty() {
+    return this.sendCacheServer.data.length() == 0 &&
+      !this.sendCacheServer.buffer.hasRemaining();
   }
 
-  public ArrayList<String> readSocketServer() throws IOException {
-    if (!isConnectedToClient() && !tryAcceptClient()) { return new ArrayList<String>(); }
-    return readSocket(this.selectorServer, this.socketServer, this.recvCacheServer);
+  public Integer writeSocketServer(String data) {
+    if (!isConnectedToClient()) {
+      Boolean connected = tryAcceptClient();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new Integer(0); }
+    }
+    return writeSocket(this.socketServer, this.sendCacheServer, data);
+  }
+
+  public ArrayList<String> readSocketServer() {
+    if (!isConnectedToClient()) {
+      Boolean connected = tryAcceptClient();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new ArrayList<String>(); }
+    }
+    ArrayList<String> res = readSocket(this.selectorServer, this.socketServer, this.recvCacheServer);
+    if (res == null) { return null; }
+    long lastReadTimeMs = this.recvCacheServer.lastActiveTimeMs;
+    if (0 < lastReadTimeMs && lastReadTimeMs + networkTimeoutMs < getFrameTimeMs()) {
+      onNetworkFailure("readSocketServer timeout", null);
+      return null;
+    }
+    return res;
   }
 
   public void stopSyncAsServer() {
+    if (this.listenerServer != null) {
+      try { this.listenerServer.close(); }
+      catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }
+      this.listenerServer = null;
+    }
     if (this.socketServer != null) {
       try { this.socketServer.close(); }
       catch (Exception e) { System.err.println("when stoping sync as server: " + e.toString()); }
@@ -231,34 +278,63 @@ public class GameInfo {
     this.recvCacheServer.reset();
     this.hostId = singleHostId;
     this.connectedToClient = false;
+    page.onConnectionClose();
   }
 
-  public void startSyncAsClient() throws IOException {
-    // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
-    this.socketClient = SocketChannel.open();
-    this.socketClient.configureBlocking(false);
-    this.socketClient.connect(new InetSocketAddress("localhost", port));
-    this.hostId = clientHostId;
+  public boolean startSyncAsClient(String serverIp) {
+    try {
+      // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+      this.socketClient = SocketChannel.open();
+      this.socketClient.configureBlocking(false);
+      this.socketClient.connect(new InetSocketAddress(serverIp, port));
+      this.hostId = clientHostId;
+      page.onSyncStart();
+      return true;
+    } catch (Exception e) {
+      onNetworkFailure("startSyncAsClient", e);
+      return false;
+    }
   }
 
-  private boolean tryConnectServer() throws IOException {
-    if (this.connectedToServer) { return true; }
-    if (this.socketClient == null) { return false; }
-    if (!this.socketClient.finishConnect()) { return false; }
-    this.selectorClient = Selector.open();
-    this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
-    this.connectedToServer = true;
-    return true;
+  private Boolean tryConnectServer() {
+    if (this.connectedToServer) { return Boolean.TRUE; }
+    if (this.socketClient == null) { return Boolean.FALSE; }
+    try {
+      if (!this.socketClient.finishConnect()) { return Boolean.FALSE; }
+      this.selectorClient = Selector.open();
+      this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
+      this.connectedToServer = true;
+      page.onConnectionStart();
+      return Boolean.TRUE;
+    } catch (Exception e) {
+      onNetworkFailure("tryConnectServer", e);
+      return null;
+    }
   }
 
-  public void writeSocketClient(String data) throws IOException {
-    if (!isConnectedToServer() && !tryConnectServer()) { return; }
-    writeSocket(this.socketClient, this.sendCacheClient, data);
+  public Integer writeSocketClient(String data) {
+    if (!isConnectedToServer()) {
+      Boolean connected = tryConnectServer();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new Integer(0); }
+    }
+    return writeSocket(this.socketClient, this.sendCacheClient, data);
   }
 
-  public ArrayList<String> readSocketClient() throws IOException {
-    if (!isConnectedToServer() && !tryConnectServer()) { return new ArrayList<String>(); }
-    return readSocket(this.selectorClient, this.socketClient, this.recvCacheClient);
+  public ArrayList<String> readSocketClient() {
+    if (!isConnectedToServer()) {
+      Boolean connected = tryConnectServer();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new ArrayList<String>(); }
+    }
+    ArrayList<String> res = readSocket(this.selectorClient, this.socketClient, this.recvCacheClient);
+    if (res == null) { return null; }
+    long lastReadTimeMs = this.recvCacheClient.lastActiveTimeMs;
+    if (0 < lastReadTimeMs && lastReadTimeMs + networkTimeoutMs < getFrameTimeMs()) {
+      onNetworkFailure("readSocketClient timeout", null);
+      return null;
+    }
+    return res;
   }
 
   public void stopSyncAsClient() {
@@ -276,67 +352,109 @@ public class GameInfo {
     this.recvCacheClient.reset();
     this.hostId = singleHostId;
     this.connectedToServer = false;
+    page.onConnectionClose();
   }
 
-  public void writeSocket(SocketChannel socket, Cache cache, String data) throws IOException {
-    cache.data = cache.data + data + messageDelim;
-    if (!cache.buffer.hasRemaining()) {
-      cache.buffer.clear();
-      cache.buffer.put(cache.data.getBytes());
-      cache.buffer.flip();
-      cache.data = "";
+  public Integer writeSocket(SocketChannel socket, Cache cache, String data) {
+    Integer writeBytes = new Integer(0);
+    if (data != null) {
+      cache.data = cache.data + data + messageDelim;
     }
-    for (int i = 0; cache.buffer.hasRemaining() &&  i < 8; ++i) {
-      socket.write(cache.buffer);
+    try {
+      if (!cache.buffer.hasRemaining() && 0 < cache.data.length()) {
+        cache.buffer.clear();
+        cache.buffer.put(cache.data.getBytes());
+        cache.buffer.flip();
+        cache.data = "";
+      }
+      for (int i = 0; cache.buffer.hasRemaining() &&  i < 8; ++i) {
+        writeBytes += socket.write(cache.buffer);
+      }
+    } catch (Exception e) {
+      onNetworkFailure("writeSocket", e);
+      return null;
     }
+    return writeBytes;
   }
 
-  public ArrayList<String> readSocket(Selector selector, SocketChannel socket, Cache cache) throws IOException {
+  public ArrayList<String> readSocket(Selector selector, SocketChannel socket, Cache cache) {
     ArrayList<String> res = new ArrayList<String>();
-    selector.selectNow();
-    Set<SelectionKey> keys = selector.selectedKeys();
-    Iterator<SelectionKey> iter = keys.iterator();
-    int numKey = 0;
-    while (iter.hasNext()) {
-      SelectionKey key = iter.next();
-      iter.remove();
-      ++numKey;
-      if (!key.isValid()) { continue; }
-      if (!key.isReadable()) { continue; }
-      int bytesRead = socket.read(cache.buffer);
-      if (bytesRead == -1) {
-        System.err.println("socket eof");
+    try {
+      selector.selectNow();
+      Set<SelectionKey> keys = selector.selectedKeys();
+      Iterator<SelectionKey> iter = keys.iterator();
+      while (iter.hasNext()) {
+        SelectionKey key = iter.next();
+        iter.remove();
+        if (!key.isValid()) { continue; }
+        if (!key.isReadable()) { continue; }
+        int bytesRead = socket.read(cache.buffer);
+        cache.lastActiveTimeMs = getFrameTimeMs();
+      }
+      cache.buffer.flip();
+      int dataLen = cache.buffer.remaining();
+      byte[] bytes;
+      if (cache.buffer.hasArray()) {
+        bytes = cache.buffer.array();
+        System.out.println("buffer has array");
       } else {
-        System.out.println("socket read bytes: " + bytesRead);
+        bytes = new byte[dataLen];
+        cache.buffer.get(bytes);
+      }
+      // Note: Ascii character array can always be converted into a String.
+      cache.data = cache.data + new String(bytes, 0, dataLen);
+      cache.buffer.clear();
+      boolean cacheLast = !cache.data.endsWith(messageDelim);
+      String[] messages = cache.data.split(Pattern.quote(messageDelim));
+      cache.data = "";
+      int numMessages = messages.length;
+      if (numMessages <= 0) { return res; }
+      if (cacheLast) {
+        numMessages -= 1;
+        cache.data = messages[numMessages];
+      }
+      if (numMessages <= 0) { return res; }
+      for (int i = 0; i < numMessages; ++i) { res.add(messages[i]); }
+      return res;
+    } catch (Exception e) {
+      onNetworkFailure("readSocket", e);
+      return null;
+    }
+  }
+
+  public void onNetworkFailure(String where, Exception e) {
+    System.err.println(where + " : " + e.toString());
+    page.onNetworkFailure(where, e);
+    if (gameInfo.isServerHost()) { gameInfo.stopSyncAsServer(); }
+    if (gameInfo.isClientHost()) { gameInfo.stopSyncAsClient(); }
+  }
+}
+
+
+public static String getIpAddr() {
+  List<String> allIps = getAllIpAddr();
+  if (allIps == null || allIps.size() <= 0) { return "0.0.0.0"; }
+  return allIps.get(0);
+}
+
+public static List<String> getAllIpAddr() {
+  try {
+    ArrayList<String> res = new ArrayList<String>();
+    Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+    if (interfaces == null) { return res; }
+    while (interfaces.hasMoreElements()) {
+      NetworkInterface iface = interfaces.nextElement();
+      if (iface.isLoopback() || !iface.isUp()) { continue; } // No loopback addresses.
+      Enumeration<InetAddress> enumIpAddr = iface.getInetAddresses();
+      while (enumIpAddr.hasMoreElements()) {
+        InetAddress addr = enumIpAddr.nextElement();
+        if (addr instanceof Inet6Address) { continue; } // No ipv6 addresses.
+        res.add(addr.getHostAddress());
       }
     }
-    System.err.println("number of selected keys = " + numKey);
-    cache.buffer.flip();
-    int dataLen = cache.buffer.remaining();
-    byte[] bytes;
-    if (cache.buffer.hasArray()) {
-      bytes = cache.buffer.array();
-      System.out.println("buffer has array");
-    } else {
-      bytes = new byte[dataLen];
-      cache.buffer.get(bytes);
-    }
-    // Note:
-    // Only ascii characters are used.
-    // So the byte array can always be converted into a String.
-    cache.data = cache.data + new String(bytes, 0, dataLen);
-    cache.buffer.clear();
-    boolean cacheLast = !cache.data.endsWith(messageDelim);
-    String[] messages = cache.data.split(Pattern.quote(messageDelim));
-    cache.data = "";
-    int numMessages = messages.length;
-    if (numMessages <= 0) { return res; }
-    if (cacheLast) {
-      numMessages -= 1;
-      cache.data = messages[numMessages];
-    }
-    if (numMessages <= 0) { return res; }
-    for (int i = 0; i < numMessages; ++i) { res.add(messages[i]); }
     return res;
+  } catch (Exception e) {
+    System.err.println("error retrieving network interface list");
+    return null;
   }
 }

@@ -91,14 +91,14 @@ public abstract class Figure extends MovableItem {
 
 final String itemTypeGhost = "Ghost";
 int itemCountGhost;
+final float defaultGhostSpeed = 50.0;
 
-// Ghost class
 public class Ghost extends Figure {
   private Timer changeDirectionTimer;
 
-  public Ghost(float w, float h) {
-    super(itemTypeGhost + itemCountGhost++, w, h);
-    setSpeed(50.0); // set Ghost speed
+  public Ghost() {
+    super(itemTypeGhost + itemCountGhost++, 2.0 * CHARACTER_SIZE, 2.0 * CHARACTER_SIZE);
+    setSpeed(defaultGhostSpeed);
     refreshHp(3);
     setLayer(2);
   }
@@ -157,9 +157,10 @@ public class Pacman extends Figure {
   private boolean isControlledByOpponent = false;
   private boolean isFrozen = false;
 
-  public Pacman(int playerId, float w, float h) {
-    super(itemTypePacman + playerId, w, h);
+  public Pacman(int playerId) {
+    super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
     this.playerId = playerId;
+    setLayer(1);
     setSpeed(100.0);
     refreshHp(3);
   }
@@ -206,7 +207,7 @@ public class Pacman extends Figure {
   }
 
   public void fire() {
-    Bullet bullet = new Bullet(10.0, 10.0);
+    Bullet bullet = new Bullet(getPlayerId());
     bullet.setDirection(getFacing());
     switch (getFacing()) {
       case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
@@ -223,7 +224,8 @@ public class Pacman extends Figure {
     if (item instanceof Coin){
       incScore(1);
     } else if (item instanceof Bullet) {
-      decHp(1);
+      Bullet bullet = (Bullet)item;
+      if (!bullet.isFiredBy(this)) { decHp(1); }
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
     } else if (item instanceof Pacman) {
