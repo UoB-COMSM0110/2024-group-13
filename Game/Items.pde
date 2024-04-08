@@ -49,8 +49,9 @@ int itemCountBreakableWall;
 public class BreakableWall extends Wall {
   private int strength;
 
-  public BreakableWall(float w, float h) {
-    super(itemTypeBreakableWall + itemCountBreakableWall++, w, h);
+  public BreakableWall() {
+    super(itemTypeBreakableWall + itemCountBreakableWall++,
+        CHARACTER_SIZE, CHARACTER_SIZE);
     strength = 3;
   }
 
@@ -85,7 +86,6 @@ public class BreakableWall extends Wall {
     }
   }
   
-
   @Override
   public PImage getImage() {
     return imageBreakableWall;
@@ -97,8 +97,9 @@ final String itemTypeIndestructableWall = "IndestructableWall";
 int itemCountIndestructableWall;
 
 public class IndestructableWall extends Wall {
-  public IndestructableWall(float w, float h) {
-    super(itemTypeIndestructableWall + itemCountIndestructableWall++, w, h);
+  public IndestructableWall() {
+    super(itemTypeIndestructableWall + itemCountIndestructableWall++,
+        CHARACTER_SIZE, CHARACTER_SIZE);
   }
 
   @Override
@@ -112,8 +113,8 @@ final String itemTypeCoin = "Coin";
 int itemCountCoin;
 
 public class Coin extends SynchronizedItem {
-  public Coin(float w, float h) {
-    super(itemTypeCoin + itemCountCoin++, w, h);
+  public Coin() {
+    super(itemTypeCoin + itemCountCoin++, CHARACTER_SIZE, CHARACTER_SIZE);
   }
 
   @Override
@@ -135,8 +136,8 @@ int itemCountBullet;
 final float defaultBulletSpeed = 200.0;
 
 public class Bullet extends MovableItem {
-  public Bullet(float w, float h) {
-    super(itemTypeBullet + itemCountBullet++, w, h);
+  public Bullet() {
+    super(itemTypeBullet + itemCountBullet++, CHARACTER_SIZE, CHARACTER_SIZE);
     startMoving();
   }
 

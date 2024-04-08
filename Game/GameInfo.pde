@@ -30,12 +30,15 @@ final int port = 2024;
 final int bufferSize = 2 * MB;
 final String messageDelim = "[MSGEOF]";
 
+static final int networkTimeoutMs = 3000;
+
 
 // A handy struct containing data cache for socket.
 private class Cache {
   private boolean isSendingCache;
   public String data;
   public ByteBuffer buffer;
+  public long lastActiveTimeMs;
 
   public Cache(boolean isSendingCache) {
     this.isSendingCache = isSendingCache;
@@ -47,6 +50,7 @@ private class Cache {
     this.data = "";
     this.buffer.clear();
     if (this.isSendingCache) { this.buffer.flip(); }
+    this.lastActiveTimeMs = 0;
   }
 }
 
@@ -174,7 +178,7 @@ public class GameInfo {
   public int getPlayerScore1() { return this.playerScore1; }
   public int getPlayerScore2() { return this.playerScore2; }
 
-  public void startSyncAsServer() {
+  public boolean startSyncAsServer() {
     try {
       this.selectorServer = Selector.open();
       this.listenerServer = ServerSocketChannel.open();
@@ -184,15 +188,17 @@ public class GameInfo {
       this.listenerServer.register(this.selectorServer, SelectionKey.OP_ACCEPT);
       this.hostId = serverHostId;
       page.onSyncStart();
+      return true;
     } catch (Exception e) {
       onNetworkFailure("startSyncAsServer", e);
+      return false;
     }
   }
 
   // Accept only one client.
-  private boolean tryAcceptClient() {
-    if (this.connectedToClient) { return true; }
-    if (this.selectorServer == null) { return false; }
+  private Boolean tryAcceptClient() {
+    if (this.connectedToClient) { return Boolean.TRUE; }
+    if (this.selectorServer == null) { return Boolean.FALSE; }
     try {
       this.selectorServer.selectNow();
       Set<SelectionKey> keys = this.selectorServer.selectedKeys();
@@ -210,12 +216,12 @@ public class GameInfo {
         this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
         this.connectedToClient = true;
         page.onConnectionStart();
-        return true;
+        return Boolean.TRUE;
       }
-      return false;
+      return Boolean.FALSE;
     } catch (Exception e) {
       onNetworkFailure("tryAcceptClient", e);
-      return false;
+      return null;
     }
   }
 
@@ -227,14 +233,29 @@ public class GameInfo {
       !this.sendCacheServer.buffer.hasRemaining();
   }
 
-  public void writeSocketServer(String data) {
-    if (!isConnectedToClient() && !tryAcceptClient()) { return; }
-    writeSocket(this.socketServer, this.sendCacheServer, data);
+  public Integer writeSocketServer(String data) {
+    if (!isConnectedToClient()) {
+      Boolean connected = tryAcceptClient();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new Integer(0); }
+    }
+    return writeSocket(this.socketServer, this.sendCacheServer, data);
   }
 
   public ArrayList<String> readSocketServer() {
-    if (!isConnectedToClient() && !tryAcceptClient()) { return new ArrayList<String>(); }
-    return readSocket(this.selectorServer, this.socketServer, this.recvCacheServer);
+    if (!isConnectedToClient()) {
+      Boolean connected = tryAcceptClient();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new ArrayList<String>(); }
+    }
+    ArrayList<String> res = readSocket(this.selectorServer, this.socketServer, this.recvCacheServer);
+    if (res == null) { return null; }
+    long lastReadTimeMs = this.recvCacheServer.lastActiveTimeMs;
+    if (0 < lastReadTimeMs && lastReadTimeMs + networkTimeoutMs < getFrameTimeMs()) {
+      onNetworkFailure("readSocketServer timeout", null);
+      return null;
+    }
+    return res;
   }
 
   public void stopSyncAsServer() {
@@ -260,7 +281,7 @@ public class GameInfo {
     page.onConnectionClose();
   }
 
-  public void startSyncAsClient() {
+  public boolean startSyncAsClient() {
     try {
       // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
       this.socketClient = SocketChannel.open();
@@ -268,35 +289,52 @@ public class GameInfo {
       this.socketClient.connect(new InetSocketAddress("172.23.25.12", port));
       this.hostId = clientHostId;
       page.onSyncStart();
-    } catch (Exception e) {
-      onNetworkFailure("startSyncAsClient", e);
-    }
-  }
-
-  private boolean tryConnectServer() {
-    if (this.connectedToServer) { return true; }
-    if (this.socketClient == null) { return false; }
-    try {
-      if (!this.socketClient.finishConnect()) { return false; }
-      this.selectorClient = Selector.open();
-      this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
-      this.connectedToServer = true;
-      page.onConnectionStart();
       return true;
     } catch (Exception e) {
-      onNetworkFailure("tryConnectServer", e);
+      onNetworkFailure("startSyncAsClient", e);
       return false;
     }
   }
 
-  public void writeSocketClient(String data) {
-    if (!isConnectedToServer() && !tryConnectServer()) { return; }
-    writeSocket(this.socketClient, this.sendCacheClient, data);
+  private Boolean tryConnectServer() {
+    if (this.connectedToServer) { return Boolean.TRUE; }
+    if (this.socketClient == null) { return Boolean.FALSE; }
+    try {
+      if (!this.socketClient.finishConnect()) { return Boolean.FALSE; }
+      this.selectorClient = Selector.open();
+      this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
+      this.connectedToServer = true;
+      page.onConnectionStart();
+      return Boolean.TRUE;
+    } catch (Exception e) {
+      onNetworkFailure("tryConnectServer", e);
+      return null;
+    }
+  }
+
+  public Integer writeSocketClient(String data) {
+    if (!isConnectedToServer()) {
+      Boolean connected = tryConnectServer();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new Integer(0); }
+    }
+    return writeSocket(this.socketClient, this.sendCacheClient, data);
   }
 
   public ArrayList<String> readSocketClient() {
-    if (!isConnectedToServer() && !tryConnectServer()) { return new ArrayList<String>(); }
-    return readSocket(this.selectorClient, this.socketClient, this.recvCacheClient);
+    if (!isConnectedToServer()) {
+      Boolean connected = tryConnectServer();
+      if (connected == null) { return null; }
+      if (!connected.booleanValue()) { return new ArrayList<String>(); }
+    }
+    ArrayList<String> res = readSocket(this.selectorClient, this.socketClient, this.recvCacheClient);
+    if (res == null) { return null; }
+    long lastReadTimeMs = this.recvCacheClient.lastActiveTimeMs;
+    if (0 < lastReadTimeMs && lastReadTimeMs + networkTimeoutMs < getFrameTimeMs()) {
+      onNetworkFailure("readSocketClient timeout", null);
+      return null;
+    }
+    return res;
   }
 
   public void stopSyncAsClient() {
@@ -317,7 +355,8 @@ public class GameInfo {
     page.onConnectionClose();
   }
 
-  public void writeSocket(SocketChannel socket, Cache cache, String data) {
+  public Integer writeSocket(SocketChannel socket, Cache cache, String data) {
+    Integer writeBytes = new Integer(0);
     if (data != null) {
       cache.data = cache.data + data + messageDelim;
     }
@@ -329,11 +368,13 @@ public class GameInfo {
         cache.data = "";
       }
       for (int i = 0; cache.buffer.hasRemaining() &&  i < 8; ++i) {
-        socket.write(cache.buffer);
+        writeBytes += socket.write(cache.buffer);
       }
     } catch (Exception e) {
       onNetworkFailure("writeSocket", e);
+      return null;
     }
+    return writeBytes;
   }
 
   public ArrayList<String> readSocket(Selector selector, SocketChannel socket, Cache cache) {
@@ -348,6 +389,7 @@ public class GameInfo {
         if (!key.isValid()) { continue; }
         if (!key.isReadable()) { continue; }
         int bytesRead = socket.read(cache.buffer);
+        cache.lastActiveTimeMs = getFrameTimeMs();
       }
       cache.buffer.flip();
       int dataLen = cache.buffer.remaining();
@@ -376,7 +418,7 @@ public class GameInfo {
       return res;
     } catch (Exception e) {
       onNetworkFailure("readSocket", e);
-      return res;
+      return null;
     }
   }
 
@@ -390,13 +432,13 @@ public class GameInfo {
 
 public static String getIpAddr() {
   List<String> allIps = getAllIpAddr();
-  if (allIps.size() <= 0) { return null; }
+  if (allIps == null || allIps.size() <= 0) { return null; }
   return allIps.get(0);
 }
 
 public static List<String> getAllIpAddr() {
-  ArrayList<String> res = new ArrayList<String>();
   try {
+    ArrayList<String> res = new ArrayList<String>();
     Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
     if (interfaces == null) { return res; }
     while (interfaces.hasMoreElements()) {
@@ -409,9 +451,9 @@ public static List<String> getAllIpAddr() {
         res.add(addr.getHostAddress());
       }
     }
+    return res;
   } catch (Exception e) {
     System.err.println("error retrieving network interface list");
+    return null;
   }
-  System.out.println("all ip addresses: " + res);
-  return res;
 }

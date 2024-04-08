@@ -100,6 +100,7 @@ public abstract class Page {
   public void evolveSyncItemsServerSide(ArrayList<KeyboardEvent> events) {
     ArrayList<String> clientMessages = null;
     clientMessages = gameInfo.readSocketServer();
+    if (clientMessages == null) { return; } // Exception
     for (String str : clientMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -118,7 +119,8 @@ public abstract class Page {
     String msgToClient = null;
     JSONObject msgJsonToClient = getMsgJsonToClient();
     if (msgJsonToClient != null) { msgToClient = msgJsonToClient.toString(); }
-    gameInfo.writeSocketClient(msgToClient);
+    Integer writeBytes = gameInfo.writeSocketServer(msgToClient);
+    if (writeBytes == null) { return; } // Exception
   }
 
   public JSONObject getMsgJsonToClient() {
@@ -136,10 +138,12 @@ public abstract class Page {
     String msgToServer = null;
     JSONObject msgJsonToServer = getMsgJsonToServer(events);
     if (msgJsonToServer != null) { msgToServer = msgJsonToServer.toString(); }
-    gameInfo.writeSocketClient(msgToServer);
+    Integer writeBytes = gameInfo.writeSocketClient(msgToServer);
+    if (writeBytes == null) { return; } // Exception
 
     ArrayList<String> serverMessages = null;
     serverMessages = gameInfo.readSocketClient();
+    if (serverMessages == null) { return; } // Exception
     for (String str : serverMessages) {
       str = str.trim();
       if (str.length() <= 0) { continue; }
@@ -275,17 +279,17 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
   if (type.equals("Border")) {
     item = new Border("", 0, 0);
   } else if (type.equals("BreakableWall")) {
-    item = new BreakableWall(0, 0);
+    item = new BreakableWall();
   } else if (type.equals("IndestructableWall")) {
-    item = new IndestructableWall(0, 0);
+    item = new IndestructableWall();
   } else if (type.equals("Coin")) {
-    item = new Coin(0, 0);
+    item = new Coin();
   } else if (type.equals("Bullet")) {
-    item = new Bullet(0, 0);
+    item = new Bullet();
   } else if (type.equals("Ghost")) {
-    item = new Ghost(0, 0);
+    item = new Ghost();
   } else if (type.equals("Pacman")) {
-    item = new Pacman(0, 0, 0);
+    item = new Pacman(-1);
   } else if (type.equals("PowerUp")) {
     item = new PowerUp(0, 0);
   } else if (type.equals("OpponentControlPowerUp")) {

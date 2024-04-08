@@ -3,7 +3,6 @@ void loadResourcesForPlayPage() {
 
 
 final String mapPath = "data/map.csv";
-final float CHARACTER_SIZE = 10.0;
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
 public class PlayPage extends Page {
@@ -133,21 +132,21 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
 
-    Pacman pacman1 = new Pacman(1, 18, 18);
+    Pacman pacman1 = new Pacman(1);
     pacman1.setX(360).setY(270);
     addSyncItem(pacman1);
     Label score1 = new Label("Score1", 200, 25, "0");
     score1.setPrefix(gameInfo.getPlayerName1() + ": ").setX(600).setY(15);
     addLocalItem(score1);
 
-    Pacman pacman2 = new Pacman(2, 18, 18);
+    Pacman pacman2 = new Pacman(2);
     pacman2.setX(360).setY(350);
     addSyncItem(pacman2);
     Label score2 = new Label("Score2", 200, 25, "0");
     score2.setPrefix(gameInfo.getPlayerName2() + ": ").setX(600).setY(40);
     addLocalItem(score2);
     
-    Ghost ghost1 = new Ghost(20, 20);
+    Ghost ghost1 = new Ghost();
     ghost1.setX(30).setY(100);
     addSyncItem(ghost1);
 
@@ -157,29 +156,19 @@ public class PlayPage extends Page {
       for (int col = 0; col < values.length; col++) {
         float x = CHARACTER_SIZE / 2 + col * CHARACTER_SIZE;
         float y = CHARACTER_SIZE / 2 + row * CHARACTER_SIZE;
-        //destructable walls
-        if (values[col].equals("1")) {
-          BreakableWall breakableWall =
-            new BreakableWall(CHARACTER_SIZE, CHARACTER_SIZE);
+        if (values[col].equals("1")) { // breakable walls
+          BreakableWall breakableWall = new BreakableWall();
           breakableWall.setX(x).setY(y);
           addSyncItem(breakableWall);
-        }
-        
-        //indestructable walls
-        else if (values[col].equals("2")) {
-          IndestructableWall indestructableWall =
-            new IndestructableWall(CHARACTER_SIZE, CHARACTER_SIZE);
+        } else if (values[col].equals("2")) { // indestructable walls
+          IndestructableWall indestructableWall = new IndestructableWall();
           indestructableWall.setX(x).setY(y);
           addSyncItem(indestructableWall);
-        }
-        //coin
-        else if (values[col].equals("3")) {
-          Coin coin = new Coin(CHARACTER_SIZE, CHARACTER_SIZE);
+        } else if (values[col].equals("3")) { // coins
+          Coin coin = new Coin();
           coin.setX(x).setY(y);
           addSyncItem(coin);
-        }
-        //power up
-        else if (values[col].equals("4")) {
+        } else if (values[col].equals("4")) { // power-ups
           generatePowerUp(x, y);
         }
       }

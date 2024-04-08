@@ -6,6 +6,8 @@ static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
 static final int LEFTWARD = 270;
 
+final float CHARACTER_SIZE = 10.0;
+
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public abstract class Item {
