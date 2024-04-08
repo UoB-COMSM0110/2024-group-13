@@ -7,6 +7,12 @@ public static interface Action {
 }
 
 
+@FunctionalInterface
+public static interface Condition {
+  boolean eval();
+}
+
+
 public class Timer {
   private float intervalS;
   private Action action;
