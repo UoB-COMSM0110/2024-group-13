@@ -81,10 +81,6 @@ public class GameInfo {
   private int playerScore2;
   private boolean networkSessionClosing;
   
-  private boolean ghostMagnetActive = false;
-  private float magnetX = 0.0;
-  private float magnetY = 0.0;
-
   private Selector selectorServer;
   private ServerSocketChannel listenerServer;
   private SocketChannel socketServer;
