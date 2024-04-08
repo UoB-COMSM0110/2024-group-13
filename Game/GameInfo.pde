@@ -56,7 +56,7 @@ private class Cache {
 
 
 // GameInfo holds some housekeeping information.
-// For example, the size of the window, the ip/port of the other player, etc.
+// For example, the size of the window, player names, etc.
 public class GameInfo {
   private int hostId;
   private boolean connectedToClient;
@@ -281,12 +281,12 @@ public class GameInfo {
     page.onConnectionClose();
   }
 
-  public boolean startSyncAsClient() {
+  public boolean startSyncAsClient(String serverIp) {
     try {
       // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
       this.socketClient = SocketChannel.open();
       this.socketClient.configureBlocking(false);
-      this.socketClient.connect(new InetSocketAddress("172.23.25.12", port));
+      this.socketClient.connect(new InetSocketAddress(serverIp, port));
       this.hostId = clientHostId;
       page.onSyncStart();
       return true;
@@ -432,7 +432,7 @@ public class GameInfo {
 
 public static String getIpAddr() {
   List<String> allIps = getAllIpAddr();
-  if (allIps == null || allIps.size() <= 0) { return null; }
+  if (allIps == null || allIps.size() <= 0) { return "0.0.0.0"; }
   return allIps.get(0);
 }
 

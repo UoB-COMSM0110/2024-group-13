@@ -107,6 +107,12 @@ public class PlayPage extends Page {
   }
 
   @Override
+  public void onNetworkFailure(String where, Exception e) {
+    String errMsg = where + e.toString();
+    trySwitchPage(new ErrorPage(getPreviousPage(), errMsg));
+  }
+
+  @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }
 
   private void loadMap(String mapPath) {
@@ -199,5 +205,32 @@ public class PlayPage extends Page {
           
     selectedPowerUp.setX(x).setY(y);
     addSyncItem(selectedPowerUp);
+  }
+}
+
+
+public class ErrorPage extends Page {
+  private String errMsg;
+
+  public ErrorPage(Page previousPage, String errMsg) {
+    super("error", previousPage);
+    this.errMsg = errMsg;
+
+    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
+      switchPage(getPreviousPage());
+    });
+    backButton.setX(55).setY(28);
+    addLocalItem(backButton);
+  }
+
+  @Override
+  public void drawBackground() { background(PlayPageBackgroundColor); }
+
+  public void draw() {
+    super.draw();
+    noStroke();
+    fill(255);
+    textSize(25);
+    text(this.errMsg, 300, 110);
   }
 }

@@ -234,5 +234,6 @@ public class PacmanShelter extends SynchronizedItem {
     noStroke();
     fill(fillColor, 200.0);
     rect(x, y, w, h, 2.0);
+    super.draw(x, y, w, h);
   }
 }

@@ -237,8 +237,9 @@ public abstract class Page {
   public Page getPreviousPage() { return this.previousPage; }
 
   public void trySwitchPage(Page nextPage) {
-    if (this.nextPage == null) { this.nextPage = nextPage; }
+    if (this.nextPage == null) { switchPage(nextPage); }
   }
+  public void switchPage(Page nextPage) { this.nextPage = nextPage; }
 
   // Whether the page should be replaced with next one.
   public boolean isObsolete() { return this.nextPage != null; }

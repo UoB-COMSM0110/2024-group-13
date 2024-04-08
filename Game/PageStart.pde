@@ -34,25 +34,36 @@ public class StartPage extends Page {
     helpButton.setX(300).setY(400);
     addLocalItem(helpButton);
 
+    Label playerNamePrompt1 = new Label("PlayerNamePrompt1", 150, 50, "Player 1 :");
+    playerNamePrompt1.setTextAlignHorizon(RIGHT).setRightX(200).setY(500);
+    addLocalItem(playerNamePrompt1);
     InputBox playerName1 = new InputBox("InputBoxPlayerName1", 300, 50, 15, (bx, oStr, nStr) -> {
         gameInfo.setPlayerName1(nStr);
         if (nStr.length() <= 0) { playButton.disable(); }
     });
     playerName1.setDefaultText("Happy Bunny")
-      .setPrefix(" Player 1 : ")
       .setUpdater(() -> { playerName1.setText(gameInfo.getPlayerName1()); })
       .setCenterX(400).setY(500);
     addLocalItem(playerName1);
 
+    Label playerNamePrompt2 = new Label("PlayerNamePrompt2", 150, 50, "Player 2 :");
+    playerNamePrompt2.setTextAlignHorizon(RIGHT).setRightX(200).setY(560);
+    addLocalItem(playerNamePrompt2);
     InputBox playerName2 = new InputBox("InputBoxPlayerName2", 300, 50, 15, (bx, oStr, nStr) -> {
         gameInfo.setPlayerName2(nStr);
         if (nStr.length() <= 0) { playButton.disable(); }
     });
     playerName2.setDefaultText("Merry Kitty")
-      .setPrefix(" Player 2 : ")
       .setUpdater(() -> { playerName2.setText(gameInfo.getPlayerName2()); })
       .setCenterX(400).setY(560);
     addLocalItem(playerName2);
+
+    Label ipPrompt = new Label("IpPrompt", 150, 40, "Game Lobby :");
+    ipPrompt.setTextAlignHorizon(RIGHT).setRightX(450).setY(300);
+    addLocalItem(ipPrompt);
+    InputBox ipBox = new InputBox("IpBox", 300, 40, 15, (bx, oStr, nStr) -> {});
+    ipBox.setX(450).setY(300);
+    addLocalItem(ipBox);
 
     Button createGameButton = new Button("CreateGame", 200, 40, "Create Game", () -> {
         if (!gameInfo.isServerHost()) { gameInfo.startSyncAsServer(); }
@@ -61,7 +72,7 @@ public class StartPage extends Page {
     createGameButton.setX(550).setY(350);
     addLocalItem(createGameButton);
     Button joinGameButton = new Button("JoinGame", 200, 40, "Join Game", () -> {
-        if (!gameInfo.isClientHost()) { gameInfo.startSyncAsClient(); }
+        if (!gameInfo.isClientHost()) { gameInfo.startSyncAsClient(ipBox.getText()); }
         else { gameInfo.stopSyncAsClient(); }
     });
     joinGameButton.setX(550).setY(400);
@@ -101,23 +112,27 @@ public class StartPage extends Page {
     Button createGameButton = (Button)getLocalItem("CreateGame");
     Button joinGameButton = (Button)getLocalItem("JoinGame");
     Button playButton = (Button)getLocalItem("ButtonPlay");
+    InputBox ipBox = (InputBox)getLocalItem("IpBox");
     InputBox playerName1 = (InputBox)getLocalItem("InputBoxPlayerName1");
     InputBox playerName2 = (InputBox)getLocalItem("InputBoxPlayerName2");
     if (gameInfo.isServerHost()) {
       createGameButton.enable().setText("Leave Game");
       joinGameButton.disable().setText("Join Game");
       playButton.disable().setText("Start Online");
+      ipBox.disable().setText(gameInfo.getIpAddr());
       playerName1.enable();
       playerName2.disable().setText("");
     } else if (gameInfo.isClientHost()) {
       createGameButton.disable().setText("Create Game");
       joinGameButton.enable().setText("Leave Game");
+      ipBox.disable();
       playButton.disable().setText("Start");
       playerName1.disable().setText("");
       playerName2.enable();
     } else {
       createGameButton.enable().setText("Create Game");
       joinGameButton.enable().setText("Join Game");
+      ipBox.enable();
       playButton.disable().setText("Start");
       playerName1.enable();
       playerName2.enable();
