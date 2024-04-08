@@ -142,15 +142,14 @@ public class PlayPage extends Page {
     generateMapBorders();
 
     // generate powerups
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SizeModificationPowerUp_Pacman(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TrapPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new GhostMagnetPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SpeedSurgePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    
+    powerups.add(new OpponentControlPowerUp());
+    powerups.add(new SizeModificationPowerUp_Ghost());
+    powerups.add(new SizeModificationPowerUp_Pacman());
+    powerups.add(new TimeFreezePowerUp());
+    powerups.add(new TeleportPowerUp());
+    powerups.add(new TrapPowerUp());
+    powerups.add(new GhostMagnetPowerUp());
+    powerups.add(new SpeedSurgePowerUp());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
@@ -172,7 +171,7 @@ public class PlayPage extends Page {
           coin.setX(x).setY(y);
           addSyncItem(coin);
         } else if (value.equals("4")) { // power-ups
-          generatePowerUp(x, y);
+          // generatePowerUp(x, y);
         } else if (value.equals("g")) { // ghosts
           Ghost ghost = new Ghost();
           ghost.setX(x).setY(y);
