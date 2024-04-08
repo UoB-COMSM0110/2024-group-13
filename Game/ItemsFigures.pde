@@ -16,6 +16,12 @@ public abstract class Figure extends MovableItem {
   private int maxHp;
   private int hp;
 
+  public Figure(String name, float w, float h) {
+    super(name, w, h);
+    setLives(1);
+    refreshHp(1);
+  }
+
   @Override
   public JSONObject getStateJson() {
     JSONObject json = super.getStateJson();
@@ -32,12 +38,6 @@ public abstract class Figure extends MovableItem {
     setHp(json.getInt("hp"));
   }
   
-  public Figure(String name, float w, float h) {
-    super(name, w, h);
-    setLives(1);
-    refreshHp(1);
-  }
-
   public int getLives() { return this.lives; }
 
   public Figure setLives(int lives) {
@@ -193,6 +193,7 @@ public class Pacman extends Figure {
     this.playerId = playerId;
     setLayer(1);
     setSpeed(100.0);
+    setLives(3);
     refreshHp(3);
   }
 
@@ -211,12 +212,6 @@ public class Pacman extends Figure {
   }
   
   public int getPlayerId() { return this.playerId; }
-
-  public PImage getImage() {
-    return imagePacman;
-  }
-
-  public int getScore(){ return this.score; }
   
   public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
 
@@ -225,13 +220,29 @@ public class Pacman extends Figure {
   }
 
   public void freeze() {
-    isFrozen = true;
+    this.isFrozen = true;
     stopMoving();
   }
 
   public void unfreeze(){
-    isFrozen = false;
+    this.isFrozen = false;
   }
+
+  @Override
+  public Pacman decLives(int dec) {
+    super.decLives(dec);
+    if (getLives() <= 0) {
+      PlayPage playPage = (PlayPage)page;
+      playPage.gameOver();
+    } else {
+      SynchronizedItem shelter = page.getSyncItem(itemTypePacmanShelter + getPlayerId());
+      setCenterX(shelter.getCenterX());
+      setCenterY(shelter.getCenterY());
+    }
+    return this;
+  }
+
+  public int getScore() { return this.score; }
 
   public void incScore(int increment){
     this.score += increment;
@@ -340,9 +351,15 @@ public class Pacman extends Figure {
   void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
+    Label livesLabel = (Label)page.getLocalItem("Lives" + getPlayerId());
+    if (livesLabel != null) { livesLabel.setText(String.valueOf(getLives())); }
     // gameInfo.setMapScaleX(5.0);
     // gameInfo.setMapScaleY(5.0);
     // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);
     // gameInfo.setMapOffsetY(- getY() * 5.0 + 100 + 80);
+  }
+
+  public PImage getImage() {
+    return imagePacman;
   }
 }

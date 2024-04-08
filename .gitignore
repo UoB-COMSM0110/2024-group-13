@@ -2,3 +2,4 @@
 *.autosave
 .~lock.*
 .DS_Store
+Game/data/leaderboard.csv

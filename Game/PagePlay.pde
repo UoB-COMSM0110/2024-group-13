@@ -8,6 +8,7 @@ final int PlayPageBackgroundColor = color(155, 82, 52);
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
   private ArrayList<PowerUp> powerups = new ArrayList<>();
+  private boolean isGameOver;
   
   public PlayPage(Page previousPage) {
     super("play", previousPage);
@@ -37,20 +38,26 @@ public class PlayPage extends Page {
     Label score1 = new Label("Score1", 120, 25, "0");
     score1.setX(350).setY(10);
     addLocalItem(score1);
-    Label playerName1 = new Label("PlayerName1", 120, score1.getH(),
-        gameInfo.getPlayerName1() + ":");
+    Label playerName1 = new Label("PlayerName1",
+        120, score1.getH(), gameInfo.getPlayerName1());
     playerName1.setTextAlignHorizon(RIGHT).setRightX(score1.getLeftX()).setY(score1.getY());
     addLocalItem(playerName1);
+    Label lives1 = new Label("Lives1", 20, score1.getH(), "0");
+    lives1.setLeftX(score1.getRightX()).setY(score1.getY());
+    addLocalItem(lives1);
 
     int offset = 30;
     // Player 2 status
     Label score2 = new Label("Score2", score1.getW(), score1.getH(), "0");
     score2.setX(score1.getX()).setY(score1.getY() + offset);
     addLocalItem(score2);
-    Label playerName2 = new Label("PlayerName2", playerName1.getW(), score2.getH(),
-        gameInfo.getPlayerName2() + ":");
+    Label playerName2 = new Label("PlayerName2",
+        playerName1.getW(), score2.getH(), gameInfo.getPlayerName2());
     playerName2.setTextAlignHorizon(RIGHT).setRightX(score2.getLeftX()).setY(score2.getY());
     addLocalItem(playerName2);
+    Label lives2 = new Label("Lives2", lives1.getW(), score2.getH(), "0");
+    lives2.setLeftX(score2.getRightX()).setY(score2.getY());
+    addLocalItem(lives2);
     
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
@@ -106,7 +113,13 @@ public class PlayPage extends Page {
     (new CollisionEngine()).solveCollisions(() -> isGameOver());
   }
 
-  public boolean isGameOver() { return false; }
+  public boolean isGameOver() { return this.isGameOver; }
+  public void gameOver() {
+    this.isGameOver = true;
+    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + "1");
+    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + "2");
+    trySwitchPage(new GameOverPage(pacman1.getScore(), pacman2.getScore(), getPreviousPage()));
+  }
 
   @Override
   public void dispatchSyncInfo(JSONObject json) {
@@ -129,19 +142,14 @@ public class PlayPage extends Page {
     generateMapBorders();
 
     // generate powerups
-    powerups.add(new OpponentControlPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SizeModificationPowerUp_Ghost(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SizeModificationPowerUp_Pacman(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TimeFreezePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TeleportPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new TrapPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new GhostMagnetPowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    powerups.add(new SpeedSurgePowerUp(CHARACTER_SIZE, CHARACTER_SIZE));
-    
-
-    Pacman pacman2 = new Pacman(2);
-    pacman2.setX(360).setY(350);
-    addSyncItem(pacman2);
+    powerups.add(new OpponentControlPowerUp());
+    powerups.add(new SizeModificationPowerUp_Ghost());
+    powerups.add(new SizeModificationPowerUp_Pacman());
+    powerups.add(new TimeFreezePowerUp());
+    powerups.add(new TeleportPowerUp());
+    powerups.add(new TrapPowerUp());
+    powerups.add(new GhostMagnetPowerUp());
+    powerups.add(new SpeedSurgePowerUp());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
@@ -163,7 +171,7 @@ public class PlayPage extends Page {
           coin.setX(x).setY(y);
           addSyncItem(coin);
         } else if (value.equals("4")) { // power-ups
-          generatePowerUp(x, y);
+          // generatePowerUp(x, y);
         } else if (value.equals("g")) { // ghosts
           Ghost ghost = new Ghost();
           ghost.setX(x).setY(y);
@@ -198,7 +206,7 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
   }
-
+  
   private void generatePowerUp(float x, float y) {
     PowerUp selectedPowerUp = null;
     while (selectedPowerUp == null) {

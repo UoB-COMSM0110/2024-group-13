@@ -77,13 +77,6 @@ public class GameInfo {
 
   private String playerName1;
   private String playerName2;
-  private int playerScore1;
-  private int playerScore2;
-  private boolean networkSessionClosing;
-  
-  private boolean ghostMagnetActive = false;
-  private float magnetX = 0.0;
-  private float magnetY = 0.0;
 
   private Selector selectorServer;
   private ServerSocketChannel listenerServer;
@@ -97,8 +90,6 @@ public class GameInfo {
   private Cache recvCacheClient;
 
   public GameInfo() {
-    System.out.println("ip: " + getIpAddr());
-
     this.hostId = singleHostId;
     this.connectedToClient = false;
     this.connectedToServer = false;
@@ -116,10 +107,8 @@ public class GameInfo {
     this.gameStartTimeMs = System.currentTimeMillis();
     this.lastEvolveTimeMs = 0;
 
-    this.playerName1 = "Anonym1";
-    this.playerName2 = "Anonym2";
-    this.playerScore1 = 0;
-    this.playerScore2 = 0;
+    this.playerName1 = "";
+    this.playerName2 = "";
 
     this.sendCacheServer = new Cache(true);
     this.recvCacheServer = new Cache(false);
@@ -134,8 +123,6 @@ public class GameInfo {
 
   public void setPlayerName1(String name) { this.playerName1 = name; }
   public void setPlayerName2(String name) { this.playerName2 = name; }
-  public void setPlayerScore1(int score) { this.playerScore1 = score; }
-  public void setPlayerScore2(int score) { this.playerScore2 = score; }
 
   public void update() {
     long lastFrameTimeMs = this.currentFrameTimeMs;
@@ -179,8 +166,6 @@ public class GameInfo {
 
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
-  public int getPlayerScore1() { return this.playerScore1; }
-  public int getPlayerScore2() { return this.playerScore2; }
 
   public boolean startSyncAsServer() {
     try {

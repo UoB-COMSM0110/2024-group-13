@@ -293,10 +293,8 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
     item = new Ghost();
   } else if (type.equals("Pacman")) {
     item = new Pacman(-1);
-  } else if (type.equals("PowerUp")) {
-    item = new PowerUp(0, 0);
   } else if (type.equals("OpponentControlPowerUp")) {
-    item = new OpponentControlPowerUp(0, 0);
+    item = new OpponentControlPowerUp();
   } else {
     System.err.println("unknown item type " + type);
     return null;
