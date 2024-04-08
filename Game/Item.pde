@@ -6,6 +6,8 @@ static final int RIGHTWARD = 90;
 static final int DOWNWARD = 180;
 static final int LEFTWARD = 270;
 
+final float CHARACTER_SIZE = 10.0;
+
 
 // Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
 public abstract class Item {
@@ -115,7 +117,9 @@ public abstract class Item {
 // Compare items based on its layer.
 // Used when deciding drawing order of items.
 public class ItemLayerComparator implements Comparator<Item> {
-  public int compare(Item i1, Item i2) { return  i1.getLayer() - i2.getLayer(); }
+  public int compare(Item i1, Item i2) {
+    return  i1.getLayer() - i2.getLayer();
+  }
 }
 
 
@@ -129,11 +133,6 @@ public abstract class LocalItem extends Item {
   @Override
   public final void setStateJson(JSONObject json) {}
 
-  public void onEvents(ArrayList<Event> events) {
-    events.forEach((e) -> { onEvent(e); });
-  }
-
-  // Deals with events.
   public void onEvent(Event e) {
     if (e instanceof MouseEvent) { onMouseEvent((MouseEvent)e); }
     else if (e instanceof KeyboardEvent) { onKeyboardEvent((KeyboardEvent)e); }
@@ -158,10 +157,6 @@ public abstract class LocalItem extends Item {
 public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
 
-  public void onKeyboardEvents(ArrayList<KeyboardEvent> events) {
-    events.forEach((e) -> { onKeyboardEvent(e); });
-  }
-
   public void onKeyboardEvent(KeyboardEvent e) {}
 
   // Whether the mouse cursor is over the item when the event happened.
@@ -174,8 +169,15 @@ public abstract class SynchronizedItem extends Item {
   // Mainly update status which affects game logic, e.g., movement of figures.
   public void evolve() {}
 
+  public boolean noCollisionCheck() { return isDiscarded(); }
+
   // Called when two sync items collide with each other.
-  public void onCollisionWith(SynchronizedItem item) {}
+  public void onCollisionWith(SynchronizedItem target) {}
+
+  public boolean isOverlapWith(SynchronizedItem target) {
+    return getLeftX() < target.getRightX() && target.getLeftX() < getRightX() &&
+      getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
+  }
 
   @Override
   public void delete() { page.deleteSyncItem(getName()); }

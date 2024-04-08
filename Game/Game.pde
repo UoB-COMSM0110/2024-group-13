@@ -11,12 +11,12 @@ void setup(){
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
   eventRecorder = new EventRecorder();
 
+  frameRate(gameInfo.getFrameRateConfig());
   loadResouces();
 
   // Create the start page.
   page = new StartPage(null);
-
-  frameRate(gameInfo.getFrameRateConfig());
+  page.onSwitchIn();
 }
 
 void draw() {
@@ -35,7 +35,6 @@ void draw() {
   page.update();
 
   // Draw page.
-  background(0);
   page.draw();
 }
 

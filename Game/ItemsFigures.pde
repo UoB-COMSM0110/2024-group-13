@@ -2,7 +2,7 @@ import java.util.Random;
 
 final String imagePathPacman = "data/Coin.png";
 PImage imagePacman;
-final String imagePathGhost = "data/Ghost.jpg";
+final String imagePathGhost = "data/Ghost.png";
 PImage imageGhost;
 
 void loadResoucesForFigures() {
@@ -15,6 +15,12 @@ public abstract class Figure extends MovableItem {
   private int lives;
   private int maxHp;
   private int hp;
+
+  public Figure(String name, float w, float h) {
+    super(name, w, h);
+    setLives(1);
+    refreshHp(1);
+  }
 
   @Override
   public JSONObject getStateJson() {
@@ -32,12 +38,6 @@ public abstract class Figure extends MovableItem {
     setHp(json.getInt("hp"));
   }
   
-  public Figure(String name, float w, float h) {
-    super(name, w, h);
-    setLives(1);
-    refreshHp(1);
-  }
-
   public int getLives() { return this.lives; }
 
   public Figure setLives(int lives) {
@@ -91,14 +91,14 @@ public abstract class Figure extends MovableItem {
 
 final String itemTypeGhost = "Ghost";
 int itemCountGhost;
+final float defaultGhostSpeed = 50.0;
 
-// Ghost class
 public class Ghost extends Figure {
   private Timer changeDirectionTimer;
 
-  public Ghost(float w, float h) {
-    super(itemTypeGhost + itemCountGhost++, w, h);
-    setSpeed(50.0); // set Ghost speed
+  public Ghost() {
+    super(itemTypeGhost + itemCountGhost++, 2.0 * CHARACTER_SIZE, 2.0 * CHARACTER_SIZE);
+    setSpeed(defaultGhostSpeed);
     refreshHp(3);
     setLayer(2);
   }
@@ -157,10 +157,12 @@ public class Pacman extends Figure {
   private boolean isControlledByOpponent = false;
   private boolean isFrozen = false;
 
-  public Pacman(int playerId, float w, float h) {
-    super(itemTypePacman + playerId, w, h);
+  public Pacman(int playerId) {
+    super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
     this.playerId = playerId;
+    setLayer(1);
     setSpeed(100.0);
+    setLives(3);
     refreshHp(3);
   }
 
@@ -179,15 +181,7 @@ public class Pacman extends Figure {
   }
   
   public int getPlayerId() { return this.playerId; }
-
-  public PImage getImage() {
-    return imagePacman;
-  }
-
-  public int getScore(){ return this.score; }
   
-  public int getLives() { return super.lives; }
-
   public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
 
   public void setIsControlledByOpponent(boolean controlled) {
@@ -195,21 +189,36 @@ public class Pacman extends Figure {
   }
 
   public void freeze() {
-    isFrozen = true;
+    this.isFrozen = true;
     stopMoving();
   }
 
   public void unfreeze(){
-    isFrozen = false;
+    this.isFrozen = false;
   }
 
+  @Override
+  public Pacman decLives(int dec) {
+    super.decLives(dec);
+    if (getLives() <= 0) {
+      PlayPage playPage = (PlayPage)page;
+      playPage.gameOver();
+    } else {
+      SynchronizedItem shelter = page.getSyncItem(itemTypePacmanShelter + getPlayerId());
+      setCenterX(shelter.getCenterX());
+      setCenterY(shelter.getCenterY());
+    }
+    return this;
+  }
+
+  public int getScore() { return this.score; }
 
   public void incScore(int increment){
     this.score += increment;
   }
 
   public void fire() {
-    Bullet bullet = new Bullet(10.0, 10.0);
+    Bullet bullet = new Bullet(getPlayerId());
     bullet.setDirection(getFacing());
     switch (getFacing()) {
       case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
@@ -226,17 +235,14 @@ public class Pacman extends Figure {
     if (item instanceof Coin){
       incScore(1);
     } else if (item instanceof Bullet) {
-      decHp(1);
+      Bullet bullet = (Bullet)item;
+      if (!bullet.isFiredBy(this)) { decHp(1); }
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
     } else if (item instanceof Pacman) {
       tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
       decLives(1);
-      if(getLives() <= 0){
-            ((PlayPage)page).checkGameOver();
-        }
-        
     }
   }
 
@@ -320,5 +326,9 @@ public class Pacman extends Figure {
     // gameInfo.setMapScaleY(5.0);
     // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);
     // gameInfo.setMapOffsetY(- getY() * 5.0 + 100 + 80);
+  }
+
+  public PImage getImage() {
+    return imagePacman;
   }
 }
