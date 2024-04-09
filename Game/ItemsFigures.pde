@@ -1,6 +1,6 @@
 import java.util.Random;
 
-final String imagePathPacman = "data/Coin.png";
+final String imagePathPacman = "data/Pacman.png";
 PImage imagePacman;
 final String imagePathGhost = "data/Ghost.png";
 PImage imageGhost;
@@ -50,12 +50,16 @@ public abstract class Figure extends MovableItem {
   public Figure decLives(int dec) {
     setLives(getLives() - dec);
     if (getLives() == 0) {
-      discard();
+      onLostAllLives();
     } else {
       refreshHp();
+      onLostLife();
     }
     return this;
   }
+
+  public void onLostLife() {}
+  public void onLostAllLives() {}
 
   public int getMaxHp() { return this.maxHp; }
   public Figure setMaxHp(int maxHp) {
@@ -101,24 +105,16 @@ public class Ghost extends Figure {
     setSpeed(defaultGhostSpeed);
     refreshHp(3);
     setLayer(2);
+    startMoving();
   }
 
   @Override
   public void evolve() {
-    ArrayList<SynchronizedItem> magnets = page.getSyncItemsByNameAndCount(itemTypeMagnet, itemCountMagnet);
-    if (magnets != null && magnets.size() != 0) {
-      for (SynchronizedItem magnet : magnets) {
-        if (!magnet.isDiscarded()) {
-          setDirectionTowards(magnet.getX(), magnet.getY());
-          break;
-        }
-      }
-    } else {
-      if (!isMoving()) {
-        randomizeDirection();
-      }
+    if (this.changeDirectionTimer == null) { randomizeDirection(); }
+    Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
+    if (magnet != null && !magnet.isDiscarded()) {
+      setDirectionTowards(magnet.getX(), magnet.getY());
     }
-    startMoving();
     super.evolve();
   }
 
@@ -131,6 +127,11 @@ public class Ghost extends Figure {
 
   @Override
   public void onStepback(Item target) { randomizeDirection(); }
+
+  @Override
+  public void onLostAllLives() {
+    discardFor(ghostRestoreTimeS);
+  }
 
   private void randomizeDirection() {
     switch ((int)random(4)) {
@@ -146,12 +147,9 @@ public class Ghost extends Figure {
   }
   
   public void setDirectionTowards(float targetX, float targetY) {
-  
     float deltaX = targetX - getX();
     float deltaY = targetY - getY();
-  
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-  
       if (deltaX > 0) {
         setDirection(RIGHTWARD);
       } else {
@@ -167,13 +165,6 @@ public class Ghost extends Figure {
   }
 
   @Override
-  public Item discard() {
-    stopMoving();
-    if (this.changeDirectionTimer != null) { this.changeDirectionTimer.destroy(); }
-    return super.discard();
-  }
-
-  @Override
   public PImage getImage() {
     return imageGhost;
   }
@@ -181,16 +172,23 @@ public class Ghost extends Figure {
 
 
 final String itemTypePacman = "Pacman";
+final float pacmanIncBulletDurationS = 2.0;
+final float ghostRestoreTimeS = 12.0;
 
 public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
   private int score;
+  private boolean ableToFire;
+  private int numBullets;
   private boolean isControlledByOpponent = false;
   private boolean isFrozen = false;
+
+  private Timer loadBulletTimer;
 
   public Pacman(int playerId) {
     super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
     this.playerId = playerId;
+    enableFire();
     setLayer(1);
     setSpeed(100.0);
     setLives(3);
@@ -202,6 +200,10 @@ public class Pacman extends Figure {
     JSONObject json = super.getStateJson();
     json.setInt("playerId", getPlayerId());
     json.setInt("score", getScore());
+    json.setBoolean("ableToFire", isAbleToFire());
+    json.setInt("numBullets", getNumberOfBullets());
+    json.setBoolean("isControlledByOpponent", getIsControlledByOpponent());
+    json.setBoolean("isFrozen", this.isFrozen);
     return json;
   }
   @Override
@@ -209,6 +211,11 @@ public class Pacman extends Figure {
     super.setStateJson(json);
     this.playerId = json.getInt("playerId");
     this.score = json.getInt("score");
+    if (json.getBoolean("ableToFire")) { enableFire(); }
+    else { disableFire(); }
+    this.numBullets = json.getInt("numBullets");
+    setIsControlledByOpponent(json.getBoolean("isControlledByOpponent"));
+    this.isFrozen = json.getBoolean("isFrozen");
   }
   
   public int getPlayerId() { return this.playerId; }
@@ -229,17 +236,15 @@ public class Pacman extends Figure {
   }
 
   @Override
-  public Pacman decLives(int dec) {
-    super.decLives(dec);
-    if (getLives() <= 0) {
-      PlayPage playPage = (PlayPage)page;
-      playPage.gameOver();
-    } else {
-      SynchronizedItem shelter = page.getSyncItem(itemTypePacmanShelter + getPlayerId());
-      setCenterX(shelter.getCenterX());
-      setCenterY(shelter.getCenterY());
-    }
-    return this;
+  public void onLostLife() {
+    SynchronizedItem shelter = page.getSyncItem(itemTypePacmanShelter + getPlayerId());
+    setCenterX(shelter.getCenterX());
+    setCenterY(shelter.getCenterY());
+  }
+  @Override
+  public void onLostAllLives() {
+    PlayPage playPage = (PlayPage)page;
+    playPage.gameOver();
   }
 
   public int getScore() { return this.score; }
@@ -248,7 +253,17 @@ public class Pacman extends Figure {
     this.score += increment;
   }
 
+  public boolean isAbleToFire() { return this.ableToFire; }
+  public Pacman enableFire() { this.ableToFire = true; return this; }
+  public Pacman disableFire() { this.ableToFire = false; return this; }
+
+  public int getNumberOfBullets() { return this.numBullets; }
+  public void incBullet(int inc) { this.numBullets += inc; }
+  public void decBullet(int dec) { this.numBullets -= dec; }
+
   public void fire() {
+    if (!isAbleToFire()) { return; }
+    if (getNumberOfBullets() <= 0) { return; }
     Bullet bullet = new Bullet(getPlayerId());
     bullet.setDirection(getFacing());
     switch (getFacing()) {
@@ -259,6 +274,17 @@ public class Pacman extends Figure {
     }
     bullet.setSpeed(getSpeed());
     page.addSyncItem(bullet);
+    decBullet(1);
+    disableFire();
+  }
+
+  @Override
+  public void evolve() {
+    if (this.loadBulletTimer == null) {
+      this.loadBulletTimer = new Timer(0.0, pacmanIncBulletDurationS, () -> { incBullet(1); });
+      page.addTimer(this.loadBulletTimer);
+    }
+    super.evolve();
   }
 
   @Override
@@ -278,14 +304,14 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (isFrozen){return false;}
+    if (this.isFrozen){return false;}
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 1;
     }
     return getPlayerId() == 1;
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (isFrozen){return false;}
+    if (this.isFrozen){return false;}
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 2;
     }
@@ -321,6 +347,8 @@ public class Pacman extends Figure {
   }
 
   public void onKeyReleasedEvent(KeyReleasedEvent e) {
+    if (e.getKey() == ' ' && usingKeySetA()) { enableFire(); return; }
+    if (e.getKey() == '0' && usingKeySetB()) { enableFire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction == null) { return; }
     if (getDirection() == direction.intValue()) { stopMoving(); }

@@ -20,15 +20,30 @@ void loadResoucesForItems() {
 
 
 public class Border extends SynchronizedItem {
-  public Border(String name, float w, float h) {
+  private int forbiddenDirection;
+
+  public Border(String name, float w, float h, int forbiddenDirection) {
     super(name, w, h);
+    this.forbiddenDirection = forbiddenDirection;
   }
 
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("forbiddenDirection", this.forbiddenDirection);
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.forbiddenDirection = json.getInt("forbiddenDirection");
+  }
+  
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     // `item` can only be instance of MovableItem
     if (item instanceof Figure) {
-      ((Figure)item).tryStepbackFrom(this);
+      ((Figure)item).tryPushbackFrom(this, this.forbiddenDirection);
     } else {
       item.discard().delete();
     }
@@ -45,6 +60,8 @@ public abstract class Wall extends SynchronizedItem {
 
 final String itemTypeBreakableWall = "BreakableWall";
 int itemCountBreakableWall;
+final int breakableWallStrength = 2;
+final float breakableWallRestoreTimeS = 10.0;
 
 public class BreakableWall extends Wall {
   private int strength;
@@ -52,7 +69,7 @@ public class BreakableWall extends Wall {
   public BreakableWall() {
     super(itemTypeBreakableWall + itemCountBreakableWall++,
         CHARACTER_SIZE, CHARACTER_SIZE);
-    strength = 3;
+    setStrength(breakableWallStrength);
   }
 
   @Override
@@ -68,13 +85,16 @@ public class BreakableWall extends Wall {
   }
   
   public int getStrength() { return this.strength; }
-
-  public BreakableWall setStrength(int strength) { this.strength = strength; return this; }
+  public BreakableWall setStrength(int strength) {
+    this.strength = strength;
+    return this;
+  }
   
   public BreakableWall decStrength() {
     this.strength -= 1;
     if (this.strength <= 0) {
-      discard();
+      discardFor(breakableWallRestoreTimeS);
+      setStrength(breakableWallStrength);
     }
     return this;
   }
@@ -111,6 +131,7 @@ public class IndestructableWall extends Wall {
 
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
+final float coinRestoreTimeS = 12.0;
 
 public class Coin extends SynchronizedItem {
   public Coin() {
@@ -120,7 +141,7 @@ public class Coin extends SynchronizedItem {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if(item instanceof Pacman){
-      discard();
+      discardFor(coinRestoreTimeS);
     }
   }
 
@@ -187,7 +208,7 @@ public class PacmanShelter extends SynchronizedItem {
   private int owner;
 
   public PacmanShelter(int owner) {
-    super(itemTypePacmanShelter + owner, 2.5 * CHARACTER_SIZE, 2.5 * CHARACTER_SIZE);
+    super(itemTypePacmanShelter + owner, 2.8 * CHARACTER_SIZE, 2.8 * CHARACTER_SIZE);
     this.owner = owner;
   }
 

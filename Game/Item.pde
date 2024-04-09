@@ -179,6 +179,12 @@ public abstract class SynchronizedItem extends Item {
       getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
   }
 
+  public SynchronizedItem discardFor(float intervalS) {
+    discard();
+    page.addTimer(new OneOffTimer(intervalS, () -> { restore(); }));
+    return this;
+  }
+
   @Override
   public void delete() { page.deleteSyncItem(getName()); }
 
@@ -247,7 +253,7 @@ public abstract class MovableItem extends SynchronizedItem {
   
   @Override
   public void evolve() {
-    if (isMoving()) { move(); }
+    if (!isDiscarded() && isMoving()) { move(); }
   }
 
   private MovableItem moveX(float dx) { setX(getX() + dx); return this; }
@@ -274,10 +280,22 @@ public abstract class MovableItem extends SynchronizedItem {
     return true;
   }
 
+  public boolean tryPushbackFrom(Item target, int direction) {
+    float backMovement = getPenetrationDepthOf(target, direction);
+    if (backMovement < 0) { return false; }
+    backMovement += epsilon;
+    doMovementTo(-backMovement, direction);
+    onStepback(target);
+    return true;
+  }
+
   public void onStepback(Item target) {}
 
   private float getPenetrationDepthOf(Item target) {
-    switch (getDirection()) {
+    return getPenetrationDepthOf(target, getDirection());
+  }
+  private float getPenetrationDepthOf(Item target, int direction) {
+    switch (direction) {
       case UPWARD: return target.getBottomY() - getTopY();
       case RIGHTWARD: return -(target.getLeftX() - getRightX());
       case DOWNWARD: return -(target.getTopY() - getBottomY());
@@ -297,7 +315,10 @@ public abstract class MovableItem extends SynchronizedItem {
   }
 
   private void doMovement(float distance) {
-    switch (getDirection()) {
+    doMovementTo(distance, getDirection());
+  }
+  private void doMovementTo(float distance, int direction) {
+    switch (direction) {
       case UPWARD: { moveY(-distance); break; }
       case RIGHTWARD: { moveX(distance); break; }
       case DOWNWARD: { moveY(distance); break; }

@@ -36,14 +36,6 @@ public abstract class Page {
     return new ArrayList<SynchronizedItem>(this.syncItems.values());
   }
 
-  public ArrayList<SynchronizedItem> getSyncItemsByNameAndCount(String name, int itemCount) {
-     ArrayList<SynchronizedItem> res = new ArrayList<>();
-     for (int i = 0; i < itemCount; i++) {
-       res.add(syncItems.get(name + i));
-     }
-     return res;
-  }
-
   public boolean deleteLocalItem(String name) {
     return this.localItems.remove(name) != null;
   }
@@ -64,6 +56,7 @@ public abstract class Page {
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
+    System.out.println(this.syncItems.size() + " " + this.timers.size());
   }
 
   public void runTimers() {
@@ -278,7 +271,7 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
   SynchronizedItem item = null;
   String type = json.getString("class");
   if (type.equals("Border")) {
-    item = new Border("", 0, 0);
+    item = new Border("", 0, 0, -1);
   } else if (type.equals("BreakableWall")) {
     item = new BreakableWall();
   } else if (type.equals("IndestructableWall")) {
@@ -295,6 +288,24 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
     item = new Pacman(-1);
   } else if (type.equals("OpponentControlPowerUp")) {
     item = new OpponentControlPowerUp();
+  } else if (type.equals("TeleportPowerUp")) {
+    item = new TeleportPowerUp();
+  } else if (type.equals("TimeFreezePowerUp")) {
+    item = new TimeFreezePowerUp();
+  } else if (type.equals("SizeModificationPowerUp_Pacman")) {
+    item = new SizeModificationPowerUp_Pacman();
+  } else if (type.equals("SizeModificationPowerUp_Ghost")) {
+    item = new SizeModificationPowerUp_Ghost();
+  } else if (type.equals("TrapPowerUp")) {
+    item = new TrapPowerUp();
+  } else if (type.equals("Trap")) {
+    item = new Trap(-1);
+  } else if (type.equals("GhostMagnetPowerUp")) {
+    item = new GhostMagnetPowerUp();
+  } else if (type.equals("Magnet")) {
+    item = new Magnet();
+  } else if (type.equals("SpeedSurgePowerUp")) {
+    item = new SpeedSurgePowerUp();
   } else {
     System.err.println("unknown item type " + type);
     return null;
