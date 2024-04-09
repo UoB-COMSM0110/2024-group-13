@@ -7,7 +7,6 @@ final int PlayPageBackgroundColor = color(155, 82, 52);
 
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
-  private ArrayList<PowerUp> powerups = new ArrayList<>();
   private boolean isGameOver;
   
   public PlayPage(Page previousPage) {
@@ -103,6 +102,7 @@ public class PlayPage extends Page {
 
   @Override
   public void doEvolve(ArrayList<KeyboardEvent> events) {
+    // Note: Timers associated with sync items are still running.
     if (!isGameOver()) {
       super.doEvolve(events);
     }
@@ -116,15 +116,17 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
-    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + "1");
-    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + "2");
-    trySwitchPage(new GameOverPage(pacman1.getScore(), pacman2.getScore(), getPreviousPage()));
+    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
+    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
+    int playerScore1 = pacman1.getScore();
+    int playerScore2 = pacman2.getScore();
+    trySwitchPage(new GameOverPage(playerScore1, playerScore2, getPreviousPage()));
   }
 
   @Override
   public void dispatchSyncInfo(JSONObject json) {
     super.dispatchSyncInfo(json);
-    if (gameInfo.isClientHost()) {
+    if (gameInfo.isClientHost()) { // Only client needs to do this.
       gameInfo.setPlayerName2(json.getString("player2"));
     }
   }
@@ -140,16 +142,6 @@ public class PlayPage extends Page {
 
   private void loadMap(String mapPath) {
     generateMapBorders();
-
-    // generate powerups
-    powerups.add(new OpponentControlPowerUp());
-    powerups.add(new SizeModificationPowerUp_Ghost());
-    powerups.add(new SizeModificationPowerUp_Pacman());
-    powerups.add(new TimeFreezePowerUp());
-    powerups.add(new TeleportPowerUp());
-    powerups.add(new TrapPowerUp());
-    powerups.add(new GhostMagnetPowerUp());
-    powerups.add(new SpeedSurgePowerUp());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
@@ -171,7 +163,9 @@ public class PlayPage extends Page {
           coin.setX(x).setY(y);
           addSyncItem(coin);
         } else if (value.equals("4")) { // power-ups
-          // generatePowerUp(x, y);
+          PowerUp powerUp = generateRandomPowerUp();
+          powerUp.setX(x).setY(y);
+          addSyncItem(powerUp);
         } else if (value.equals("g")) { // ghosts
           Ghost ghost = new Ghost();
           ghost.setX(x).setY(y);
@@ -190,38 +184,21 @@ public class PlayPage extends Page {
   }
   
   private void generateMapBorders() {
-    float borderSize = 5.0;
+    float borderSize = CHARACTER_SIZE * 2.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
-    Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight);
+    Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight, LEFTWARD);
     leftBorder.setX(-borderSize).setY(-borderSize);
     addSyncItem(leftBorder);
-    Border rightBorder = new Border("RightBorder", borderSize, verticalBorderHeight);
+    Border rightBorder = new Border("RightBorder", borderSize, verticalBorderHeight, RIGHTWARD);
     rightBorder.setX(gameInfo.getMapWidth()).setY(-borderSize);
     addSyncItem(rightBorder);
-    Border topBorder = new Border("TopBorder", horizonBorderWidth, borderSize);
+    Border topBorder = new Border("TopBorder", horizonBorderWidth, borderSize, UPWARD);
     topBorder.setX(-borderSize).setY(-borderSize);
     addSyncItem(topBorder);
-    Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize);
+    Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize, DOWNWARD);
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
-  }
-  
-  private void generatePowerUp(float x, float y) {
-    PowerUp selectedPowerUp = null;
-    while (selectedPowerUp == null) {
-      int index = (int) random(powerups.size());
-      PowerUp powerup = powerups.get(index);
-      if (powerup.getInUse()) {
-        continue;
-      } else {
-        powerup.setInUse(true);
-        selectedPowerUp = powerup;
-      }
-    }
-          
-    selectedPowerUp.setX(x).setY(y);
-    addSyncItem(selectedPowerUp);
   }
 }
 

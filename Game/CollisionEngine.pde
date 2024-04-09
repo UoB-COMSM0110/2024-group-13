@@ -36,11 +36,15 @@ public class SimpleCollisionEngine {
   public void solveCollisionsForItem(MovableItem item,
       ArrayList<SynchronizedItem> targets, Condition stopCond) {
     int i = 0;
-    while (!stopCond.eval() && !item.noCollisionCheck() && i < targets.size()) {
+    while (!stopCond.eval() && i < targets.size()) {
       SynchronizedItem target = targets.get(i++);
-      if (!target.noCollisionCheck() && isOverlap(item, target)) {
-        item.onCollisionWith(target);
-        target.onCollisionWith(item);
+      if (isOverlap(item, target)) {
+        if (!target.isDiscarded() && !item.noCollisionCheck()) {
+          item.onCollisionWith(target);
+        }
+        if (!item.isDiscarded() && !target.noCollisionCheck()) {
+          target.onCollisionWith(item);
+        }
       }
     }
   }

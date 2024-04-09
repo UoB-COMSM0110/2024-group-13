@@ -13,20 +13,24 @@ static final String leaderboardFile = "data/leaderboard.csv";
 
 public class GameOverPage extends Page {
   private String winnerMessage;
+  private int player1Score;
+  private int player2Score;
   private List<String> topScores;
 
   public GameOverPage(int player1Score, int player2Score, Page previousPage) {
     super("gameover", previousPage);
+    this.player1Score = player1Score;
+    this.player2Score = player2Score;
 
     writeScoreToFile(gameInfo.getPlayerName1(), player1Score);
     writeScoreToFile(gameInfo.getPlayerName2(), player2Score);
     this.topScores = readAndSortScores();
 
     if (player1Score > player2Score) {
-      this.winnerMessage = gameInfo.getPlayerName1() + " Wins!";
+      this.winnerMessage = gameInfo.getPlayerName1() + "  Wins!";
     }
     if (player2Score > player1Score) {
-      this.winnerMessage = gameInfo.getPlayerName2() + " Wins!";
+      this.winnerMessage = gameInfo.getPlayerName2() + "  Wins!";
     }
     if (player1Score == player2Score) {
       this.winnerMessage = "It's a draw!";
@@ -82,7 +86,9 @@ public class GameOverPage extends Page {
   public void draw() {
     super.draw();
 
-    drawTextWithOutline(winnerMessage, 410, 200, 60, 5, color(255));
+    String scoreMessage = this.player1Score + "  vs  " + this.player2Score;
+    drawTextWithOutline(scoreMessage, 410, 150, 60, 5, color(255));
+    drawTextWithOutline(winnerMessage, 410, 250, 60, 5, color(255));
 
     textSize(32); 
     int yPos = 350; 

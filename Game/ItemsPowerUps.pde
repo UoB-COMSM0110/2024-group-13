@@ -5,7 +5,7 @@ final String imagePathPowerUp = "data/PowerUp.png";
 PImage imagePowerUp;
 final String imagePathTrap = "data/Trap.png";
 PImage imageTrap;
-final String imagePathMagnet = "data/magnet.png";
+final String imagePathMagnet = "data/Magnet.png";
 PImage imageMagnet;
 
 
@@ -16,32 +16,27 @@ void loadResoucesForPowerUps() {
 }
 
 
+static final float defaultPowerUpDurationS = 5.0; 
+
+
 final String itemTypePowerUp = "PowerUp";
 int itemCountPowerUp;
+final float powerUpRestoreTimeS = 10.0;
 
 public abstract class PowerUp extends SynchronizedItem {
-  private boolean inUse = false;
-
   public PowerUp() {
     super(itemTypePowerUp + itemCountPowerUp++, CHARACTER_SIZE, CHARACTER_SIZE);
   }
 
-  public boolean getInUse() {
-    return this.inUse;
-  }
-
-  public PowerUp setInUse(boolean status) {
-    this.inUse = status;
+  public PowerUp replace() {
+    discard().delete();
+    page.addTimer(new OneOffTimer(powerUpRestoreTimeS, () -> {
+          PowerUp newPowerUp = generateRandomPowerUp();
+          newPowerUp.setX(getX()).setY(getY());
+          page.addSyncItem(newPowerUp);
+    }));
     return this;
   }
-
-
-  @Override
-  public void onCollisionWith(SynchronizedItem item) {
-    if(item instanceof Pacman){
-      discard();
-    }
-  }  
 
   @Override
   public PImage getImage() {
@@ -51,8 +46,6 @@ public abstract class PowerUp extends SynchronizedItem {
 
 
 public class OpponentControlPowerUp extends PowerUp {
-  private int duration = 5; 
-
   public OpponentControlPowerUp() {
     super();
   }
@@ -60,18 +53,15 @@ public class OpponentControlPowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
-      int currentPlayerId = pacman.getPlayerId();
-      int opponentId = (currentPlayerId == 1) ? 2 : 1;
-      // Pacman opponentPacman = findPacmanById(opponentId);
-      Pacman opponentPacman = (Pacman) page.getSyncItem(itemTypePacman + opponentId);
-
+      Pacman pacman = (Pacman)item;
+      Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
         takeControl(opponentPacman);
-        Timer controlEndTimer = new OneOffTimer(duration, () -> releaseControl(opponentPacman));
+        Timer controlEndTimer = new OneOffTimer(defaultPowerUpDurationS,
+            () -> releaseControl(opponentPacman));
         page.addTimer(controlEndTimer);
       }
-      discard();
+      replace();
     }
   }
 
@@ -80,28 +70,15 @@ public class OpponentControlPowerUp extends PowerUp {
     return super.getImage();
   }
 
-  //private Pacman findPacmanById(int id) {
-  //  ArrayList<SynchronizedItem> syncItems= page.getSyncItems();
-  //  for (SynchronizedItem item : syncItems) {
-  //    if (item instanceof Pacman) {
-  //      Pacman pacman = (Pacman) item;
-  //      if (pacman.getPlayerId() == id) {
-  //        return pacman;
-  //      }
-  //    }
-  //  }
-  //  return null; 
-  //}
-
   private void takeControl(Pacman opponentPacman) {
     opponentPacman.setIsControlledByOpponent(true);
   }
 
   private void releaseControl(Pacman opponentPacman) {
     opponentPacman.setIsControlledByOpponent(false);
-    this.setInUse(false);
   }
 }
+
 
 public class TeleportPowerUp extends PowerUp {
   public TeleportPowerUp() {
@@ -113,13 +90,13 @@ public class TeleportPowerUp extends PowerUp {
     if (item instanceof Pacman) {
       Pacman pacman = (Pacman) item;
       teleportPacman(pacman);
-      discard();
+      replace();
     }
   }
 
   private void teleportPacman(Pacman pacman) {
-    float newX = random(0, width); 
-    float newY = random(0, height);
+    float newX = random(0, width); // This has problems.
+    float newY = random(0, height); // This has problems.
     pacman.setX(newX);
     pacman.setY(newY);
   }
@@ -130,9 +107,8 @@ public class TeleportPowerUp extends PowerUp {
   }
 }
 
-public class TimeFreezePowerUp extends PowerUp {
-  private int freezeDuration = 300; 
 
+public class TimeFreezePowerUp extends PowerUp {
   public TimeFreezePowerUp() {
     super();
   }
@@ -140,26 +116,20 @@ public class TimeFreezePowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
-      int currentPlayerId = pacman.getPlayerId();
-      int opponentId = (currentPlayerId == 1) ? 2 : 1;
-      Pacman opponentPacman = (Pacman) page.getSyncItem(itemTypePacman + opponentId);
-
+      Pacman pacman = (Pacman)item;
+      Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
         freezeOpponent(opponentPacman);
       }
-      discard();
+      replace();
     }
   }
 
   private void freezeOpponent(Pacman opponentPacman) {
     System.out.println("Freezing opponent Pacman.");
     opponentPacman.freeze();
-
-    int delayMillis = (int)(freezeDuration / 60.0 * 1000);
-    new java.util.Timer().schedule(new java.util.TimerTask() {
-          public void run() { unfreezeOpponent(opponentPacman); }
-        }, delayMillis);
+    page.addTimer(new OneOffTimer(defaultPowerUpDurationS,
+          () -> { unfreezeOpponent(opponentPacman); }));
   }
 
   private void unfreezeOpponent(Pacman opponentPacman) {
@@ -170,8 +140,6 @@ public class TimeFreezePowerUp extends PowerUp {
 
 
 public class SizeModificationPowerUp_Pacman extends PowerUp {
-  private int duration = 5;
-
   public SizeModificationPowerUp_Pacman() {
     super();
   }
@@ -182,9 +150,9 @@ public class SizeModificationPowerUp_Pacman extends PowerUp {
       Pacman pacman = (Pacman) item;
 
       shrinkPacman(pacman);
-      Timer changeEndTimer = new OneOffTimer(duration, () -> resetPacmanSize(pacman));
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetPacmanSize(pacman));
       page.addTimer(changeEndTimer);
-      discard();
+      replace();
     }
   }
 
@@ -194,21 +162,17 @@ public class SizeModificationPowerUp_Pacman extends PowerUp {
   }
 
   private void shrinkPacman(Pacman pacman) {
-    pacman.setW(pacman.getW() * 0.5);
-    pacman.setH(pacman.getH() * 0.5);
+    pacman.zoom(0.5);
   }
 
   private void resetPacmanSize(Pacman pacman) {
-    pacman.setW(pacman.getW() * 2);
-    pacman.setH(pacman.getH() * 2);
+    pacman.zoom(2.0);
   }
 }
 
 
 // if ghost could be stuck in the future version
 public class SizeModificationPowerUp_Ghost extends PowerUp {
-  private int duration = 5;
-
   public SizeModificationPowerUp_Ghost() {
     super();
   }
@@ -216,13 +180,16 @@ public class SizeModificationPowerUp_Ghost extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      ArrayList<SynchronizedItem> ghosts = page.getSyncItemsByNameAndCount(itemTypeGhost, itemCountGhost);
-      if (ghosts != null) {
-        enlargeGhost(ghosts);
-        Timer changeEndTimer = new OneOffTimer(duration, () -> resetGhostSize(ghosts));
-        page.addTimer(changeEndTimer);
-        discard();
+      ArrayList<Ghost> ghosts = new ArrayList<Ghost>();
+      for (SynchronizedItem syncItem : page.getSyncItems()) {
+        if (syncItem instanceof Ghost) {
+          ghosts.add((Ghost)syncItem);
+        }
       }
+      enlargeGhost(ghosts);
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetGhostSize(ghosts));
+      page.addTimer(changeEndTimer);
+      replace();
     }
   }
 
@@ -231,21 +198,15 @@ public class SizeModificationPowerUp_Ghost extends PowerUp {
     return super.getImage();
   }
 
-  private void enlargeGhost(ArrayList<SynchronizedItem> ghosts) {
-    for (SynchronizedItem ghost : ghosts) {
-      if (ghost != null) {
-        ghost.setW(ghost.getW() * 2);
-        ghost.setH(ghost.getH() * 2);
-      }
+  private void enlargeGhost(ArrayList<Ghost> ghosts) {
+    for (Ghost ghost : ghosts) {
+      ghost.zoom(2.0);
     }
   }
 
-  private void resetGhostSize(ArrayList<SynchronizedItem> ghosts) {
-    for (SynchronizedItem ghost : ghosts) {
-      if (ghost != null) {
-        ghost.setW(ghost.getW() * 0.5);
-        ghost.setH(ghost.getH() * 0.5);
-      }
+  private void resetGhostSize(ArrayList<Ghost> ghosts) {
+    for (Ghost ghost : ghosts) {
+      ghost.zoom(0.5);
     }
   }
 }
@@ -260,12 +221,10 @@ public class TrapPowerUp extends PowerUp {
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
       Pacman pacman = (Pacman) item;
-      Trap trap = new Trap();
-      trap.setW(CHARACTER_SIZE * 1.5).setH(CHARACTER_SIZE * 1.5);
+      Trap trap = new Trap(pacman.getPlayerId());
       trap.setX(this.getX()).setY(this.getY());
-      trap.setOwner(pacman.getPlayerId());
       page.addSyncItem(trap);
-      discard();
+      replace();
     }
   }
 
@@ -276,16 +235,27 @@ public class TrapPowerUp extends PowerUp {
 }
 
 
-public class Trap extends TrapPowerUp {
-  private int owner;
-  private int duration = 5;
+final String itemTypeTrap = "Trap";
+int itemCountTrap;
 
-  public Trap() {
-    super();
+public class Trap extends SynchronizedItem {
+  private int owner;
+
+  public Trap(int owner) {
+    super(itemTypeTrap + itemCountTrap++, CHARACTER_SIZE * 1.5, CHARACTER_SIZE * 1.5);
+    this.owner = owner;
   }
 
-  public void setOwner(int playerId) {
-    this.owner = playerId;
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("owner", getOwner());
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.owner = json.getInt("owner");
   }
 
   public int getOwner() {
@@ -295,21 +265,20 @@ public class Trap extends TrapPowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
+      Pacman pacman = (Pacman)item;
       if (pacman.getPlayerId() != this.owner) {
         reduceSpeed(pacman);
-        Timer changeEndTimer = new OneOffTimer(duration, () -> resetSpeed(pacman));
+        Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(pacman));
         page.addTimer(changeEndTimer);
-        discard();
       }
     }
     if (item instanceof Ghost) {
-      Ghost ghost = (Ghost) item;
+      Ghost ghost = (Ghost)item;
       reduceSpeed(ghost);
-      Timer changeEndTimer = new OneOffTimer(duration, () -> resetSpeed(ghost));
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(ghost));
       page.addTimer(changeEndTimer);
-      discard();        
     }
+    delete();        
   }
 
   @Override
@@ -335,10 +304,13 @@ public class GhostMagnetPowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Magnet magnet = new Magnet();
-      magnet.setX(this.getX()).setY(this.getY());
-      page.addSyncItem(magnet);
-      discard();
+      Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
+      if (magnet == null) {
+        magnet = new Magnet();
+        page.addSyncItem(magnet);
+      }
+      magnet.enableAt(this.getX(), this.getY());
+      replace();
     }
   }
 
@@ -350,26 +322,17 @@ public class GhostMagnetPowerUp extends PowerUp {
 
 
 final String itemTypeMagnet = "Magnet";
-int itemCountMagnet;
 
 public class Magnet extends SynchronizedItem {
-  private int duration = 5;
-
   public Magnet() {
-    super(itemTypeMagnet + itemCountMagnet++, CHARACTER_SIZE, CHARACTER_SIZE);
-    Timer changeEndTimer = new OneOffTimer(duration, () -> this.discard());
-    page.addTimer(changeEndTimer); 
+    super(itemTypeMagnet, CHARACTER_SIZE, CHARACTER_SIZE);
   }
 
-  //@Override
-  //public void onCollisionWith(SynchronizedItem item) {
-  //  if (item instanceof Pacman) {
-  //    gameInfo.activateGhostMagnet(this.getX(), this.getY());
-  //    Timer changeEndTimer = new OneOffTimer(duration, () -> gameInfo.deactivateGhostMagnet());
-  //    page.addTimer(changeEndTimer);        
-  //    discard();
-  //  }
-  //}
+  public void enableAt(float x, float y) {
+    setX(x).setY(y).restore();
+    Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> { discard(); });
+    page.addTimer(changeEndTimer); 
+  }
 
   @Override
   public PImage getImage() {
@@ -379,8 +342,6 @@ public class Magnet extends SynchronizedItem {
 
 
 public class SpeedSurgePowerUp extends PowerUp {
-  private int duration = 5;
-
   public SpeedSurgePowerUp() {
     super();
   }
@@ -390,9 +351,9 @@ public class SpeedSurgePowerUp extends PowerUp {
     if (item instanceof Pacman) {
       Pacman pacman = (Pacman) item;
       increaseSpeed(pacman);
-      Timer changeEndTimer = new OneOffTimer(duration, () -> resetSpeed(pacman));
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(pacman));
       page.addTimer(changeEndTimer);        
-      discard();
+      replace();
     }
   }
 
@@ -408,4 +369,25 @@ public class SpeedSurgePowerUp extends PowerUp {
   private void resetSpeed(MovableItem item) {
     item.setSpeed(item.getSpeed() * 0.5);
   }
+}
+
+
+// ----------------------------------------------------------------
+
+public PowerUp generateRandomPowerUp() {
+  PowerUp powerUp = null;
+  while (powerUp == null) {
+    int number = (int)random(10.0); // [0.0, 10.0)
+    switch (number) {
+      case 0: { powerUp = new OpponentControlPowerUp(); break; }
+      // case 1: { powerUp = new TeleportPowerUp(); break; }
+      case 2: { powerUp = new TimeFreezePowerUp(); break; }
+      case 3: { powerUp = new SizeModificationPowerUp_Pacman(); break; }
+      case 4: { powerUp = new SizeModificationPowerUp_Ghost(); break; }
+      case 5: { powerUp = new TrapPowerUp(); break; }
+      case 6: { powerUp = new GhostMagnetPowerUp(); break; }
+      default: { powerUp = new SpeedSurgePowerUp(); break; } // 1,7,8,9
+    }
+  }
+  return powerUp;
 }
