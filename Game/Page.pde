@@ -256,7 +256,7 @@ public abstract class Page {
   public void onSwitchIn() {}
 
   // Draw all the items, including sync ones and local ones.
-  public void draw() {
+  public void draw() {  
     drawBackground();
     drawSyncItems();
     drawLocalItems();

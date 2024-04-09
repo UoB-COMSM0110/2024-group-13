@@ -35,6 +35,12 @@ public class PlayPage extends Page {
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
     // Player 1 status
+    Label playerPrompt1 = new Label("PlayerPrompt1",
+        150, 35, "Player : ");
+    playerPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(200).setY(10);
+    addLocalItem(playerPrompt1);
+    
     Label score1 = new Label("Score1", 120, 25, "0");
     score1.setX(350).setY(10);
     addLocalItem(score1);
@@ -243,8 +249,9 @@ public class ErrorPage extends Page {
   @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }
 
-  public void draw() {
+  public void draw() { 
     super.draw();
+    
     noStroke();
     fill(255);
     textSize(25);
