@@ -1,7 +1,6 @@
 void loadResourcesForPlayPage() {
 }
 
-
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
@@ -16,9 +15,9 @@ public class PlayPage extends Page {
     RectArea localArea = new RectArea("LocalArea",
         gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
-      .setBoxStrokeWeight(5.0)
+      .setBoxStrokeWeight(2.0)
       .setBoxStrokeColor(color(102, 51, 0))
-      .setBoxFillColor(PlayPageBackgroundColor)
+      .setBoxFillColor(color(255, 253, 208))
       .setLayer(-9);
     addLocalItem(localArea);
 
@@ -34,28 +33,67 @@ public class PlayPage extends Page {
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
     // Player 1 status
+    Label playerPrompt1 = new Label("PlayerPrompt1",
+        150, 35, "Player : ");
+    playerPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(250).setY(6);
+    addLocalItem(playerPrompt1);
+    
+    Label scorePrompt1 = new Label("ScorePrompt1",
+        150, 35, "Score : ");
+    scorePrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(250).setY(25);
+    addLocalItem(scorePrompt1);
+    
+    Label livesPrompt1 = new Label("LivesPrompt1",
+        150, 35, "Lives : ");
+    livesPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(250).setY(44);
+    addLocalItem(livesPrompt1);
+    
     Label score1 = new Label("Score1", 120, 25, "0");
-    score1.setX(350).setY(10);
+    score1.setX(270).setY(29);
     addLocalItem(score1);
+    
     Label playerName1 = new Label("PlayerName1",
         120, score1.getH(), gameInfo.getPlayerName1());
-    playerName1.setTextAlignHorizon(RIGHT).setRightX(score1.getLeftX()).setY(score1.getY());
+    playerName1.setTextAlignHorizon(RIGHT).setRightX(390).setY(10);
     addLocalItem(playerName1);
+
     Label lives1 = new Label("Lives1", 20, score1.getH(), "0");
-    lives1.setLeftX(score1.getRightX()).setY(score1.getY());
+    lives1.setLeftX(270).setY(48);
     addLocalItem(lives1);
 
-    int offset = 30;
     // Player 2 status
+    Label playerPrompt2 = new Label("PlayerPrompt2",
+        150, 35, "Player : ");
+    playerPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(600).setY(6);
+    addLocalItem(playerPrompt2);
+    
+    Label scorePrompt2 = new Label("ScorePrompt2",
+        150, 35, "Score : ");
+    scorePrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(600).setY(25);
+    addLocalItem(scorePrompt2);
+    
+    Label livesPrompt2 = new Label("LivesPrompt2",
+        150, 35, "Lives : ");
+    livesPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+      .setRightX(600).setY(44);
+    addLocalItem(livesPrompt2);
+    
     Label score2 = new Label("Score2", score1.getW(), score1.getH(), "0");
-    score2.setX(score1.getX()).setY(score1.getY() + offset);
+    score2.setX(620).setY(score1.getY());
     addLocalItem(score2);
+    
     Label playerName2 = new Label("PlayerName2",
         playerName1.getW(), score2.getH(), gameInfo.getPlayerName2());
-    playerName2.setTextAlignHorizon(RIGHT).setRightX(score2.getLeftX()).setY(score2.getY());
+    playerName2.setTextAlignHorizon(RIGHT).setRightX(740).setY(playerName1.getY());
     addLocalItem(playerName2);
+    
     Label lives2 = new Label("Lives2", lives1.getW(), score2.getH(), "0");
-    lives2.setLeftX(score2.getRightX()).setY(score2.getY());
+    lives2.setLeftX(620).setY(lives1.getY());
     addLocalItem(lives2);
     
     if (!gameInfo.isClientHost()) {
@@ -220,8 +258,9 @@ public class ErrorPage extends Page {
   @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }
 
-  public void draw() {
+  public void draw() { 
     super.draw();
+    
     noStroke();
     fill(255);
     textSize(25);
