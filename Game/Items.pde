@@ -131,7 +131,7 @@ public class IndestructableWall extends Wall {
 
 final String itemTypeCoin = "Coin";
 int itemCountCoin;
-final float coinRestoreTimeS = 12.0;
+final float coinRestoreTimeS = 30.0;
 
 public class Coin extends SynchronizedItem {
   public Coin() {

@@ -47,19 +47,20 @@ public abstract class Figure extends MovableItem {
 
   public Figure incLives(int inc) { return setLives(getLives() + inc); }
 
-  public Figure decLives(int dec) {
+  public Figure decLives(int dec) { return decLives(dec, null); }
+  public Figure decLives(int dec, Object cause) {
     setLives(getLives() - dec);
-    if (getLives() == 0) {
-      onLostAllLives();
+    if (getLives() <= 0) {
+      onLostAllLives(cause);
     } else {
       refreshHp();
-      onLostLife();
+      onLostLife(cause);
     }
     return this;
   }
 
-  public void onLostLife() {}
-  public void onLostAllLives() {}
+  public void onLostLife(Object cause) {}
+  public void onLostAllLives(Object cause) {}
 
   public int getMaxHp() { return this.maxHp; }
   public Figure setMaxHp(int maxHp) {
@@ -83,10 +84,11 @@ public abstract class Figure extends MovableItem {
 
   public Figure incHp(int inc) { return setHp(getHp() + inc); }
 
-  public Figure decHp(int dec) {
+  public Figure decHp(int dec) { return decHp(dec, null); }
+  public Figure decHp(int dec, Object cause) {
     setHp(getHp() - dec);
     if (getHp() <= 0) {
-      decLives(1);
+      decLives(1, cause);
     }
     return this;
   }
@@ -121,7 +123,7 @@ public class Ghost extends Figure {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Bullet) {
-      decHp(1);
+      decHp(1, item);
     }
   }
 
@@ -129,7 +131,7 @@ public class Ghost extends Figure {
   public void onStepback(Item target) { randomizeDirection(); }
 
   @Override
-  public void onLostAllLives() {
+  public void onLostAllLives(Object cause) {
     discardFor(ghostRestoreTimeS);
   }
 
@@ -236,13 +238,19 @@ public class Pacman extends Figure {
   }
 
   @Override
-  public void onLostLife() {
+  public void onLostLife(Object cause) {
+    if (cause instanceof Bullet) {
+      this.getOpponent().incScore(20);
+    }
     SynchronizedItem shelter = page.getSyncItem(itemTypePacmanShelter + getPlayerId());
     setCenterX(shelter.getCenterX());
     setCenterY(shelter.getCenterY());
   }
   @Override
-  public void onLostAllLives() {
+  public void onLostAllLives(Object cause) {
+    if (cause instanceof Bullet) {
+      this.getOpponent().incScore(50);
+    }
     PlayPage playPage = (PlayPage)page;
     playPage.gameOver();
   }
@@ -293,14 +301,19 @@ public class Pacman extends Figure {
       incScore(1);
     } else if (item instanceof Bullet) {
       Bullet bullet = (Bullet)item;
-      if (!bullet.isFiredBy(this)) { decHp(1); }
+      if (bullet.isFiredBy(this)) { return; }
+      decHp(1, bullet);
     } else if (item instanceof Wall) {
       tryStepbackFrom(item);
     } else if (item instanceof Pacman) {
       tryStepbackFrom(item);
     } else if (item instanceof Ghost) {
-      decLives(1);
+      decLives(1, item);
     }
+  }
+
+  public Pacman getOpponent() {
+    return getPacmanOpponent(this);
   }
 
   public boolean usingKeySetA() { // W A S D Space
@@ -390,4 +403,15 @@ public class Pacman extends Figure {
   public PImage getImage() {
     return imagePacman;
   }
+}
+
+public Pacman getPacmanOpponent(Pacman pacman) {
+  return getPacmanOpponent(pacman.getPlayerId());
+}
+public Pacman getPacmanOpponent(int playerId) {
+  int opponentId = (playerId == 1) ? 2 : 1;
+  return getPacman(opponentId);
+}
+public Pacman getPacman(int playerId) {
+  return (Pacman)page.getSyncItem(itemTypePacman + playerId);
 }

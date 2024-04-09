@@ -116,15 +116,17 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
-    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + "1");
-    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + "2");
-    trySwitchPage(new GameOverPage(pacman1.getScore(), pacman2.getScore(), getPreviousPage()));
+    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
+    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
+    int playerScore1 = pacman1.getScore();
+    int playerScore2 = pacman2.getScore();
+    trySwitchPage(new GameOverPage(playerScore1, playerScore2, getPreviousPage()));
   }
 
   @Override
   public void dispatchSyncInfo(JSONObject json) {
     super.dispatchSyncInfo(json);
-    if (gameInfo.isClientHost()) {
+    if (gameInfo.isClientHost()) { // Only client needs to do this.
       gameInfo.setPlayerName2(json.getString("player2"));
     }
   }

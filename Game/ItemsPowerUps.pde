@@ -53,11 +53,8 @@ public class OpponentControlPowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
-      int currentPlayerId = pacman.getPlayerId();
-      int opponentId = (currentPlayerId == 1) ? 2 : 1;
-      Pacman opponentPacman = (Pacman) page.getSyncItem(itemTypePacman + opponentId);
-
+      Pacman pacman = (Pacman)item;
+      Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
         takeControl(opponentPacman);
         Timer controlEndTimer = new OneOffTimer(defaultPowerUpDurationS,
@@ -119,11 +116,8 @@ public class TimeFreezePowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
-      int currentPlayerId = pacman.getPlayerId();
-      int opponentId = (currentPlayerId == 1) ? 2 : 1;
-      Pacman opponentPacman = (Pacman) page.getSyncItem(itemTypePacman + opponentId);
-
+      Pacman pacman = (Pacman)item;
+      Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
         freezeOpponent(opponentPacman);
       }

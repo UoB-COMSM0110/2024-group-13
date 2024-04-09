@@ -56,7 +56,7 @@ public abstract class Page {
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
-    System.out.println(this.syncItems.size() + " " + this.timers.size());
+    // System.out.println(this.syncItems.size() + " " + this.timers.size());
   }
 
   public void runTimers() {
