@@ -279,11 +279,19 @@ Communication between classes:
 <img src="resources/PacCommunicationDiagram.jpg"
 alt="CommunicationDiagram" width="70%">
 
-## Qualitative HCI Evaluation
+## Implementation
+Our three challenges: ??
+1. Multiplayer
+2. Online Play
+3. Leaderboard
 
-### Think Aloud Evaluation
+## Evaluation
 
-#### 11/03/2024
+### Qualitative Evaluations
+
+#### Think Aloud Evaluation
+
+##### 11/03/2024
 
 1. Effect when buttons being hovered on.
 2. Better to add background music.
@@ -291,15 +299,23 @@ alt="CommunicationDiagram" width="70%">
 4. Annimation effect for game figures.
 5. Add background story.
 
-#### 11/03/2024
+##### 11/03/2024
 
 1. Pacman get stuck between coins.
 2. Arrow key does not function properly.
 
-### Heuristic Evaluation
+#### Heuristic Evaluation
 
-#### 11/03/2024
+##### 11/03/2024
 
 <img src="resources/HeuristicEvaluation_240311.jpeg"
 alt="ClassDiagram" width="50%">
 
+### Quantitative Evaluations
+Insert here
+
+## Process
+Insert here
+
+## Conclusion
+Insert here
