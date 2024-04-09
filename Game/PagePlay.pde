@@ -60,15 +60,9 @@ public class PlayPage extends Page {
         120, score1.getH(), gameInfo.getPlayerName1());
     playerName1.setTextAlignHorizon(RIGHT).setRightX(390).setY(10);
     addLocalItem(playerName1);
-    
-    
-    
-    
+
     Label lives1 = new Label("Lives1", 20, score1.getH(), "0");
     lives1.setLeftX(270).setY(48);
-    
-    
-    
     addLocalItem(lives1);
 
     // Player 2 status
