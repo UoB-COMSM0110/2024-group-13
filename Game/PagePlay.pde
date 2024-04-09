@@ -164,8 +164,14 @@ public class PlayPage extends Page {
   @Override
   public void dispatchSyncInfo(JSONObject json) {
     super.dispatchSyncInfo(json);
-    if (gameInfo.isClientHost()) { // Only client needs to do this.
+    if (gameInfo.isClientHost()) {
+      // Only client needs to do player name alignment.
       gameInfo.setPlayerName2(json.getString("player2"));
+
+      if (json.getString("nextPage").equals("gameover")
+          || json.getString("page").equals("gameover")) {
+        gameOver();
+      }
     }
   }
 

@@ -288,7 +288,12 @@ public abstract class MovableItem extends SynchronizedItem {
   }
 
   // Step back if `this` "moves" into `target`.
-  // If `this` overlaps with `target`, but not because `this`
+  // If `this` overlaps with `target`, not because of the movement of `this`,
+  // but because of, e.g., the resizing of `this`, or the movement of `target`,
+  // then `this` won't step back.
+  //
+  // This method seems to be self-consistent,
+  // but can't handle collisions induced by resizing.
   public boolean tryStepbackFrom(Item target) {
     float backMovement = getPenetrationDepthOf(target);
     float prevMovement = getMovementFromRefPoint();
@@ -299,7 +304,11 @@ public abstract class MovableItem extends SynchronizedItem {
     return true;
   }
 
-  // Push `this` s if `this` overlaps into `target`
+  // If `this` overlaps with `target`,
+  // then push `this` in the opposite of `direction`.
+  //
+  // This method is useful for implementing hard boundaries.
+  // But it may cause problems, and may violate the presumption of `tryStepbackFrom`.
   public boolean tryPushbackFrom(Item target, int direction) {
     float backMovement = getPenetrationDepthOf(target, direction);
     if (backMovement < 0) { return false; }
