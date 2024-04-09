@@ -115,7 +115,7 @@ public class Ghost extends Figure {
     if (this.changeDirectionTimer == null) { randomizeDirection(); }
     Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
     if (magnet != null && !magnet.isDiscarded()) {
-      setDirectionTowards(magnet.getX(), magnet.getY());
+      setDirectionTowards(magnet);
     }
     super.evolve();
   }
@@ -148,24 +148,6 @@ public class Ghost extends Figure {
     page.addTimer(this.changeDirectionTimer);
   }
   
-  public void setDirectionTowards(float targetX, float targetY) {
-    float deltaX = targetX - getX();
-    float deltaY = targetY - getY();
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX > 0) {
-        setDirection(RIGHTWARD);
-      } else {
-        setDirection(LEFTWARD);
-      }
-    } else {
-      if (deltaY > 0) {
-        setDirection(DOWNWARD);
-      } else {
-        setDirection(UPWARD);
-      }
-    }
-  }
-
   @Override
   public PImage getImage() {
     return imageGhost;

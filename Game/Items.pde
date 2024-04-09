@@ -235,7 +235,7 @@ public class PacmanShelter extends SynchronizedItem {
       if (item instanceof Pacman) {
         if (isUsedBy((Pacman)item)) { return; }
       }
-      ((Figure)item).tryStepbackFrom(this);
+      ((Figure)item).tryPushbackFrom(this, item.getDirectionOf(this));
     } else {
       if (item instanceof Bullet) {
         if (((Bullet)item).isFiredBy(getOwner())) { return; }

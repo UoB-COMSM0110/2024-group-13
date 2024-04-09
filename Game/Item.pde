@@ -179,6 +179,19 @@ public abstract class SynchronizedItem extends Item {
       getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
   }
 
+  // Adapted from Chao's previous code in ItemsFigures.pde
+  public int getDirectionOf(SynchronizedItem target) {
+    float dx = target.getCenterX() - getCenterX();
+    float dy = target.getCenterY() - getCenterY();
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) { return RIGHTWARD; }
+      else { return LEFTWARD; }
+    } else {
+      if (dy > 0) { return DOWNWARD; }
+      else { return UPWARD; }
+    }
+  }
+
   public SynchronizedItem discardFor(float intervalS) {
     discard();
     page.addTimer(new OneOffTimer(intervalS, () -> { restore(); }));
@@ -247,6 +260,10 @@ public abstract class MovableItem extends SynchronizedItem {
   public MovableItem startMoving() { this.moving = true; return this; }
   public MovableItem stopMoving() { this.moving = false; return this; }
   
+  public void setDirectionTowards(SynchronizedItem target) {
+    setDirection(getDirectionOf(target));
+  }
+
   public float getSpeed() { return this.speed; }
   public int getDirection() { return this.direction; }
   public boolean isMoving() { return this.moving; }
@@ -270,6 +287,8 @@ public abstract class MovableItem extends SynchronizedItem {
     doMovement(distance);
   }
 
+  // Step back if `this` "moves" into `target`.
+  // If `this` overlaps with `target`, but not because `this`
   public boolean tryStepbackFrom(Item target) {
     float backMovement = getPenetrationDepthOf(target);
     float prevMovement = getMovementFromRefPoint();
@@ -280,6 +299,7 @@ public abstract class MovableItem extends SynchronizedItem {
     return true;
   }
 
+  // Push `this` s if `this` overlaps into `target`
   public boolean tryPushbackFrom(Item target, int direction) {
     float backMovement = getPenetrationDepthOf(target, direction);
     if (backMovement < 0) { return false; }

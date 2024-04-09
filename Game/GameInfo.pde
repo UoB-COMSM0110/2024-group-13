@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 // https://jenkov.com/tutorials/java-nio/selectors.html
@@ -88,6 +89,9 @@ public class GameInfo {
   private SocketChannel socketClient;
   private Cache sendCacheClient;
   private Cache recvCacheClient;
+
+  private int nextForwardPort = port;
+  private Process sshProcess;
 
   public GameInfo() {
     this.hostId = singleHostId;
@@ -272,10 +276,21 @@ public class GameInfo {
 
   public boolean startSyncAsClient(String serverIp) {
     try {
-      // ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+      String connectHost = serverIp;
+      int connectPort = port;
+      if (true) {
+        int forwardPort = this.nextForwardPort++;
+        ProcessBuilder builder = new ProcessBuilder(
+            "/usr/bin/ssh", "-L", forwardPort + ":localhost:" + port, serverIp, "sleep 10");
+        System.out.println(builder.command());
+        this.sshProcess = builder.start();
+        this.sshProcess.waitFor(2, TimeUnit.SECONDS);
+        connectHost = "localhost";
+        connectPort = forwardPort;
+      }
       this.socketClient = SocketChannel.open();
       this.socketClient.configureBlocking(false);
-      this.socketClient.connect(new InetSocketAddress(serverIp, port));
+      this.socketClient.connect(new InetSocketAddress(connectHost, port));
       this.hostId = clientHostId;
       page.onSyncStart();
       return true;
@@ -294,6 +309,7 @@ public class GameInfo {
       this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
       this.connectedToServer = true;
       page.onConnectionStart();
+      System.out.println("connected to server");
       return Boolean.TRUE;
     } catch (Exception e) {
       onNetworkFailure("tryConnectServer", e);
