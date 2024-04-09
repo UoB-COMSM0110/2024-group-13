@@ -289,18 +289,17 @@ Our three challenges: ??
 
 ### Qualitative Evaluations
 
-#### Think Aloud Evaluation
+#### Think Aloud Evaluation 11/03/2024
 
-##### 11/03/2024
+##### Think Aloud Evaluation 1 Feedback
+1. The map and graphic is impressive.
+2. Effect when buttons being hovered on.
+3. Better to add background music.
+4. Consider to add multiple maps.
+5. Annimation effect for game figures.
+6. Add background story.
 
-1. Effect when buttons being hovered on.
-2. Better to add background music.
-3. Consider to add multiple maps.
-4. Annimation effect for game figures.
-5. Add background story.
-
-##### 11/03/2024
-
+##### Think Aloud Evaluation 2 Feedback
 1. Pacman get stuck between coins.
 2. Arrow key does not function properly.
 
