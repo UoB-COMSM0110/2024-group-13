@@ -1,5 +1,4 @@
-void loadResourcesForPlayPage() {
-}
+void loadResourcesForPlayPage() {}
 
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
@@ -7,6 +6,7 @@ final int PlayPageBackgroundColor = color(155, 82, 52);
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
   private boolean isGameOver;
+  private long gameOverWaitingTimeMs;
   
   public PlayPage(Page previousPage) {
     super("play", previousPage);
@@ -29,7 +29,7 @@ public class PlayPage extends Page {
     Label fps = new Label("Fps", backButton.getW(), backButton.getH(), "");
     fps.setPrefix("fps:").setX(backButton.getX()).setTopY(backButton.getBottomY());
     addLocalItem(fps);
-    addTimer(new Timer(0.0, 1.0,
+    addLocalTimer(new Timer(0.0, 1.0,
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
     // Player 1 status
@@ -140,9 +140,15 @@ public class PlayPage extends Page {
 
   @Override
   public void doEvolve(ArrayList<KeyboardEvent> events) {
-    // Note: Timers associated with sync items are still running.
     if (!isGameOver()) {
       super.doEvolve(events);
+      return;
+    }
+    if (this.gameOverWaitingTimeMs > 0) {
+      this.gameOverWaitingTimeMs -= gameInfo.getLastFrameIntervalMs();
+    }
+    if (this.gameOverWaitingTimeMs <= 0) {
+      goToGameOverPage();
     }
   }
 
@@ -154,6 +160,10 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
+    this.gameOverWaitingTimeMs = 1000; // 1 second stand-still time.
+  }
+
+  public void goToGameOverPage() {
     Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
     Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
     int playerScore1 = pacman1.getScore();
@@ -162,23 +172,35 @@ public class PlayPage extends Page {
   }
 
   @Override
-  public void dispatchSyncInfo(JSONObject json) {
-    super.dispatchSyncInfo(json);
+  public boolean dispatchSyncInfo(JSONObject json) {
+    if (!super.dispatchSyncInfo(json)) {
+      trySwitchPage(getPreviousPage());
+      return false;
+    }
+    if (!getName().equals(json.getString("page"))) {
+      if (!isSwitching()) {
+        onNetworkFailure("lost page switching information", null);
+        return false;
+      }
+      return true;
+    }
+    if (json.getString("nextPage").equals("start")) {
+      trySwitchPage(getPreviousPage());
+    }
     if (gameInfo.isClientHost()) {
-      // Only client needs to do player name alignment.
+      gameInfo.setPlayerName1(json.getString("player1"));
       gameInfo.setPlayerName2(json.getString("player2"));
-
-      if (json.getString("nextPage").equals("gameover")
-          || json.getString("page").equals("gameover")) {
-        gameOver();
+      if (json.getString("nextPage").equals("gameover")) {
+        goToGameOverPage();
       }
     }
+    return true;
   }
 
   @Override
   public void onNetworkFailure(String where, Exception e) {
     String errMsg = where + e.toString();
-    trySwitchPage(new ErrorPage(getPreviousPage(), errMsg));
+    switchPage(new ErrorPage(getPreviousPage(), errMsg));
   }
 
   @Override
@@ -255,7 +277,7 @@ public class ErrorPage extends Page {
     this.errMsg = errMsg;
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
-      switchPage(getPreviousPage());
+      trySwitchPage(getPreviousPage());
     });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);

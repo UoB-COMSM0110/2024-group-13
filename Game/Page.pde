@@ -8,6 +8,7 @@ public abstract class Page {
   private String name;
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
+  private ArrayList<Timer> localTimers;
   private ArrayList<Timer> timers;
   private Page previousPage; // With this attribute, we can form a page stack.
   private Page nextPage;
@@ -16,6 +17,7 @@ public abstract class Page {
     this.name = name;
     this.syncItems = new HashMap<String, SynchronizedItem>();
     this.localItems = new HashMap<String, LocalItem>();
+    this.localTimers = new ArrayList<Timer>();
     this.timers = new ArrayList<Timer>();
     this.previousPage = previousPage;
     this.nextPage = null;
@@ -43,6 +45,7 @@ public abstract class Page {
     return this.syncItems.remove(name) != null;
   }
 
+  public void addLocalTimer(Timer timer) { this.localTimers.add(timer); }
   public void addTimer(Timer timer) { this.timers.add(timer); }
 
   // Update all the items, including sync ones and local ones.
@@ -52,24 +55,35 @@ public abstract class Page {
     for (Event e : events) {
       if (e instanceof KeyboardEvent) { keyboardEvents.add((KeyboardEvent)e); }
     }
-    runTimers(); // Run timers for both local and sync items.
+    runLocalTimers();
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
     // System.out.println(this.syncItems.size() + " " + this.timers.size());
   }
 
+  public void runLocalTimers() {
+    List<Timer> timerList = this.localTimers;
+    this.localTimers = new ArrayList<Timer>();
+    this.localTimers.addAll(runTimerList(timerList));
+  }
   public void runTimers() {
-    ArrayList<Timer> oldTimers = this.timers;
+    List<Timer> timerList = this.timers;
     this.timers = new ArrayList<Timer>();
-    for (Timer timer : oldTimers) {
+    this.timers.addAll(runTimerList(timerList));
+  }
+
+  private ArrayList<Timer> runTimerList(List<Timer> timerList) {
+    ArrayList<Timer> continuedTimers = new ArrayList<Timer>();
+    for (Timer timer : timerList) {
       if (timer.due()) {
         timer.run();
       }
       if (!timer.expired()) {
-        addTimer(timer);
+        continuedTimers.add(timer);
       }
     }
+    return continuedTimers;
   }
 
   public void dispatchEventsToLocalItems(ArrayList<Event> events) {
@@ -99,7 +113,7 @@ public abstract class Page {
       if (str.length() <= 0) { continue; }
       JSONObject msgJsonFromClient = parseJSONObject(str);
       JSONObject infoJson = msgJsonFromClient.getJSONObject("info");
-      dispatchSyncInfo(infoJson);
+      if (!dispatchSyncInfo(infoJson)) { return; }
       if (!getName().equals(infoJson.getString("page"))) { continue; }
       JSONArray eventsJson = msgJsonFromClient.getJSONArray("events");
       if (eventsJson == null) { continue; }
@@ -114,6 +128,7 @@ public abstract class Page {
     if (msgJsonToClient != null) { msgToClient = msgJsonToClient.toString(); }
     Integer writeBytes = gameInfo.writeSocketServer(msgToClient);
     if (writeBytes == null) { return; } // Exception
+    if (isSwitching()) { gameInfo.writeOutSocketServer(2000); }
   }
 
   public JSONObject getMsgJsonToClient() {
@@ -142,8 +157,8 @@ public abstract class Page {
       if (str.length() <= 0) { continue; }
       JSONObject msgJsonFromServer = parseJSONObject(str);
       JSONObject infoJson = msgJsonFromServer.getJSONObject("info");
-      dispatchSyncInfo(infoJson);
-      if (!getName().equals(infoJson.getString("page"))) { continue; }
+      if (!dispatchSyncInfo(infoJson)) { return; }
+      if (!getName().equals(infoJson.getString("page"))) { continue; } // This causes problems!
       JSONArray changesJson = msgJsonFromServer.getJSONArray("changes");
       if (changesJson == null) { continue; }
       applyChangesFromJson(changesJson);
@@ -182,7 +197,9 @@ public abstract class Page {
     }
   }
 
+  // This method is in fact only used by `PlayPage`.
   public void doEvolve(ArrayList<KeyboardEvent> events) {
+    runTimers();
     ArrayList<SynchronizedItem> items = getSyncItems();
     for (KeyboardEvent e : events) {
       for (SynchronizedItem item : items) {
@@ -190,6 +207,10 @@ public abstract class Page {
       }
     }
     items.forEach((item) -> { item.evolve(); });
+    // Currently the game only ends during collision solving.
+    // So `PlayPage` passes a stop condition to the collision engine.
+    // If the game can end during other stages, e.g., during timer running,
+    // then the whole `doEvolve` method may need a stop condition.
     solveCollisions();
     gameInfo.updateEvolveTime();
   }
@@ -204,23 +225,18 @@ public abstract class Page {
     json.setString("nextPage", nextPageName);
     json.setString("player1", gameInfo.getPlayerName1());
     json.setString("player2", gameInfo.getPlayerName2());
-    json.setBoolean("closing", false);
+    json.setBoolean("leaving", isLeavingGame());
     return json;
   }
+  public boolean isLeavingGame() { return false; }
 
-  public void dispatchSyncInfo(JSONObject json) {
-    if (gameInfo.isServerHost()) {
-      gameInfo.setPlayerName2(json.getString("player2"));
+  public boolean dispatchSyncInfo(JSONObject json) {
+    if (json.getBoolean("leaving")) {
+      onCounterpartLeave();
+      return false;
     }
-    if (gameInfo.isClientHost()) {
-      gameInfo.setPlayerName1(json.getString("player1"));
-    }
+    return true;
   }
-
-  public void onSyncStart() {}
-  public void onConnectionStart() {}
-  public void onNetworkFailure(String where, Exception e) {}
-  public void onConnectionClose() {}
 
   public void updateItems() {
     getSyncItems().forEach((item) -> { item.update(); });
@@ -233,18 +249,27 @@ public abstract class Page {
     if (this.nextPage == null) { switchPage(nextPage); }
   }
   public void switchPage(Page nextPage) { this.nextPage = nextPage; }
+  public void stopSwitchingPage() { this.nextPage = null; }
 
   // Whether the page should be replaced with next one.
-  public boolean isObsolete() { return this.nextPage != null; }
+  public boolean isObsolete() { return isSwitching(); }
+  public boolean isSwitching() { return this.nextPage != null; }
+  public boolean isSwitchingTo(String pageName) {
+    return isSwitching() && this.nextPage.getName().equals(pageName);
+  }
 
   // Generate the next page.
   public Page fetchNextPage() {
-    if (!isObsolete()) { return this; }
+    if (!isSwitching()) { return this; }
     Page next = this.nextPage;
     this.nextPage = null;
     return next;
   }
 
+  public void onConnectionStart() {}
+  public void onNetworkFailure(String where, Exception e) {}
+  public void onCounterpartLeave() { gameInfo.stopSync(); }
+  public void onConnectionClose() {}
   public void onSwitchOut() {}
   public void onSwitchIn() {}
 
