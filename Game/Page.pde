@@ -59,7 +59,6 @@ public abstract class Page {
     dispatchEventsToLocalItems(events);
     evolveSyncItems(keyboardEvents);
     updateItems();
-    // System.out.println(this.syncItems.size() + " " + this.timers.size());
   }
 
   public void runLocalTimers() {
@@ -288,6 +287,15 @@ public abstract class Page {
     for (Item item : items) {
       if (!item.isDiscarded()) { item.draw(); }
     }
+  }
+
+  public float[] getLocalCoord(float x, float y, float w, float h) {
+    float[] coord = new float[4];
+    coord[0] = gameInfo.getMapOffsetX() + x * gameInfo.getMapScaleX();
+    coord[1] = gameInfo.getMapOffsetY() + y * gameInfo.getMapScaleY();
+    coord[2] = w * gameInfo.getMapScaleX();
+    coord[3] = h * gameInfo.getMapScaleY();
+    return coord;
   }
 }
 

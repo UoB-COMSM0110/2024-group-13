@@ -7,6 +7,9 @@ public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
   private boolean isGameOver;
   private long gameOverWaitingTimeMs;
+
+  private Pacman pacman1;
+  private Pacman pacman2;
   
   public PlayPage(Page previousPage) {
     super("play", previousPage);
@@ -164,10 +167,8 @@ public class PlayPage extends Page {
   }
 
   public void goToGameOverPage() {
-    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
-    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
-    int playerScore1 = pacman1.getScore();
-    int playerScore2 = pacman2.getScore();
+    int playerScore1 = this.pacman1.getScore();
+    int playerScore2 = this.pacman2.getScore();
     trySwitchPage(new GameOverPage(playerScore1, playerScore2, getPreviousPage()));
   }
 
@@ -241,6 +242,8 @@ public class PlayPage extends Page {
           Pacman pacman = new Pacman(playerId);
           pacman.setX(x).setY(y);
           addSyncItem(pacman);
+          if (playerId == 1) { this.pacman1 = pacman; }
+          else { this.pacman2 = pacman; }
           PacmanShelter pacmanShelter = new PacmanShelter(pacman.getPlayerId());
           pacmanShelter.setCenterX(pacman.getCenterX()).setCenterY(pacman.getCenterY());
           addSyncItem(pacmanShelter);
@@ -265,6 +268,49 @@ public class PlayPage extends Page {
     Border bottomBorder = new Border("BottomBorder", horizonBorderWidth, borderSize, DOWNWARD);
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
+  }
+
+  @Override
+  public float[] getLocalCoord(float x, float y, float w, float h) {
+    float[] factoredCoord = getFactoredCoord(x, y, w, h);
+    return super.getLocalCoord(factoredCoord[0], factoredCoord[1],
+        factoredCoord[2], factoredCoord[3]);
+  }
+
+  // Place pacman at the center.
+  public float[] getFactoredCoord(float x, float y, float w, float h) {
+    float[] coord = new float[4];
+    float factor = 1.0;
+    float anchorX = gameInfo.getMapWidth() / 2.0;
+    float anchorY = gameInfo.getMapHeight() / 2.0;
+    if (gameInfo.isServerHost()) {
+      factor = this.pacman1.getViewFactor();
+      anchorX = this.pacman1.getCenterX();
+      anchorY = this.pacman1.getCenterY();
+    }
+    if (gameInfo.isClientHost()) {
+      factor = this.pacman2.getViewFactor();
+      anchorX = this.pacman2.getCenterX();
+      anchorY = this.pacman2.getCenterY();
+    }
+    factor = Math.min(Math.max(0.1, factor), 1.0);
+    anchorX /= factor;
+    anchorY /= factor;
+    x /= factor;
+    y /= factor;
+    w /= factor;
+    h /= factor;
+    float offsetX = anchorX - gameInfo.getMapWidth() / 2.0;
+    float maxOffsetX = gameInfo.getMapWidth() / factor - gameInfo.getMapWidth();
+    offsetX = Math.min(Math.max(0.0, offsetX), maxOffsetX);
+    float offsetY = anchorY - gameInfo.getMapHeight() / 2.0;
+    float maxOffsetY = gameInfo.getMapHeight() / factor - gameInfo.getMapHeight();
+    offsetY = Math.min(Math.max(0.0, offsetY), maxOffsetY);
+    coord[0] = x - offsetX;
+    coord[1] = y - offsetY;
+    coord[2] = w;
+    coord[3] = h;
+    return coord;
   }
 }
 

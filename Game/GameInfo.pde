@@ -298,7 +298,6 @@ public class GameInfo {
         int forwardPort = this.nextForwardPort++;
         ProcessBuilder builder = new ProcessBuilder(
             "/usr/bin/ssh", "-L", forwardPort + ":localhost:" + port, serverIp, "sleep 10");
-        System.out.println(builder.command());
         this.sshProcess = builder.start();
         this.sshProcess.waitFor(2, TimeUnit.SECONDS);
         connectHost = "localhost";
@@ -435,7 +434,6 @@ public class GameInfo {
       byte[] bytes;
       if (cache.buffer.hasArray()) {
         bytes = cache.buffer.array();
-        System.out.println("buffer has array");
       } else {
         bytes = new byte[dataLen];
         cache.buffer.get(bytes);

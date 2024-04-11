@@ -126,14 +126,12 @@ public class TimeFreezePowerUp extends PowerUp {
   }
 
   private void freezeOpponent(Pacman opponentPacman) {
-    System.out.println("Freezing opponent Pacman.");
     opponentPacman.freeze();
     page.addTimer(new OneOffTimer(defaultPowerUpDurationS,
           () -> { unfreezeOpponent(opponentPacman); }));
   }
 
   private void unfreezeOpponent(Pacman opponentPacman) {
-    System.out.println("Unfreezing opponent Pacman.");
     opponentPacman.unfreeze(); 
   }
 }
@@ -222,9 +220,10 @@ public class TrapPowerUp extends PowerUp {
     if (item instanceof Pacman) {
       Pacman pacman = (Pacman) item;
       Trap trap = new Trap(pacman.getPlayerId());
-      trap.setX(this.getX()).setY(this.getY());
+      trap.setGenerator(this).setX(this.getX()).setY(this.getY());
       page.addSyncItem(trap);
-      replace();
+      page.addTimer(new OneOffTimer(20.0, () -> { trap.discard().delete(); }));
+      discard();
     }
   }
 
@@ -240,6 +239,7 @@ int itemCountTrap;
 
 public class Trap extends SynchronizedItem {
   private int owner;
+  private TrapPowerUp generator;
 
   public Trap(int owner) {
     super(itemTypeTrap + itemCountTrap++, CHARACTER_SIZE * 1.5, CHARACTER_SIZE * 1.5);
@@ -258,8 +258,22 @@ public class Trap extends SynchronizedItem {
     this.owner = json.getInt("owner");
   }
 
+  public Trap setGenerator(TrapPowerUp generator) {
+    this.generator = generator;
+    return this;
+  }
+
   public int getOwner() {
     return this.owner;
+  }
+
+  @Override
+  void delete() {
+    super.delete();
+    if (this.generator != null) {
+      this.generator.replace();
+      this.generator = null;
+    }
   }
 
   @Override
@@ -270,6 +284,7 @@ public class Trap extends SynchronizedItem {
         reduceSpeed(pacman);
         Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(pacman));
         page.addTimer(changeEndTimer);
+        discard().delete();        
       }
     }
     if (item instanceof Ghost) {
@@ -277,8 +292,8 @@ public class Trap extends SynchronizedItem {
       reduceSpeed(ghost);
       Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(ghost));
       page.addTimer(changeEndTimer);
+      discard().delete();        
     }
-    delete();        
   }
 
   @Override
@@ -386,7 +401,7 @@ public PowerUp generateRandomPowerUp() {
       case 4: { powerUp = new SizeModificationPowerUp_Ghost(); break; }
       case 5: { powerUp = new TrapPowerUp(); break; }
       case 6: { powerUp = new GhostMagnetPowerUp(); break; }
-      default: { powerUp = new SpeedSurgePowerUp(); break; } // 1,7,8,9
+      default: { powerUp = new SpeedSurgePowerUp(); break; }
     }
   }
   return powerUp;

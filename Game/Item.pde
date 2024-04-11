@@ -9,7 +9,7 @@ static final int LEFTWARD = 270;
 final float CHARACTER_SIZE = 10.0;
 
 
-// Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
+// Every thing shown in the game is an `Item`: bricks, buttons, power-ups, etc.
 public abstract class Item {
   private String name;
   private float w, h; // Item size.
@@ -107,6 +107,10 @@ public abstract class Item {
   public void draw() { draw(getX(), getY(), getW(), getH()); }
 
   public void draw(float x, float y, float w, float h) {
+    drawLocally(x, y, w, h);
+  }
+
+  public void drawLocally(float x, float y, float w, float h) {
       PImage img = getImage();
       if (img == null) { return; }
       image(img, x, y, w, h);
@@ -204,18 +208,10 @@ public abstract class SynchronizedItem extends Item {
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override
-  public void draw() {
-    draw(getLocalX(), getLocalY(), getLocalW(), getLocalH());
+  public void draw(float x, float y, float w, float h) {
+    float[] localCoord = page.getLocalCoord(x, y, w, h);
+    drawLocally(localCoord[0], localCoord[1], localCoord[2], localCoord[3]);
   }
-
-  public float getLocalX() {
-    return gameInfo.getMapOffsetX() + getX() * gameInfo.getMapScaleX();
-  }
-  public float getLocalY() {
-    return gameInfo.getMapOffsetY() + getY() * gameInfo.getMapScaleY();
-  }
-  public float getLocalW() { return getW() * gameInfo.getMapScaleX(); }
-  public float getLocalH() { return getH() * gameInfo.getMapScaleY(); }
 }
 
 

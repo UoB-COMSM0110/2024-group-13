@@ -189,6 +189,8 @@ public class Bullet extends MovableItem {
 
   @Override
   public void onCollisionWith(SynchronizedItem item) {
+    // Note, not discarded before deleted,
+    // so a single bullet can collide with multiple targets.
     if(item instanceof Wall){
       delete();
     } else if (item instanceof Figure) {
@@ -245,7 +247,7 @@ public class PacmanShelter extends SynchronizedItem {
   }
 
   @Override
-  public void draw(float x, float y, float w, float h) {
+  public void drawLocally(float x, float y, float w, float h) {
     int fillColor;
     switch (getOwner()) {
       case 1: { fillColor = color(255, 102, 178); break; }
@@ -255,6 +257,6 @@ public class PacmanShelter extends SynchronizedItem {
     noStroke();
     fill(fillColor, 200.0);
     rect(x, y, w, h, 2.0);
-    super.draw(x, y, w, h);
+    super.drawLocally(x, y, w, h);
   }
 }
