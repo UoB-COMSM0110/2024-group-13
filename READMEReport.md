@@ -48,9 +48,9 @@ We first did three types of qualitative evaluations at different points of the d
 Based off additional research, we found that hosting a focus group would provide further feedback. In this 40 minute session we asked the following quetions:
 
 *How did you find playing the game?*
->P1 - Pretty good.
->P2 - I liked the traditional game play of Pac-Man but it was good to have the competition between players.
->P3 - Really cool, I really liked it.
+> P1 - Pretty good.
+> P2 - I liked the traditional game play of Pac-Man but it was good to have the competition between players.
+> P3 - Really cool, I really liked it.
 
 
 ### Quantitative Evaluations
