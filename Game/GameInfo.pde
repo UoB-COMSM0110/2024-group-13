@@ -209,7 +209,6 @@ public class GameInfo {
         this.socketServer = this.listenerServer.accept();
         Socket socket = this.socketServer.socket();
         socket.setReuseAddress(true);
-        System.out.println("client from: " + socket.getRemoteSocketAddress().toString());
         this.socketServer.configureBlocking(false);
         this.socketServer.register(this.selectorServer, SelectionKey.OP_READ);
         this.connectedToClient = true;
@@ -297,9 +296,9 @@ public class GameInfo {
       if (true) {
         int forwardPort = this.nextForwardPort++;
         ProcessBuilder builder = new ProcessBuilder(
-            "/usr/bin/ssh", "-L", forwardPort + ":localhost:" + port, serverIp, "sleep 10");
+            "/usr/bin/ssh", "-L", forwardPort + ":localhost:" + port, serverIp, "sleep 5");
         this.sshProcess = builder.start();
-        this.sshProcess.waitFor(2, TimeUnit.SECONDS);
+        this.sshProcess.waitFor(1000, TimeUnit.MILLISECONDS);
         connectHost = "localhost";
         connectPort = forwardPort;
       }
@@ -323,7 +322,6 @@ public class GameInfo {
       this.socketClient.register(this.selectorClient, SelectionKey.OP_READ);
       this.connectedToServer = true;
       page.onConnectionStart();
-      System.out.println("connected to server");
       return Boolean.TRUE;
     } catch (Exception e) {
       onNetworkFailure("tryConnectServer", e);
@@ -460,9 +458,8 @@ public class GameInfo {
   }
 
   public void onNetworkFailure(String where, Exception e) {
-    System.err.println(where + " : " + e.toString());
-    page.onNetworkFailure(where, e);
-    stopSync();
+    String message = where + " : " + e;
+    page.onNetworkFailure(message);
   }
 
   public void stopSync() {

@@ -266,7 +266,10 @@ public abstract class Page {
   }
 
   public void onConnectionStart() {}
-  public void onNetworkFailure(String where, Exception e) {}
+  public void onNetworkFailure(String message) {
+    System.err.println(message);
+    gameInfo.stopSync();
+  }
   public void onCounterpartLeave() { gameInfo.stopSync(); }
   public void onConnectionClose() {}
   public void onSwitchOut() {}

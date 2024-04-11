@@ -147,15 +147,10 @@ public class StartPage extends Page {
   }
 
   @Override
-  public void onCounterpartLeave() {
-    if (isSwitchingTo("play")) { stopSwitchingPage(); }
-    super.onCounterpartLeave();
-  }
-
-  @Override
   public void onConnectionClose() {
     super.onConnectionClose();
     this.otherPlayerPage = "";
+    if (isSwitchingTo("play")) { stopSwitchingPage(); }
     updateWidgets();
   }
 
@@ -207,8 +202,8 @@ public class StartPage extends Page {
       // Below for server only
       enable = enable && gameInfo.isConnected();
       enable = enable && !isLeavingGame();
-      // TODO: Comment out the following line and test.
-      enable = enable && this.otherPlayerPage.equals("start");
+      enable = enable && (this.otherPlayerPage.equals("start")
+          || this.otherPlayerPage.equals("help"));
     }
     if (enable) { startButton.enable(); }
     else { startButton.disable(); }

@@ -8,9 +8,6 @@ public class PlayPage extends Page {
   private boolean isGameOver;
   private long gameOverWaitingTimeMs;
 
-  private Pacman pacman1;
-  private Pacman pacman2;
-  
   public PlayPage(Page previousPage) {
     super("play", previousPage);
     this.syncDeletesRecord = new JSONArray();
@@ -167,8 +164,10 @@ public class PlayPage extends Page {
   }
 
   public void goToGameOverPage() {
-    int playerScore1 = this.pacman1.getScore();
-    int playerScore2 = this.pacman2.getScore();
+    Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
+    Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
+    int playerScore1 = pacman1.getScore();
+    int playerScore2 = pacman2.getScore();
     trySwitchPage(new GameOverPage(playerScore1, playerScore2, getPreviousPage()));
   }
 
@@ -178,12 +177,18 @@ public class PlayPage extends Page {
       trySwitchPage(getPreviousPage());
       return false;
     }
-    if (!getName().equals(json.getString("page"))) {
-      if (!isSwitching()) {
-        onNetworkFailure("lost page switching information", null);
+    String otherPlayerPage = json.getString("page");
+    if (!getName().equals(otherPlayerPage)) {
+      if (isSwitching()) { return true; }
+      if (gameInfo.isClientHost()) {
+        onNetworkFailure("server is not playing");
+        return false;
+      } else {
+        if (otherPlayerPage.equals("start")) { return true; }
+        if (otherPlayerPage.equals("help")) { return true; }
+        onNetworkFailure("client is not playing");
         return false;
       }
-      return true;
     }
     if (json.getString("nextPage").equals("start")) {
       trySwitchPage(getPreviousPage());
@@ -199,9 +204,9 @@ public class PlayPage extends Page {
   }
 
   @Override
-  public void onNetworkFailure(String where, Exception e) {
-    String errMsg = where + e.toString();
-    switchPage(new ErrorPage(getPreviousPage(), errMsg));
+  public void onNetworkFailure(String message) {
+    super.onNetworkFailure(message);
+    switchPage(new ErrorPage(getPreviousPage(), message));
   }
 
   @Override
@@ -242,8 +247,6 @@ public class PlayPage extends Page {
           Pacman pacman = new Pacman(playerId);
           pacman.setX(x).setY(y);
           addSyncItem(pacman);
-          if (playerId == 1) { this.pacman1 = pacman; }
-          else { this.pacman2 = pacman; }
           PacmanShelter pacmanShelter = new PacmanShelter(pacman.getPlayerId());
           pacmanShelter.setCenterX(pacman.getCenterX()).setCenterY(pacman.getCenterY());
           addSyncItem(pacmanShelter);
@@ -283,15 +286,12 @@ public class PlayPage extends Page {
     float factor = 1.0;
     float anchorX = gameInfo.getMapWidth() / 2.0;
     float anchorY = gameInfo.getMapHeight() / 2.0;
-    if (gameInfo.isServerHost()) {
-      factor = this.pacman1.getViewFactor();
-      anchorX = this.pacman1.getCenterX();
-      anchorY = this.pacman1.getCenterY();
-    }
-    if (gameInfo.isClientHost()) {
-      factor = this.pacman2.getViewFactor();
-      anchorX = this.pacman2.getCenterX();
-      anchorY = this.pacman2.getCenterY();
+    if (!gameInfo.isSingleHost()) {
+      int playerId = gameInfo.isServerHost() ? 1 : 2;
+      Pacman pacman = (Pacman)getSyncItem(itemTypePacman + playerId);
+      factor = pacman.getViewFactor();
+      anchorX = pacman.getCenterX();
+      anchorY = pacman.getCenterY();
     }
     factor = Math.min(Math.max(0.1, factor), 1.0);
     anchorX /= factor;
@@ -337,7 +337,8 @@ public class ErrorPage extends Page {
     
     noStroke();
     fill(255);
-    textSize(25);
-    text(this.errMsg, 300, 110);
+    textFont(fontErikaType, 20);
+    textAlign(CENTER, CENTER);
+    text(this.errMsg, gameInfo.getWinWidth() / 2.0, gameInfo.getWinHeight() / 2.0);
   }
 }
