@@ -49,7 +49,9 @@ Based off additional research, we found that hosting a focus group would provide
 
 *How did you find playing the game?*
 > P1 - Pretty good.
+
 > P2 - I liked the traditional game play of Pac-Man but it was good to have the competition between players.
+
 > P3 - Really cool, I really liked it.
 
 
