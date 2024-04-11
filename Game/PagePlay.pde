@@ -214,6 +214,7 @@ public class PlayPage extends Page {
 
   private void loadMap(String mapPath) {
     generateMapBorders();
+    addSyncItem(new ViewShader());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {

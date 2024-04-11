@@ -260,3 +260,52 @@ public class PacmanShelter extends SynchronizedItem {
     super.drawLocally(x, y, w, h);
   }
 }
+
+
+final String itemTypeViewShader = "ViewShader";
+
+// ViewShader can also be implemented as a LocalItem.
+public class ViewShader extends SynchronizedItem {
+  public ViewShader() {
+    super(itemTypeViewShader, 0.0, 0.0);
+    setLayer(9);
+  }
+
+  @Override
+  public void draw() { // Runs locally.
+    if (gameInfo.isSingleHost()) { return; }
+    int playerId = gameInfo.isServerHost() ? 1 : 2;
+    Pacman pacman = (Pacman)page.getSyncItem(itemTypePacman + playerId);
+    if (pacman.getViewFactor() >= 1.0) { return; }
+    float[] coord = page.getLocalCoord(pacman.getCenterX(), pacman.getCenterY(), 0, 0);
+    shadeLocally(coord[0], coord[1]);
+  }
+
+  public void shadeLocally(float x, float y) {
+    float step = 5.0;
+    strokeWeight(step);
+    noFill();
+    int c = color(0);
+    float winW = gameInfo.getWinWidth();
+    float winH = gameInfo.getWinHeight();
+    float rStart = Math.min(winW, winH) / 2.5;
+    float rEnd = (float)Math.sqrt(winW * winW + winH * winH);
+    float r = rStart;
+    while (r < rEnd) {
+      float f = (r - rStart) / (rEnd - rStart);
+      f = Math.min(f, 1.0);
+      f = 1.0 - (float)Math.pow((1.0 - f), 15.0);
+      if (f >= 0.98) { // Saves cpu resource.
+        stroke(c);
+        float finalStep = rEnd - r;
+        strokeWeight(finalStep);
+        circle(x, y, 2.0 * r + finalStep);
+        break;
+      }
+      float alpha = 255.0 * f;
+      stroke(c, alpha);
+      circle(x, y, 2.0 * r + step);
+      r += step;
+    }
+  }
+}

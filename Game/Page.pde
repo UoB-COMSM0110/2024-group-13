@@ -318,6 +318,8 @@ public SynchronizedItem createSyncItemFromJson(JSONObject json) {
     item = new Bullet(-1);
   } else if (type.equals("PacmanShelter")) {
     item = new PacmanShelter(-1);
+  } else if (type.equals("ViewShader")) {
+    item = new ViewShader();
   } else if (type.equals("Ghost")) {
     item = new Ghost();
   } else if (type.equals("Pacman")) {
