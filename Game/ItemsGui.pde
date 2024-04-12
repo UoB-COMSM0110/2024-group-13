@@ -357,12 +357,12 @@ public class InputBox extends InteractiveWidget {
     int nStep = 10;
     strokeWeight(step);
     noFill();
+    int c = color(0, 200, 200);
     for (int i = 0; i < nStep; ++i) {
       float x = getX() + step * (i + 0.5);
       float y = getY() + step * (i + 0.5);
       float w = getW() - (2 * i + 1) * step;
       float h = getH() - (2 * i + 1) * step;
-      int c = color(0, 200, 200);
       float alpha = 255.0 * (1.0 - i * 1.0 / nStep);
       stroke(c, alpha);
       rect(x, y, w, h, getBoxRadius());

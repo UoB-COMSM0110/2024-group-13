@@ -115,7 +115,7 @@ public class Ghost extends Figure {
     if (this.changeDirectionTimer == null) { randomizeDirection(); }
     Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
     if (magnet != null && !magnet.isDiscarded()) {
-      setDirectionTowards(magnet.getX(), magnet.getY());
+      setDirectionTowards(magnet);
     }
     super.evolve();
   }
@@ -148,24 +148,6 @@ public class Ghost extends Figure {
     page.addTimer(this.changeDirectionTimer);
   }
   
-  public void setDirectionTowards(float targetX, float targetY) {
-    float deltaX = targetX - getX();
-    float deltaY = targetY - getY();
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX > 0) {
-        setDirection(RIGHTWARD);
-      } else {
-        setDirection(LEFTWARD);
-      }
-    } else {
-      if (deltaY > 0) {
-        setDirection(DOWNWARD);
-      } else {
-        setDirection(UPWARD);
-      }
-    }
-  }
-
   @Override
   public PImage getImage() {
     return imageGhost;
@@ -182,6 +164,7 @@ public class Pacman extends Figure {
   private int score;
   private boolean ableToFire;
   private int numBullets;
+  private float viewFactor;
   private boolean isControlledByOpponent = false;
   private boolean isFrozen = false;
 
@@ -191,6 +174,7 @@ public class Pacman extends Figure {
     super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
     this.playerId = playerId;
     enableFire();
+    setViewFactor(0.4);
     setLayer(1);
     setSpeed(100.0);
     setLives(3);
@@ -204,6 +188,7 @@ public class Pacman extends Figure {
     json.setInt("score", getScore());
     json.setBoolean("ableToFire", isAbleToFire());
     json.setInt("numBullets", getNumberOfBullets());
+    json.setFloat("viewFactor", getViewFactor());
     json.setBoolean("isControlledByOpponent", getIsControlledByOpponent());
     json.setBoolean("isFrozen", this.isFrozen);
     return json;
@@ -216,6 +201,7 @@ public class Pacman extends Figure {
     if (json.getBoolean("ableToFire")) { enableFire(); }
     else { disableFire(); }
     this.numBullets = json.getInt("numBullets");
+    setViewFactor(json.getFloat("viewFactor"));
     setIsControlledByOpponent(json.getBoolean("isControlledByOpponent"));
     this.isFrozen = json.getBoolean("isFrozen");
   }
@@ -286,6 +272,9 @@ public class Pacman extends Figure {
     disableFire();
   }
 
+  public float getViewFactor() { return this.viewFactor; }
+  public Pacman setViewFactor(float viewFactor) { this.viewFactor = viewFactor; return this; }
+
   @Override
   public void evolve() {
     if (this.loadBulletTimer == null) {
@@ -317,14 +306,14 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (this.isFrozen){return false;}
+    if (this.isFrozen) { return false; }
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 1;
     }
     return getPlayerId() == 1;
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (this.isFrozen){return false;}
+    if (this.isFrozen) { return false; }
     if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
       return getPlayerId() != 2;
     }
@@ -394,10 +383,6 @@ public class Pacman extends Figure {
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
     Label livesLabel = (Label)page.getLocalItem("Lives" + getPlayerId());
     if (livesLabel != null) { livesLabel.setText(String.valueOf(getLives())); }
-    // gameInfo.setMapScaleX(5.0);
-    // gameInfo.setMapScaleY(5.0);
-    // gameInfo.setMapOffsetX(- getX() * 5.0 + 100);
-    // gameInfo.setMapOffsetY(- getY() * 5.0 + 100 + 80);
   }
 
   public PImage getImage() {

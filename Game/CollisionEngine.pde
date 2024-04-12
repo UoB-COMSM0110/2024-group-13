@@ -28,6 +28,8 @@ public class SimpleCollisionEngine {
     while (!stopCond.eval() && unchecked.size() > 0) {
       MovableItem item = unchecked.remove(unchecked.size() - 1);
       solveCollisionsForItem(item, checked, stopCond);
+      // Inside the list `checked`, immovable items are always before movable items.
+      // This order is important.
       checked.add(item);
     }
   }

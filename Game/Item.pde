@@ -9,7 +9,7 @@ static final int LEFTWARD = 270;
 final float CHARACTER_SIZE = 10.0;
 
 
-// Every thing shown in the game is an Item: bricks, buttons, power-ups, etc.
+// Every thing shown in the game is an `Item`: bricks, buttons, power-ups, etc.
 public abstract class Item {
   private String name;
   private float w, h; // Item size.
@@ -107,6 +107,10 @@ public abstract class Item {
   public void draw() { draw(getX(), getY(), getW(), getH()); }
 
   public void draw(float x, float y, float w, float h) {
+    drawLocally(x, y, w, h);
+  }
+
+  public void drawLocally(float x, float y, float w, float h) {
       PImage img = getImage();
       if (img == null) { return; }
       image(img, x, y, w, h);
@@ -179,6 +183,19 @@ public abstract class SynchronizedItem extends Item {
       getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
   }
 
+  // Adapted from Chao's previous code in ItemsFigures.pde
+  public int getDirectionOf(SynchronizedItem target) {
+    float dx = target.getCenterX() - getCenterX();
+    float dy = target.getCenterY() - getCenterY();
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) { return RIGHTWARD; }
+      else { return LEFTWARD; }
+    } else {
+      if (dy > 0) { return DOWNWARD; }
+      else { return UPWARD; }
+    }
+  }
+
   public SynchronizedItem discardFor(float intervalS) {
     discard();
     page.addTimer(new OneOffTimer(intervalS, () -> { restore(); }));
@@ -191,18 +208,10 @@ public abstract class SynchronizedItem extends Item {
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
   @Override
-  public void draw() {
-    draw(getLocalX(), getLocalY(), getLocalW(), getLocalH());
+  public void draw(float x, float y, float w, float h) {
+    float[] localCoord = page.getLocalCoord(x, y, w, h);
+    drawLocally(localCoord[0], localCoord[1], localCoord[2], localCoord[3]);
   }
-
-  public float getLocalX() {
-    return gameInfo.getMapOffsetX() + getX() * gameInfo.getMapScaleX();
-  }
-  public float getLocalY() {
-    return gameInfo.getMapOffsetY() + getY() * gameInfo.getMapScaleY();
-  }
-  public float getLocalW() { return getW() * gameInfo.getMapScaleX(); }
-  public float getLocalH() { return getH() * gameInfo.getMapScaleY(); }
 }
 
 
@@ -247,6 +256,10 @@ public abstract class MovableItem extends SynchronizedItem {
   public MovableItem startMoving() { this.moving = true; return this; }
   public MovableItem stopMoving() { this.moving = false; return this; }
   
+  public void setDirectionTowards(SynchronizedItem target) {
+    setDirection(getDirectionOf(target));
+  }
+
   public float getSpeed() { return this.speed; }
   public int getDirection() { return this.direction; }
   public boolean isMoving() { return this.moving; }
@@ -270,6 +283,13 @@ public abstract class MovableItem extends SynchronizedItem {
     doMovement(distance);
   }
 
+  // Step back if `this` "moves" into `target`.
+  // If `this` overlaps with `target`, not because of the movement of `this`,
+  // but because of, e.g., the resizing of `this`, or the movement of `target`,
+  // then `this` won't step back.
+  //
+  // This method seems to be self-consistent,
+  // but can't handle collisions induced by resizing.
   public boolean tryStepbackFrom(Item target) {
     float backMovement = getPenetrationDepthOf(target);
     float prevMovement = getMovementFromRefPoint();
@@ -280,6 +300,11 @@ public abstract class MovableItem extends SynchronizedItem {
     return true;
   }
 
+  // If `this` overlaps with `target`,
+  // then push `this` in the opposite of `direction`.
+  //
+  // This method is useful for implementing hard boundaries.
+  // But it may cause problems, and may violate the presumption of `tryStepbackFrom`.
   public boolean tryPushbackFrom(Item target, int direction) {
     float backMovement = getPenetrationDepthOf(target, direction);
     if (backMovement < 0) { return false; }

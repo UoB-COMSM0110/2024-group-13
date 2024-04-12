@@ -1,5 +1,4 @@
-void loadResourcesForPlayPage() {
-}
+void loadResourcesForPlayPage() {}
 
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
@@ -7,7 +6,8 @@ final int PlayPageBackgroundColor = color(155, 82, 52);
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
   private boolean isGameOver;
-  
+  private long gameOverWaitingTimeMs;
+
   public PlayPage(Page previousPage) {
     super("play", previousPage);
     this.syncDeletesRecord = new JSONArray();
@@ -29,7 +29,7 @@ public class PlayPage extends Page {
     Label fps = new Label("Fps", backButton.getW(), backButton.getH(), "");
     fps.setPrefix("fps:").setX(backButton.getX()).setTopY(backButton.getBottomY());
     addLocalItem(fps);
-    addTimer(new Timer(0.0, 1.0,
+    addLocalTimer(new Timer(0.0, 1.0,
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
     // Player 1 status
@@ -140,9 +140,15 @@ public class PlayPage extends Page {
 
   @Override
   public void doEvolve(ArrayList<KeyboardEvent> events) {
-    // Note: Timers associated with sync items are still running.
     if (!isGameOver()) {
       super.doEvolve(events);
+      return;
+    }
+    if (this.gameOverWaitingTimeMs > 0) {
+      this.gameOverWaitingTimeMs -= gameInfo.getLastFrameIntervalMs();
+    }
+    if (this.gameOverWaitingTimeMs <= 0) {
+      goToGameOverPage();
     }
   }
 
@@ -154,6 +160,10 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
+    this.gameOverWaitingTimeMs = 1000; // 1 second stand-still time.
+  }
+
+  public void goToGameOverPage() {
     Pacman pacman1 = (Pacman)getSyncItem(itemTypePacman + 1);
     Pacman pacman2 = (Pacman)getSyncItem(itemTypePacman + 2);
     int playerScore1 = pacman1.getScore();
@@ -162,17 +172,41 @@ public class PlayPage extends Page {
   }
 
   @Override
-  public void dispatchSyncInfo(JSONObject json) {
-    super.dispatchSyncInfo(json);
-    if (gameInfo.isClientHost()) { // Only client needs to do this.
-      gameInfo.setPlayerName2(json.getString("player2"));
+  public boolean dispatchSyncInfo(JSONObject json) {
+    if (!super.dispatchSyncInfo(json)) {
+      trySwitchPage(getPreviousPage());
+      return false;
     }
+    String otherPlayerPage = json.getString("page");
+    if (!getName().equals(otherPlayerPage)) {
+      if (isSwitching()) { return true; }
+      if (gameInfo.isClientHost()) {
+        onNetworkFailure("server is not playing");
+        return false;
+      } else {
+        if (otherPlayerPage.equals("start")) { return true; }
+        if (otherPlayerPage.equals("help")) { return true; }
+        onNetworkFailure("client is not playing");
+        return false;
+      }
+    }
+    if (json.getString("nextPage").equals("start")) {
+      trySwitchPage(getPreviousPage());
+    }
+    if (gameInfo.isClientHost()) {
+      gameInfo.setPlayerName1(json.getString("player1"));
+      gameInfo.setPlayerName2(json.getString("player2"));
+      if (json.getString("nextPage").equals("gameover")) {
+        goToGameOverPage();
+      }
+    }
+    return true;
   }
 
   @Override
-  public void onNetworkFailure(String where, Exception e) {
-    String errMsg = where + e.toString();
-    trySwitchPage(new ErrorPage(getPreviousPage(), errMsg));
+  public void onNetworkFailure(String message) {
+    super.onNetworkFailure(message);
+    switchPage(new ErrorPage(getPreviousPage(), message));
   }
 
   @Override
@@ -180,6 +214,7 @@ public class PlayPage extends Page {
 
   private void loadMap(String mapPath) {
     generateMapBorders();
+    addSyncItem(new ViewShader());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
@@ -238,6 +273,46 @@ public class PlayPage extends Page {
     bottomBorder.setX(-borderSize).setY(gameInfo.getMapHeight());
     addSyncItem(bottomBorder);
   }
+
+  @Override
+  public float[] getLocalCoord(float x, float y, float w, float h) {
+    float[] factoredCoord = getFactoredCoord(x, y, w, h);
+    return super.getLocalCoord(factoredCoord[0], factoredCoord[1],
+        factoredCoord[2], factoredCoord[3]);
+  }
+
+  // Place pacman at the center.
+  public float[] getFactoredCoord(float x, float y, float w, float h) {
+    float[] coord = new float[4];
+    float factor = 1.0;
+    float anchorX = gameInfo.getMapWidth() / 2.0;
+    float anchorY = gameInfo.getMapHeight() / 2.0;
+    if (!gameInfo.isSingleHost()) {
+      int playerId = gameInfo.isServerHost() ? 1 : 2;
+      Pacman pacman = (Pacman)getSyncItem(itemTypePacman + playerId);
+      factor = pacman.getViewFactor();
+      anchorX = pacman.getCenterX();
+      anchorY = pacman.getCenterY();
+    }
+    factor = Math.min(Math.max(0.1, factor), 1.0);
+    anchorX /= factor;
+    anchorY /= factor;
+    x /= factor;
+    y /= factor;
+    w /= factor;
+    h /= factor;
+    float offsetX = anchorX - gameInfo.getMapWidth() / 2.0;
+    float maxOffsetX = gameInfo.getMapWidth() / factor - gameInfo.getMapWidth();
+    offsetX = Math.min(Math.max(0.0, offsetX), maxOffsetX);
+    float offsetY = anchorY - gameInfo.getMapHeight() / 2.0;
+    float maxOffsetY = gameInfo.getMapHeight() / factor - gameInfo.getMapHeight();
+    offsetY = Math.min(Math.max(0.0, offsetY), maxOffsetY);
+    coord[0] = x - offsetX;
+    coord[1] = y - offsetY;
+    coord[2] = w;
+    coord[3] = h;
+    return coord;
+  }
 }
 
 
@@ -249,7 +324,7 @@ public class ErrorPage extends Page {
     this.errMsg = errMsg;
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
-      switchPage(getPreviousPage());
+      trySwitchPage(getPreviousPage());
     });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -263,7 +338,8 @@ public class ErrorPage extends Page {
     
     noStroke();
     fill(255);
-    textSize(25);
-    text(this.errMsg, 300, 110);
+    textFont(fontErikaType, 20);
+    textAlign(CENTER, CENTER);
+    text(this.errMsg, gameInfo.getWinWidth() / 2.0, gameInfo.getWinHeight() / 2.0);
   }
 }

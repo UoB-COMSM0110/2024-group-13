@@ -6,25 +6,21 @@ PImage imageGameBanner;
 
 // The first page of the game.
 public class StartPage extends Page {
+  private boolean leavingGame;
+  private String otherPlayerPage;
+
   public StartPage(Page previousPage) {
     super("start", previousPage);
+    this.leavingGame = false;
+    this.otherPlayerPage = "";
+
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
     imageGameBanner = loadImage(imagePathGameBanner);
 
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setUpdater(() -> {
-        boolean enable = !gameInfo.isClientHost();
-        enable = enable && gameInfo.getPlayerName1().length() > 0;
-        enable = enable && gameInfo.getPlayerName2().length() > 0;
-        if (gameInfo.isServerHost()) {
-          enable = enable && gameInfo.isConnectedToClient();
-        }
-        if (enable) { startButton.enable(); }
-        else { startButton.disable(); }
-    });
-    startButton.disable().setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
     addLocalItem(startButton);
     // Help button
     Button helpButton = new Button("ButtonHelp", startButton.getW(), startButton.getH(), "Help",
@@ -41,7 +37,7 @@ public class StartPage extends Page {
     InputBox playerName1 = new InputBox("InputBoxPlayerName1",
         210, playerNamePrompt1.getH(), 15, (bx, oStr, nStr) -> {
         gameInfo.setPlayerName1(nStr);
-        if (nStr.length() <= 0) { startButton.disable(); }
+        onPlayerNameSet();
     });
     playerName1.setDefaultText("Happy Bunny")
       .setUpdater(() -> { playerName1.setText(gameInfo.getPlayerName1()); })
@@ -56,7 +52,7 @@ public class StartPage extends Page {
     InputBox playerName2 = new InputBox("InputBoxPlayerName2",
         playerName1.getW(), playerName1.getH(), playerName1.getMaxLen(), (bx, oStr, nStr) -> {
         gameInfo.setPlayerName2(nStr);
-        if (nStr.length() <= 0) { startButton.disable(); }
+        onPlayerNameSet();
     });
     playerName2.setDefaultText("Merry Kitty")
       .setUpdater(() -> { playerName2.setText(gameInfo.getPlayerName2()); })
@@ -71,61 +67,109 @@ public class StartPage extends Page {
     // Create button
     Button createGameButton = new Button("CreateGame", ipBox.getW(), ipBox.getH(), "Create Game",
         () -> {
-          if (!gameInfo.isServerHost()) { gameInfo.startSyncAsServer(); }
-          else { gameInfo.stopSyncAsServer(); }
+          if (gameInfo.isSingleHost()) { startSyncGame(); }
+          else { prepareToLeaveGame(); }
     });
     createGameButton.setX(ipBox.getX()).setBottomY(ipBox.getTopY() - 10);
     addLocalItem(createGameButton);
     // Join button
     Button joinGameButton = new Button("JoinGame", ipBox.getW(), ipBox.getH(), "Join Game",
         () -> {
-          if (!gameInfo.isClientHost()) { gameInfo.startSyncAsClient(ipBox.getText()); }
-          else { gameInfo.stopSyncAsClient(); }
+          if (gameInfo.isSingleHost()) { startSyncGame(ipBox.getText()); }
+          else { prepareToLeaveGame(); }
     });
     joinGameButton.setX(ipBox.getX()).setTopY(ipBox.getBottomY() + 10);
     addLocalItem(joinGameButton);
   }
 
-  @Override
-  public void dispatchSyncInfo(JSONObject json) {
-    // TODO: illegal player name after server start button clicked;
-    super.dispatchSyncInfo(json);
-    // TODO: connection close after server start button clicked;
+  void startSyncGame() {
+    if (gameInfo.startSyncAsServer()) {
+      updateWidgets();
+    }
+  }
+  void startSyncGame(String serverIp) {
+    if (gameInfo.startSyncAsClient(serverIp)) {
+      updateWidgets();
+    }
+  }
+  void prepareToLeaveGame() {
+    this.leavingGame = true;
+    if (isSwitchingTo("play")) { stopSwitchingPage(); }
+    updateStartButton();
+  }
 
-    if (gameInfo.isClientHost() && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(this));
+  @Override
+  public boolean isLeavingGame() { return this.leavingGame; }
+
+  @Override
+  public boolean dispatchSyncInfo(JSONObject json) {
+    if (!super.dispatchSyncInfo(json)) { return false; }
+    if (!this.otherPlayerPage.equals(json.getString("page"))) {
+      this.otherPlayerPage = json.getString("page");
+      updateStartButton();
+    }
+    if (!json.getString("page").equals(getName())) { return true; }
+    if (gameInfo.isServerHost() && !isSwitchingTo("play")) {
+      gameInfo.setPlayerName2(json.getString("player2"));
+      onPlayerNameSet();
+    }
+    if (gameInfo.isClientHost()) {
+      gameInfo.setPlayerName1(json.getString("player1"));
+      onPlayerNameSet();
+      if (json.getString("nextPage").equals("play")) {
+        trySwitchPage(new PlayPage(this));
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public void update() {
+    super.update();
+    if (isLeavingGame()) {
+      leaveGame();
     }
   }
 
-  @Override
-  public void onSwitchIn() {
-    super.onSwitchIn();
-    adjustWidgets();
+  public void leaveGame() {
+    this.leavingGame = false;
+    if (gameInfo.isServerHost()) { gameInfo.writeOutSocketServer(2000); }
+    if (gameInfo.isClientHost()) { gameInfo.writeOutSocketClient(2000); }
+    gameInfo.stopSync();
   }
 
+  public void onPlayerNameSet() { updateStartButton(); }
+
   @Override
-  public void onSyncStart() {
-    super.onSyncStart();
-    adjustWidgets();
+  public void onConnectionStart() {
+    super.onConnectionStart();
+    updateStartButton();
   }
 
   @Override
   public void onConnectionClose() {
     super.onConnectionClose();
-    adjustWidgets();
+    this.otherPlayerPage = "";
+    if (isSwitchingTo("play")) { stopSwitchingPage(); }
+    updateWidgets();
   }
 
-  public void adjustWidgets() {
+  @Override
+  public void onSwitchIn() {
+    super.onSwitchIn();
+    this.otherPlayerPage = "";
+    updateWidgets();
+  }
+
+  public void updateWidgets() {
     Button createGameButton = (Button)getLocalItem("CreateGame");
     Button joinGameButton = (Button)getLocalItem("JoinGame");
-    Button startButton = (Button)getLocalItem("ButtonStart");
     InputBox ipBox = (InputBox)getLocalItem("IpBox");
     InputBox playerName1 = (InputBox)getLocalItem("InputBoxPlayerName1");
     InputBox playerName2 = (InputBox)getLocalItem("InputBoxPlayerName2");
     if (gameInfo.isServerHost()) {
       createGameButton.enable().setText("Leave Game");
       joinGameButton.disable().setText("Join Game");
-      startButton.disable().setText("Start Online");
       ipBox.disable().setPrefix("Ip: ").setText(getIpAddr());
       playerName1.enable();
       playerName2.disable().setText("");
@@ -133,7 +177,6 @@ public class StartPage extends Page {
       createGameButton.disable().setText("Create Game");
       joinGameButton.enable().setText("Leave Game");
       ipBox.disable().setPrefix("");
-      startButton.disable().setText("Start");
       playerName1.disable().setText("");
       playerName2.enable();
     } else {
@@ -141,10 +184,29 @@ public class StartPage extends Page {
       joinGameButton.enable().setText("Join Game");
       ipBox.enable().setPrefix("");
       if (ipBox.getText().equals(getIpAddr())) { ipBox.setText(""); }
-      startButton.disable().setText("Start");
       playerName1.enable();
       playerName2.enable();
     }
+    updateStartButton();
+  }
+
+  public void updateStartButton() {
+    Button startButton = (Button)getLocalItem("ButtonStart");
+    boolean enable = !gameInfo.isClientHost();
+    enable = enable && gameInfo.getPlayerName1().length() > 0;
+    enable = enable && gameInfo.getPlayerName2().length() > 0;
+    if (gameInfo.isSingleHost()) {
+      startButton.setText("Start");
+    } else {
+      startButton.setText("Start Online");
+      // Below for server only
+      enable = enable && gameInfo.isConnected();
+      enable = enable && !isLeavingGame();
+      enable = enable && (this.otherPlayerPage.equals("start")
+          || this.otherPlayerPage.equals("help"));
+    }
+    if (enable) { startButton.enable(); }
+    else { startButton.disable(); }
   }
 
   @Override
