@@ -1,12 +1,15 @@
 import java.util.Random;
 
-final String imagePathPacman = "data/Pacman.png";
-PImage imagePacman;
+final String imagePathPacman_1 = "data/Pacman_1.png";
+PImage imagePacman_1;
+final String imagePathPacman_2 = "data/Pacman_2.png";
+PImage imagePacman_2;
 final String imagePathGhost = "data/Ghost.png";
 PImage imageGhost;
 
 void loadResoucesForFigures() {
-  imagePacman = loadImage(imagePathPacman);
+  imagePacman_1 = loadImage(imagePathPacman_1);
+  imagePacman_2 = loadImage(imagePathPacman_2);
   imageGhost = loadImage(imagePathGhost);
 }
 
@@ -386,7 +389,7 @@ public class Pacman extends Figure {
   }
 
   public PImage getImage() {
-    return imagePacman;
+    return this.playerId == 1 ? imagePacman_1 : imagePacman_2;
   }
 }
 
