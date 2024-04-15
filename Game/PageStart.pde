@@ -15,7 +15,6 @@ public class StartPage extends Page {
     this.otherPlayerPage = "";
 
     imageStartPageBackground = loadImage(imagePathStartPageBackground);
-    imageGameBanner = loadImage(imagePathGameBanner);
 
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
@@ -208,13 +207,34 @@ public class StartPage extends Page {
     if (enable) { startButton.enable(); }
     else { startButton.disable(); }
   }
+  
+  
+  void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset, color textColor) {
+    textSize(textSize);
+
+    // Draw the outline
+    fill(116, 54, 18); 
+    for (int dx = -outlineOffset; dx <= outlineOffset; dx++) {
+      for (int dy = -outlineOffset; dy <= outlineOffset; dy++) {
+        if (dx != 0 || dy != 0) { 
+          text(text, x + dx, y + dy);
+        }
+      }
+    }
+
+    fill(textColor); 
+    text(text, x, y);
+  }
 
   @Override
   public void drawBackground() {
-    float winWidth = gameInfo.getWinWidth();
-    float winHeight = gameInfo.getWinHeight();
-    image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-    float bannerWidth = 510;
-    image(imageGameBanner, (winWidth - bannerWidth) / 2, 130, bannerWidth, 165);
+      float winWidth = gameInfo.getWinWidth();
+      float winHeight = gameInfo.getWinHeight();
+      image(imageStartPageBackground, 0, 0, winWidth, winHeight);
+  
+      PFont fontMinecraft = createFont("data/Minecraft.ttf", 80, true);
+      textFont(fontMinecraft);
+      drawTextWithOutline("PACMINER", 400, 220, 80, 3, color(255));
   }
+
 }
