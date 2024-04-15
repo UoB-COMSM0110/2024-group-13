@@ -3,6 +3,8 @@ void loadResourcesForPlayPage() {}
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
+final int textSizeBoard = 17;
+
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
   private boolean isGameOver;
@@ -34,67 +36,87 @@ public class PlayPage extends Page {
 
     // Player 1 status
     Label playerPrompt1 = new Label("PlayerPrompt1",
-        150, 35, "Player : ");
-    playerPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(250).setY(6);
+        112.5, 26.25, "Player : ");
+    playerPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(250).setY(4);
     addLocalItem(playerPrompt1);
     
     Label scorePrompt1 = new Label("ScorePrompt1",
-        150, 35, "Score : ");
-    scorePrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(250).setY(25);
+        112.5, 26.25, "Score : ");
+    scorePrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(250).setY(20);
     addLocalItem(scorePrompt1);
     
     Label livesPrompt1 = new Label("LivesPrompt1",
-        150, 35, "Lives : ");
-    livesPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(250).setY(44);
+        112.5, 26.25, "Lives : ");
+    livesPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(250).setY(36);
     addLocalItem(livesPrompt1);
     
+    Label powerupPrompt1 = new Label("PowerupPrompt1",
+        112.5, 26.25, "PowerUp : ");
+    powerupPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(250).setY(52);
+    addLocalItem(powerupPrompt1);
+    
     Label score1 = new Label("Score1", 120, 25, "0");
-    score1.setX(270).setY(29);
+    score1.setTextSize(textSizeBoard).setX(250).setY(20);
     addLocalItem(score1);
     
     Label playerName1 = new Label("PlayerName1",
         120, score1.getH(), gameInfo.getPlayerName1());
-    playerName1.setTextAlignHorizon(RIGHT).setRightX(390).setY(10);
+    playerName1.setTextAlignHorizon(LEFT).setTextSize(textSizeBoard).setRightX(370).setY(4);
     addLocalItem(playerName1);
 
     Label lives1 = new Label("Lives1", 20, score1.getH(), "0");
-    lives1.setLeftX(270).setY(48);
+    lives1.setTextSize(textSizeBoard).setLeftX(250).setY(36);
     addLocalItem(lives1);
+    
+    Label powerupDesc1 = new Label("PowerupDesc1", 120, score1.getH(), "");
+    powerupDesc1.setTextSize(textSizeBoard).setLeftX(250).setY(52);
+    addLocalItem(powerupDesc1);
 
     // Player 2 status
     Label playerPrompt2 = new Label("PlayerPrompt2",
-        150, 35, "Player : ");
-    playerPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(600).setY(6);
+        112.5, 26.25, "Player : ");
+    playerPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(570).setY(playerPrompt1.getY());
     addLocalItem(playerPrompt2);
     
     Label scorePrompt2 = new Label("ScorePrompt2",
-        150, 35, "Score : ");
-    scorePrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(600).setY(25);
+        112.5, 26.25, "Score : ");
+    scorePrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(570).setY(scorePrompt1.getY());
     addLocalItem(scorePrompt2);
     
     Label livesPrompt2 = new Label("LivesPrompt2",
-        150, 35, "Lives : ");
-    livesPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(600).setY(44);
+        112.5, 26.25, "Lives : ");
+    livesPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(570).setY(livesPrompt1.getY());
     addLocalItem(livesPrompt2);
     
+    Label powerupPrompt2 = new Label("PowerupPrompt2",
+        112.5, 26.25, "PowerUp : ");
+    powerupPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(570).setY(powerupPrompt1.getY());
+    addLocalItem(powerupPrompt2);
+    
     Label score2 = new Label("Score2", score1.getW(), score1.getH(), "0");
-    score2.setX(620).setY(score1.getY());
+    score2.setTextSize(textSizeBoard).setX(570).setY(score1.getY());
     addLocalItem(score2);
     
     Label playerName2 = new Label("PlayerName2",
         playerName1.getW(), score2.getH(), gameInfo.getPlayerName2());
-    playerName2.setTextAlignHorizon(RIGHT).setRightX(740).setY(playerName1.getY());
+    playerName2.setTextSize(textSizeBoard).setTextAlignHorizon(LEFT).setRightX(690).setY(playerName1.getY());
     addLocalItem(playerName2);
     
     Label lives2 = new Label("Lives2", lives1.getW(), score2.getH(), "0");
-    lives2.setLeftX(620).setY(lives1.getY());
+    lives2.setTextSize(textSizeBoard).setLeftX(570).setY(lives1.getY());
     addLocalItem(lives2);
+    
+    Label powerupDesc2 = new Label("PowerupDesc2", powerupDesc1.getW(), powerupDesc1.getH(), "");
+    powerupDesc2.setTextSize(textSizeBoard).setLeftX(570).setY(powerupDesc1.getY());
+    addLocalItem(powerupDesc2);
     
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
