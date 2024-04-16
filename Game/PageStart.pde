@@ -3,7 +3,6 @@ PImage imageStartPageBackground;
 final String imagePathGameBanner = "data/GameBanner.png";
 PImage imageGameBanner;
 
-
 // The first page of the game.
 public class StartPage extends Page {
   private boolean leavingGame;

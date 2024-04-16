@@ -72,10 +72,12 @@ public class OpponentControlPowerUp extends PowerUp {
 
   private void takeControl(Pacman opponentPacman) {
     opponentPacman.setIsControlledByOpponent(true);
+    opponentPacman.setPowerupDesc("(-) Opponent Control");
   }
 
   private void releaseControl(Pacman opponentPacman) {
     opponentPacman.setIsControlledByOpponent(false);
+    opponentPacman.setPowerupDesc("");
   }
 }
 
@@ -127,12 +129,14 @@ public class TimeFreezePowerUp extends PowerUp {
 
   private void freezeOpponent(Pacman opponentPacman) {
     opponentPacman.freeze();
+    opponentPacman.setPowerupDesc("(-) Frozen");
     page.addTimer(new OneOffTimer(defaultPowerUpDurationS,
           () -> { unfreezeOpponent(opponentPacman); }));
   }
 
   private void unfreezeOpponent(Pacman opponentPacman) {
     opponentPacman.unfreeze(); 
+    opponentPacman.setPowerupDesc("");
   }
 }
 
@@ -161,10 +165,12 @@ public class SizeModificationPowerUp_Pacman extends PowerUp {
 
   private void shrinkPacman(Pacman pacman) {
     pacman.zoom(0.5);
+    pacman.setPowerupDesc("(+) Size Modification");
   }
 
   private void resetPacmanSize(Pacman pacman) {
     pacman.zoom(2.0);
+    pacman.setPowerupDesc("");
   }
 }
 
@@ -379,10 +385,14 @@ public class SpeedSurgePowerUp extends PowerUp {
 
   private void increaseSpeed(MovableItem item) {
     item.setSpeed(item.getSpeed() * 2.0);
+    Pacman pacman = (Pacman) item;
+    pacman.setPowerupDesc("(+) Speed Surge");
   }
 
   private void resetSpeed(MovableItem item) {
     item.setSpeed(item.getSpeed() * 0.5);
+    Pacman pacman = (Pacman) item;
+    pacman.setPowerupDesc("");
   }
 }
 
