@@ -16,7 +16,9 @@ alt="Group Members" width="70%">
 [Kanban](https://github.com/orgs/UoB-COMSM0110/projects/62)
 
 ## Introduction
-Text
+Welcome to multiplayer Pac-Man, a thrilling game that pits two players against each other on a mostly traditional Pac-Man map with an exciting twist: the ability to break through walls. This game is named Pac-Miner. Both players compete against each other to gather as many points as possible by collecting the coins generated throughout the map. Each player starts with 3 lives and aims to avoid ghosts while trying to outscore their opponent. Scattered in the map are different types of power-ups which can temporarily improve the players’ character or negatively affect their opponent. The ability to destroy barriers and kill ghosts using bullets enables the players to escape imminent death! The game ends when one player loses all three of their lives and the winner is the player with the most points. 
+
+As our game is multiplayer, the players could target one another to score more points by killing their opponent or work peacefully and focus on collecting points instead. Our game has two modes of play: local or online multiplayer. The game strategy differs depending on which you choose. In the local version, you are able to see the whole map including your opponent, however in the online version a smaller area of the map is visible so you won’t always see your opponent.
 
 ---
 
