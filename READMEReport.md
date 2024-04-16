@@ -20,22 +20,18 @@ Welcome to multiplayer Pac-Man, a thrilling game that pits two players against e
 
 As our game is multiplayer, the players could target one another to score more points by killing their opponent or work peacefully and focus on collecting points instead. Our game has two modes of play: local or online multiplayer. The game strategy differs depending on which you choose. In the local version, you are able to see the whole map including your opponent, however in the online version a smaller area of the map is visible so you won’t always see your opponent.
 
----
 
 ## Requirements
 Text
 
----
 
 ## Design
 Text
 
----
 
 ## Implementation
 Text
 
----
 
 ## Evaluation
 
@@ -108,11 +104,10 @@ The feedback from the focus group was valuable in showing personal user experien
 
 ### How our code was tested
 
----
 
 ## Process
 Text
 
----
 
 ## Conclusion
+Text
