@@ -26,6 +26,19 @@ Text
 
 
 ## Design
+### Class Diagram
+Text
+
+<img src="resources/PacClassDiagram.jpg"
+alt="ClassDiagram" width="70%">
+
+### Communication Diagram
+Text
+
+<img src="resources/PacCommunicationDiagram.jpg"
+alt="CommunicationDiagram" width="70%">
+
+### Design Summary
 Text
 
 
