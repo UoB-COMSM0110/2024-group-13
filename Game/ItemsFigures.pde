@@ -4,10 +4,18 @@ final String imagePathPacman_1_L = "data/Pacman_1_L.png";
 PImage imagePacman_1_L;
 final String imagePathPacman_1_R = "data/Pacman_1_R.png";
 PImage imagePacman_1_R;
+final String imagePathPacman_1_U = "data/Pacman_1_U.png";
+PImage imagePacman_1_U;
+final String imagePathPacman_1_D = "data/Pacman_1_D.png";
+PImage imagePacman_1_D;
 final String imagePathPacman_2_L = "data/Pacman_2_L.png";
 PImage imagePacman_2_L;
 final String imagePathPacman_2_R = "data/Pacman_2_R.png";
 PImage imagePacman_2_R;
+final String imagePathPacman_2_U = "data/Pacman_2_U.png";
+PImage imagePacman_2_U;
+final String imagePathPacman_2_D = "data/Pacman_2_D.png";
+PImage imagePacman_2_D;
 final String imagePathGhost_L = "data/Ghost_L.png";
 PImage imageGhost_L;
 final String imagePathGhost_R = "data/Ghost_R.png";
@@ -15,10 +23,14 @@ PImage imageGhost_R;
 
 void loadResoucesForFigures() {
   imagePacman_1_L = loadImage(imagePathPacman_1_L);
-  imagePacman_2_L = loadImage(imagePathPacman_2_L);
-  imageGhost_L = loadImage(imagePathGhost_L);
   imagePacman_1_R = loadImage(imagePathPacman_1_R);
+  imagePacman_1_U = loadImage(imagePathPacman_1_U);
+  imagePacman_1_D = loadImage(imagePathPacman_1_D);
+  imagePacman_2_L = loadImage(imagePathPacman_2_L);
   imagePacman_2_R = loadImage(imagePathPacman_2_R);
+  imagePacman_2_U = loadImage(imagePathPacman_2_U);
+  imagePacman_2_D = loadImage(imagePathPacman_2_D);
+  imageGhost_L = loadImage(imagePathGhost_L);
   imageGhost_R = loadImage(imagePathGhost_R);
 }
 
@@ -278,8 +290,8 @@ public class Pacman extends Figure {
     if (!isAbleToFire()) { return; }
     if (getNumberOfBullets() <= 0) { return; }
     Bullet bullet = new Bullet(getPlayerId());
-    bullet.setDirection(getFacing());
-    switch (getFacing()) {
+    bullet.setDirection(getDirection());
+    switch (getDirection()) {
       case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
       case RIGHTWARD: { bullet.setLeftX(getRightX() + epsilon).setCenterY(getCenterY()); break; }
       case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
@@ -360,7 +372,6 @@ public class Pacman extends Figure {
     if (e.getKey() == '0' && usingKeySetB()) { fire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction != null) {
-      setFacing(direction.intValue());
       setDirection(direction.intValue());
       startMoving();
       return;
@@ -408,9 +419,19 @@ public class Pacman extends Figure {
 
   public PImage getImage() {
     if (this.playerId == 1) {
-      return this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD ? imagePacman_1_R : imagePacman_1_L;
+      switch (getDirection()) {
+        case LEFTWARD: return imagePacman_1_L;
+        case RIGHTWARD: return imagePacman_1_R;
+        case UPWARD: return imagePacman_1_U;
+        default: return imagePacman_1_D;
+      }
     }
-    return this.getDirection() == DOWNWARD || this.getDirection() == LEFTWARD ? imagePacman_2_R : imagePacman_2_L;
+    switch (getDirection()) {
+      case LEFTWARD: return imagePacman_2_L;
+      case RIGHTWARD: return imagePacman_2_R;
+      case UPWARD: return imagePacman_2_U;
+      default: return imagePacman_2_D;
+    }
   }
 }
 
