@@ -1,18 +1,6 @@
 final int textColorDefault = color(100, 20, 20);
 final int textColorDisabled = color(100, 100, 100);
 final int textSizeDefault = 20;
-final String imagePathButton = "data/Button.png";
-PImage imageButton;
-final String fontPathMinecraft = "data/Minecraft.ttf";
-PFont fontMinecraft;
-final String fontPathErikaType = "data/ErikaType.ttf";
-PFont fontErikaType;
-
-void loadResourcesForGui() {
-  imageButton = loadImage(imagePathButton);
-  fontMinecraft = createFont(fontPathMinecraft, textSizeDefault, true);
-  fontErikaType = createFont(fontPathErikaType, textSizeDefault, true);
-}
 
 
 public class RectArea extends LocalItem {

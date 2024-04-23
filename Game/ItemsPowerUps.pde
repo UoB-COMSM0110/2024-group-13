@@ -9,7 +9,7 @@ final String imagePathMagnet = "data/Magnet.png";
 PImage imageMagnet;
 
 
-void loadResoucesForPowerUps() {
+void loadResourcesForPowerUps() {
   imagePowerUp = loadImage(imagePathPowerUp);
   imageTrap = loadImage(imagePathTrap);
   imageMagnet = loadImage(imagePathMagnet);

@@ -21,7 +21,7 @@ PImage imageGhost_L;
 final String imagePathGhost_R = "data/Ghost_R.png";
 PImage imageGhost_R;
 
-void loadResoucesForFigures() {
+void loadResourcesForFigures() {
   imagePacman_1_L = loadImage(imagePathPacman_1_L);
   imagePacman_1_R = loadImage(imagePathPacman_1_R);
   imagePacman_1_U = loadImage(imagePathPacman_1_U);
@@ -124,7 +124,10 @@ int itemCountGhost;
 final float defaultGhostSpeed = 50.0;
 
 public class Ghost extends Figure {
+  private boolean attracted;
+
   private Timer changeDirectionTimer;
+  private PImage img;
 
   public Ghost() {
     super(itemTypeGhost + itemCountGhost++, 2.0 * CHARACTER_SIZE, 2.0 * CHARACTER_SIZE);
@@ -132,14 +135,29 @@ public class Ghost extends Figure {
     refreshHp(3);
     setLayer(2);
     startMoving();
+    this.img = imageGhost_R;
+  }
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setBoolean("attracted", this.attracted);
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.attracted = json.getBoolean("attracted");
   }
 
   @Override
   public void evolve() {
     if (this.changeDirectionTimer == null) { randomizeDirection(); }
+    this.attracted = false;
     Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
     if (magnet != null && !magnet.isDiscarded()) {
       setDirectionTowards(magnet);
+      this.attracted = true;
     }
     super.evolve();
   }
@@ -174,7 +192,13 @@ public class Ghost extends Figure {
   
   @Override
   public PImage getImage() {
-    return this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD ? imageGhost_R : imageGhost_L;
+    if (this.attracted) { return this.img; }
+    if (this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD) {
+      this.img = imageGhost_R;
+    } else {
+      this.img = imageGhost_L;
+    }
+    return this.img;
   }
 }
 
@@ -196,7 +220,7 @@ public class Pacman extends Figure {
   private Timer loadBulletTimer;
 
   public Pacman(int playerId) {
-    super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
+    super(itemTypePacman + playerId, 2.51 * CHARACTER_SIZE, 2.51 * CHARACTER_SIZE);
     this.playerId = playerId;
     enableFire();
     setViewFactor(0.4);

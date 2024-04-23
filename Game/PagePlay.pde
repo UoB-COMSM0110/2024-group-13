@@ -1,5 +1,3 @@
-void loadResourcesForPlayPage() {}
-
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
 

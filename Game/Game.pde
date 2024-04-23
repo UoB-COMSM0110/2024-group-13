@@ -39,12 +39,43 @@ void draw() {
 }
 
 
+// ********************************
+// Resouces loading.
+// ********************************
+
+final int fontSizeDefault = 20;
+final String fontPathMinecraft = "data/Minecraft.ttf";
+PFont fontMinecraft;
+final String fontPathErikaType = "data/ErikaType.ttf";
+PFont fontErikaType;
+
+final String imagePathStartPageBackground = "data/StartPageBackground.png";
+PImage imageStartPageBackground;
+final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
+PImage imageOverlay;
+final String imagePathInstructionSet = "data/InstructionSet.png";
+PImage imageInstruction;
+
+final String imagePathButton = "data/Button.png";
+PImage imageButton;
+final String imagePathHeart = "data/Heart.png";
+PImage imageHeart;
+
+
 void loadResouces() {
-  loadResoucesForItems();
-  loadResourcesForGui();
-  loadResoucesForFigures();
-  loadResoucesForPowerUps();
-  loadResourcesForPlayPage();
+  loadResourcesForItems();
+  loadResourcesForFigures();
+  loadResourcesForPowerUps();
+
+  fontMinecraft = createFont(fontPathMinecraft, fontSizeDefault, true);
+  fontErikaType = createFont(fontPathErikaType, fontSizeDefault, true);
+
+  imageStartPageBackground = loadImage(imagePathStartPageBackground);
+  imageOverlay = loadImage(imagePathHelpPageOverlay);
+  imageInstruction = loadImage(imagePathInstructionSet);
+
+  imageButton = loadImage(imagePathButton);
+  imageHeart = loadImage(imagePathHeart);
 }
 
 
