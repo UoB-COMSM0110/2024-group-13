@@ -90,6 +90,16 @@ public class PlayPage extends Page {
       getPacman(1).setViewFactor(1.0);
       getPacman(2).setViewFactor(1.0);
     }
+    if (this.gameOverWaitingTimeMs <= 1000) {
+      Label gameOverLabel = (Label)getLocalItem("GameOver");
+      if (gameOverLabel == null) {
+        gameOverLabel = new Label("GameOver", 500, 100, "Game  Over");
+        gameOverLabel.setTextAlignHorizon(CENTER).setTextFont(fontMinecraft).setTextSize(80);
+        gameOverLabel.setDrawBox(true).setBoxFillColor(color(255, 253, 208));
+        gameOverLabel.setCenterX(gameInfo.getWinWidth() / 2).setCenterY(gameInfo.getWinHeight() / 2);
+        addLocalItem(gameOverLabel);
+      }
+    }
     if (this.gameOverWaitingTimeMs <= 0) {
       goToGameOverPage();
     }
