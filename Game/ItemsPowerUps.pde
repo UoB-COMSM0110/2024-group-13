@@ -17,6 +17,18 @@ void loadResourcesForPowerUps() {
 
 
 static final float defaultPowerUpDurationS = 5.0; 
+int nextBuffId = 1;
+private int getNextBuffId() { return nextBuffId++; }
+
+private void removeBuffDesc(int buffId, Pacman pacman) {
+  String buffIdStr = String.valueOf(buffId);
+  String desc = pacman.getBuffDesc();
+  if (desc.length() <= buffIdStr.length()) { return; }
+  if (!desc.startsWith(buffIdStr)) { return; }
+  char type = desc.charAt(buffIdStr.length());
+  if (type != '+' && type != '-') { return; }
+  pacman.setBuffDesc("");
+}
 
 
 final String itemTypePowerUp = "PowerUp";
@@ -56,28 +68,22 @@ public class OpponentControlPowerUp extends PowerUp {
       Pacman pacman = (Pacman)item;
       Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
-        takeControl(opponentPacman);
-        Timer controlEndTimer = new OneOffTimer(defaultPowerUpDurationS,
-            () -> releaseControl(opponentPacman));
+        int buffId = getNextBuffId();
+        opponentPacman.setControlledByOpponent(buffId);
+        pacman.setBuffDesc(buffId + "+Control rival");
+        opponentPacman.setBuffDesc(buffId + "-Loose control");
+
+        Timer controlEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
+            if (opponentPacman.getControlledByOpponent() == buffId) {
+              opponentPacman.setControlledByOpponent(0);
+            }
+            removeBuffDesc(buffId, pacman);
+            removeBuffDesc(buffId, opponentPacman);
+        });
         page.addTimer(controlEndTimer);
       }
       replace();
     }
-  }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }
-
-  private void takeControl(Pacman opponentPacman) {
-    opponentPacman.setIsControlledByOpponent(true);
-    opponentPacman.setPowerupDesc("(-) Opponent Control");
-  }
-
-  private void releaseControl(Pacman opponentPacman) {
-    opponentPacman.setIsControlledByOpponent(false);
-    opponentPacman.setPowerupDesc("");
   }
 }
 
@@ -102,11 +108,6 @@ public class TeleportPowerUp extends PowerUp {
     pacman.setX(newX);
     pacman.setY(newY);
   }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }
 }
 
 
@@ -121,22 +122,19 @@ public class TimeFreezePowerUp extends PowerUp {
       Pacman pacman = (Pacman)item;
       Pacman opponentPacman = pacman.getOpponent();
       if (opponentPacman != null) {
-        freezeOpponent(opponentPacman);
+        int buffId = getNextBuffId();
+        opponentPacman.setFrozen(buffId);
+        opponentPacman.setBuffDesc(buffId + "-Frozen");
+
+        page.addTimer(new OneOffTimer(defaultPowerUpDurationS, () -> {
+            if (opponentPacman.getFrozen() == buffId) {
+              opponentPacman.setFrozen(0); 
+            }
+            removeBuffDesc(buffId, opponentPacman);
+        }));
       }
       replace();
     }
-  }
-
-  private void freezeOpponent(Pacman opponentPacman) {
-    opponentPacman.freeze();
-    opponentPacman.setPowerupDesc("(-) Frozen");
-    page.addTimer(new OneOffTimer(defaultPowerUpDurationS,
-          () -> { unfreezeOpponent(opponentPacman); }));
-  }
-
-  private void unfreezeOpponent(Pacman opponentPacman) {
-    opponentPacman.unfreeze(); 
-    opponentPacman.setPowerupDesc("");
   }
 }
 
@@ -149,28 +147,18 @@ public class SizeModificationPowerUp_Pacman extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
+      int buffId = getNextBuffId();
+      Pacman pacman = (Pacman)item;
+      pacman.zoom(0.5);
+      pacman.setBuffDesc(buffId + "+Shrunk");
 
-      shrinkPacman(pacman);
-      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetPacmanSize(pacman));
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
+          pacman.zoom(2.0);
+          removeBuffDesc(buffId, pacman);
+      });
       page.addTimer(changeEndTimer);
       replace();
     }
-  }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }
-
-  private void shrinkPacman(Pacman pacman) {
-    pacman.zoom(0.5);
-    pacman.setPowerupDesc("(+) Size Modification");
-  }
-
-  private void resetPacmanSize(Pacman pacman) {
-    pacman.zoom(2.0);
-    pacman.setPowerupDesc("");
   }
 }
 
@@ -195,11 +183,6 @@ public class SizeModificationPowerUp_Ghost extends PowerUp {
       page.addTimer(changeEndTimer);
       replace();
     }
-  }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
   }
 
   private void enlargeGhost(ArrayList<Ghost> ghosts) {
@@ -232,11 +215,6 @@ public class TrapPowerUp extends PowerUp {
       discard();
     }
   }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }    
 }
 
 
@@ -287,16 +265,24 @@ public class Trap extends SynchronizedItem {
     if (item instanceof Pacman) {
       Pacman pacman = (Pacman)item;
       if (pacman.getPlayerId() != this.owner) {
-        reduceSpeed(pacman);
-        Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(pacman));
+        int buffId = getNextBuffId();
+        pacman.setSpeed(pacman.getSpeed() * 0.5);
+        pacman.setBuffDesc(buffId + "-Slowed down");
+
+        Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
+            pacman.setSpeed(pacman.getSpeed() * 2.0);
+            removeBuffDesc(buffId, pacman);
+        });
         page.addTimer(changeEndTimer);
         discard().delete();        
       }
     }
     if (item instanceof Ghost) {
       Ghost ghost = (Ghost)item;
-      reduceSpeed(ghost);
-      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(ghost));
+      ghost.setSpeed(ghost.getSpeed() * 0.5);
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
+          ghost.setSpeed(ghost.getSpeed() * 2.0);
+      });
       page.addTimer(changeEndTimer);
       discard().delete();        
     }
@@ -305,14 +291,6 @@ public class Trap extends SynchronizedItem {
   @Override
   public PImage getImage() {
     return imageTrap;
-  }    
-
-  private void reduceSpeed(MovableItem item) {
-    item.setSpeed(item.getSpeed() * 0.5);
-  }
-
-  private void resetSpeed(MovableItem item) {
-    item.setSpeed(item.getSpeed() * 2);
   }    
 }
 
@@ -334,11 +312,6 @@ public class GhostMagnetPowerUp extends PowerUp {
       replace();
     }
   }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }      
 }
 
 
@@ -370,29 +343,18 @@ public class SpeedSurgePowerUp extends PowerUp {
   @Override
   public void onCollisionWith(SynchronizedItem item) {
     if (item instanceof Pacman) {
-      Pacman pacman = (Pacman) item;
-      increaseSpeed(pacman);
-      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> resetSpeed(pacman));
+      Pacman pacman = (Pacman)item;
+      int buffId = getNextBuffId();
+      pacman.setSpeed(pacman.getSpeed() * 2.0);
+      pacman.setBuffDesc(buffId + "+Speed surge");
+
+      Timer changeEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
+          pacman.setSpeed(pacman.getSpeed() * 0.5);
+          removeBuffDesc(buffId, pacman);
+      });
       page.addTimer(changeEndTimer);        
       replace();
     }
-  }
-
-  @Override
-  public PImage getImage() {
-    return super.getImage();
-  }
-
-  private void increaseSpeed(MovableItem item) {
-    item.setSpeed(item.getSpeed() * 2.0);
-    Pacman pacman = (Pacman) item;
-    pacman.setPowerupDesc("(+) Speed Surge");
-  }
-
-  private void resetSpeed(MovableItem item) {
-    item.setSpeed(item.getSpeed() * 0.5);
-    Pacman pacman = (Pacman) item;
-    pacman.setPowerupDesc("");
   }
 }
 
@@ -402,15 +364,15 @@ public class SpeedSurgePowerUp extends PowerUp {
 public PowerUp generateRandomPowerUp() {
   PowerUp powerUp = null;
   while (powerUp == null) {
-    int number = (int)random(10.0); // [0.0, 10.0)
+    int number = (int)random(9.0); // [0.0, 9.0)
     switch (number) {
+      // TeleportPowerUp not used
       case 0: { powerUp = new OpponentControlPowerUp(); break; }
-      // case 1: { powerUp = new TeleportPowerUp(); break; }
-      case 2: { powerUp = new TimeFreezePowerUp(); break; }
-      case 3: { powerUp = new SizeModificationPowerUp_Pacman(); break; }
-      case 4: { powerUp = new SizeModificationPowerUp_Ghost(); break; }
-      case 5: { powerUp = new TrapPowerUp(); break; }
-      case 6: { powerUp = new GhostMagnetPowerUp(); break; }
+      case 1: { powerUp = new TimeFreezePowerUp(); break; }
+      case 2: { powerUp = new SizeModificationPowerUp_Pacman(); break; }
+      case 3: { powerUp = new SizeModificationPowerUp_Ghost(); break; }
+      case 4: { powerUp = new TrapPowerUp(); break; }
+      case 5: { powerUp = new GhostMagnetPowerUp(); break; }
       default: { powerUp = new SpeedSurgePowerUp(); break; }
     }
   }

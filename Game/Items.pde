@@ -282,7 +282,7 @@ public class ViewShader extends SynchronizedItem {
   public void draw() { // Runs locally.
     if (gameInfo.isSingleHost()) { return; }
     int playerId = gameInfo.isServerHost() ? 1 : 2;
-    Pacman pacman = (Pacman)page.getSyncItem(itemTypePacman + playerId);
+    Pacman pacman = getPacman(playerId);
     if (pacman.getViewFactor() >= 1.0) { return; }
     float[] coord = page.getLocalCoord(pacman.getCenterX(), pacman.getCenterY(), 0, 0);
     shadeLocally(coord[0], coord[1]);

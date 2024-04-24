@@ -86,6 +86,10 @@ public class PlayPage extends Page {
     if (this.gameOverWaitingTimeMs > 0) {
       this.gameOverWaitingTimeMs -= gameInfo.getLastFrameIntervalMs();
     }
+    if (this.gameOverWaitingTimeMs <= 2000) {
+      getPacman(1).setViewFactor(1.0);
+      getPacman(2).setViewFactor(1.0);
+    }
     if (this.gameOverWaitingTimeMs <= 0) {
       goToGameOverPage();
     }
@@ -99,7 +103,7 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
-    this.gameOverWaitingTimeMs = 1000; // 1 second stand-still time.
+    this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
   }
 
   public void goToGameOverPage() {
@@ -201,19 +205,19 @@ public class PlayPage extends Page {
       .setLeftX(bulletPrompt.getRightX()).setCenterY(bulletPrompt.getCenterY());
     addLocalItem(bulletNumber);
 
-    Label powerupPrompt = new Label("PowerupPrompt" + playerId, playerPrompt.getW(), lineHeight, "Buff : ");
-    powerupPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+    Label buffPrompt = new Label("BuffPrompt" + playerId, playerPrompt.getW(), lineHeight, "Buff : ");
+    buffPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
       .setRightX(healthPrompt.getRightX()).setTopY(healthPrompt.getBottomY() + verticalSpace);
-    addLocalItem(powerupPrompt);
+    addLocalItem(buffPrompt);
 
-    Label powerupDesc = new Label("PowerupDesc" + playerId, 200, lineHeight, "");
-    powerupDesc.setTextSize(textSizeBoard).setLeftX(powerupPrompt.getRightX()).setY(powerupPrompt.getY());
-    addLocalItem(powerupDesc);
+    Label buffDesc = new Label("BuffDesc" + playerId, 200, lineHeight, "");
+    buffDesc.setTextSize(textSizeBoard).setLeftX(buffPrompt.getRightX()).setY(buffPrompt.getY());
+    addLocalItem(buffDesc);
 
     PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
     RectArea keyset = new RectArea("InstructionKeyset" + playerId, 180, 45);
     keyset.setImage(imgKeyset)
-      .setLeftX(playerIcon.getCenterX()).setTopY(powerupPrompt.getBottomY() + verticalSpace);
+      .setLeftX(playerIcon.getCenterX()).setTopY(buffPrompt.getBottomY() + verticalSpace);
     addLocalItem(keyset);
 
     RectArea keysetLine = new RectArea("InstructionKeysetLine" + playerId, keyset.getW(), 1);
@@ -225,7 +229,7 @@ public class PlayPage extends Page {
     // playerName.setDrawBox(true);
     // score.setDrawBox(true);
     // bulletNumber.setDrawBox(true);
-    // powerupDesc.setDrawBox(true);
+    // buffDesc.setDrawBox(true);
     // keyset.setDrawBox(true);
   }
 
@@ -306,7 +310,7 @@ public class PlayPage extends Page {
     float anchorY = gameInfo.getMapHeight() / 2.0;
     if (!gameInfo.isSingleHost()) {
       int playerId = gameInfo.isServerHost() ? 1 : 2;
-      Pacman pacman = (Pacman)getSyncItem(itemTypePacman + playerId);
+      Pacman pacman = getPacman(playerId);
       factor = pacman.getViewFactor();
       anchorX = pacman.getCenterX();
       anchorY = pacman.getCenterY();

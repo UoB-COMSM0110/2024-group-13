@@ -220,9 +220,9 @@ public class Pacman extends Figure {
   private boolean ableToFire;
   private int numBullets;
   private float viewFactor;
-  private boolean isControlledByOpponent = false;
-  private boolean isFrozen = false;
-  private String powerupDesc;
+  private int controlledByOpponent;
+  private int frozen;
+  private String buffDesc;
 
   private Timer loadBulletTimer;
 
@@ -235,7 +235,7 @@ public class Pacman extends Figure {
     setSpeed(100.0);
     setLives(3);
     refreshHp(3);
-    powerupDesc = "";
+    buffDesc = "";
   }
 
   @Override
@@ -246,9 +246,9 @@ public class Pacman extends Figure {
     json.setBoolean("ableToFire", isAbleToFire());
     json.setInt("numBullets", getNumberOfBullets());
     json.setFloat("viewFactor", getViewFactor());
-    json.setBoolean("isControlledByOpponent", getIsControlledByOpponent());
-    json.setBoolean("isFrozen", this.isFrozen);
-    json.setString("powerupDesc", getPowerupDesc());
+    json.setInt("controlledByOpponent", getControlledByOpponent());
+    json.setInt("frozen", this.frozen);
+    json.setString("buffDesc", getBuffDesc());
     return json;
   }
   @Override
@@ -260,27 +260,26 @@ public class Pacman extends Figure {
     else { disableFire(); }
     this.numBullets = json.getInt("numBullets");
     setViewFactor(json.getFloat("viewFactor"));
-    setIsControlledByOpponent(json.getBoolean("isControlledByOpponent"));
-    this.isFrozen = json.getBoolean("isFrozen");
-    setPowerupDesc(json.getString("powerupDesc"));
+    setControlledByOpponent(json.getInt("controlledByOpponent"));
+    this.frozen = json.getInt("frozen");
+    setBuffDesc(json.getString("buffDesc"));
   }
   
   public int getPlayerId() { return this.playerId; }
   
-  public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
-
-  public void setIsControlledByOpponent(boolean controlled) {
-    this.isControlledByOpponent = controlled;
+  public boolean isControlledByOpponent() { return 0 < getControlledByOpponent(); }
+  public int getControlledByOpponent() { return this.controlledByOpponent; }
+  public void setControlledByOpponent(int controlled) {
+    this.controlledByOpponent = controlled;
   }
 
-  public void freeze() {
-    this.isFrozen = true;
-    stopMoving();
+  public void setFrozen(int frozen) {
+    this.frozen = frozen;
+    if (this.frozen > 0) {
+      stopMoving();
+    }
   }
-
-  public void unfreeze(){
-    this.isFrozen = false;
-  }
+  public int getFrozen(){ return this.frozen; }
 
   @Override
   public void onLostLife(Object cause) {
@@ -306,8 +305,8 @@ public class Pacman extends Figure {
     this.score += increment;
   }
   
-  public void setPowerupDesc(String desc) { this.powerupDesc = desc; }
-  public String getPowerupDesc() { return this.powerupDesc; }
+  public void setBuffDesc(String desc) { this.buffDesc = desc; }
+  public String getBuffDesc() { return this.buffDesc; }
 
   public boolean isAbleToFire() { return this.ableToFire; }
   public Pacman enableFire() { this.ableToFire = true; return this; }
@@ -370,23 +369,19 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (this.isFrozen) { return false; }
-    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
-      return getPlayerId() != 1;
-    }
-    return getPlayerId() == 1;
+    if (this.frozen > 0) { return false; }
+    if (isControlledByOpponent()) { return getPlayerId() != 1; }
+    else { return getPlayerId() == 1; }
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (this.isFrozen) { return false; }
-    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
-      return getPlayerId() != 2;
-    }
-    return  getPlayerId() == 2;
+    if (this.frozen > 0) { return false; }
+    if (isControlledByOpponent()) { return getPlayerId() != 2; }
+    else { return  getPlayerId() == 2; }
   }
 
   public boolean acceptKeyboardEvent(KeyboardEvent e) {
     if (gameInfo.isSingleHost()) { return true; }
-    if (getIsControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
+    if (isControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
     return e.getHostId() == getPlayerId();
   }
 
@@ -441,7 +436,7 @@ public class Pacman extends Figure {
   }
 
   @Override
-  void update() {
+  public void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
 
@@ -455,8 +450,14 @@ public class Pacman extends Figure {
       }
     }
 
+    updateHealthWidgets();
+    updateBuffLabel();
+  }
+
+  private void updateHealthWidgets() {
     for (int i = 1; i <= 3; ++i) {
       RectArea heart = (RectArea)page.getLocalItem("Heart_" + getPlayerId() + "_" + i);
+      if (heart == null) { continue; }
       if (i < getLives()) { heart.setImage(imageHeart3); continue; }
       if (getLives() < i) { heart.setImage(imageHeart0); continue; }
       if (getHp() <= 1) {
@@ -467,9 +468,28 @@ public class Pacman extends Figure {
         heart.setImage(imageHeart3);
       }
     }
+  }
 
-    Label powerUpLabel = (Label)page.getLocalItem("PowerupDesc" + getPlayerId());
-    if (powerUpLabel != null) { powerUpLabel.setText(getPowerupDesc()); }
+  private void updateBuffLabel() {
+    Label buffLabel = (Label)page.getLocalItem("BuffDesc" + getPlayerId());
+    if (buffLabel == null) { return; }
+    buffLabel.setText("None").setTextColor(textColorDefault);
+    String buffDesc = getBuffDesc();
+    if (buffDesc == null || buffDesc.length() <= 0) { return; }
+    char type = 0;
+    int pos = 0;
+    while (pos < buffDesc.length()) {
+      type = buffDesc.charAt(pos);
+      if (type == '+' || type == '-') { break; }
+      ++pos;
+    }
+    if (type != '+' && type != '-') { return; }
+    buffLabel.setText(buffDesc.substring(pos + 1));
+    if (type == '+') {
+      buffLabel.setTextColor(color(0, 0, 255));
+    } else {
+      buffLabel.setTextColor(color(255, 0, 0));
+    }
   }
 
   public PImage getImage() {
