@@ -1,6 +1,7 @@
 import java.util.Collections;
 import java.util.List;
 
+
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
 // and is responsible for updating and drawing them.

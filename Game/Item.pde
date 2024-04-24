@@ -14,7 +14,6 @@ public abstract class Item {
   private String name;
   private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
-  private int facing;
   private int layer; // Item layer decides its drawing order.
   private boolean discarded;
 
@@ -35,7 +34,6 @@ public abstract class Item {
     json.setFloat("h", getH());
     json.setFloat("x", getX());
     json.setFloat("y", getY());
-    json.setInt("facing", getFacing());
     json.setInt("layer", getLayer());
     json.setBoolean("discarded", isDiscarded());
     return json;
@@ -46,7 +44,6 @@ public abstract class Item {
     setH(json.getFloat("h"));
     setX(json.getFloat("x"));
     setY(json.getFloat("y"));
-    setFacing(json.getInt("facing"));
     setLayer(json.getInt("layer"));
     if (json.getBoolean("discarded")) { discard(); }
     else { restore(); }
@@ -58,7 +55,6 @@ public abstract class Item {
   public Item setH(float h) { this.h = h; return this; }
   public Item setX(float x) { this.x = x; return this; }
   public Item setY(float y) { this.y = y; return this; }
-  public Item setFacing(int facing) { this.facing = facing; return this; }
   public Item setLayer(int layer) { this.layer = layer; return this; }
   public Item discard() { this.discarded = true; return this; }
   public Item restore() { this.discarded = false; return this; }
@@ -68,7 +64,6 @@ public abstract class Item {
   public float getH() { return this.h; }
   public float getX() { return this.x; }
   public float getY() { return this.y; }
-  public int getFacing() { return facing; }
   public int getLayer() { return layer; }
   public boolean isDiscarded(){ return this.discarded; }
 

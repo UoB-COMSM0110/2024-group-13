@@ -1,7 +1,3 @@
-final String imagePathStartPageBackground = "data/StartPageBackground.png";
-PImage imageStartPageBackground;
-final String imagePathGameBanner = "data/GameBanner.png";
-PImage imageGameBanner;
 
 // The first page of the game.
 public class StartPage extends Page {
@@ -12,8 +8,6 @@ public class StartPage extends Page {
     super("start", previousPage);
     this.leavingGame = false;
     this.otherPlayerPage = "";
-
-    imageStartPageBackground = loadImage(imagePathStartPageBackground);
 
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
@@ -212,8 +206,8 @@ public class StartPage extends Page {
     else { startButton.disable(); }
   }
   
-  
   void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset, color textColor) {
+    textFont(fontMinecraft);
     textSize(textSize);
 
     // Draw the outline
@@ -235,10 +229,6 @@ public class StartPage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-  
-      PFont fontMinecraft = createFont("data/Minecraft.ttf", 80, true);
-      textFont(fontMinecraft);
       drawTextWithOutline("PACMINER", 400, 220, 80, 3, color(255));
   }
-
 }

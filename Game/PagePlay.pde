@@ -1,5 +1,3 @@
-void loadResourcesForPlayPage() {}
-
 final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
@@ -34,90 +32,9 @@ public class PlayPage extends Page {
     addLocalTimer(new Timer(0.0, 1.0,
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
-    // Player 1 status
-    Label playerPrompt1 = new Label("PlayerPrompt1",
-        112.5, 26.25, "Player : ");
-    playerPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(250).setY(4);
-    addLocalItem(playerPrompt1);
-    
-    Label scorePrompt1 = new Label("ScorePrompt1",
-        112.5, 26.25, "Score : ");
-    scorePrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(250).setY(20);
-    addLocalItem(scorePrompt1);
-    
-    Label livesPrompt1 = new Label("LivesPrompt1",
-        112.5, 26.25, "Lives : ");
-    livesPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(250).setY(36);
-    addLocalItem(livesPrompt1);
-    
-    Label powerupPrompt1 = new Label("PowerupPrompt1",
-        112.5, 26.25, "PowerUp : ");
-    powerupPrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(250).setY(52);
-    addLocalItem(powerupPrompt1);
-    
-    Label score1 = new Label("Score1", 120, 25, "0");
-    score1.setTextSize(textSizeBoard).setX(250).setY(20);
-    addLocalItem(score1);
-    
-    Label playerName1 = new Label("PlayerName1",
-        120, score1.getH(), gameInfo.getPlayerName1());
-    playerName1.setTextAlignHorizon(LEFT).setTextSize(textSizeBoard).setRightX(370).setY(4);
-    addLocalItem(playerName1);
+    createPlayerStatusWidgets(1, 160, 5);
+    createPlayerStatusWidgets(2, 480, 5);
 
-    Label lives1 = new Label("Lives1", 20, score1.getH(), "0");
-    lives1.setTextSize(textSizeBoard).setLeftX(250).setY(36);
-    addLocalItem(lives1);
-    
-    Label powerupDesc1 = new Label("PowerupDesc1", 120, score1.getH(), "");
-    powerupDesc1.setTextSize(textSizeBoard).setLeftX(250).setY(52);
-    addLocalItem(powerupDesc1);
-
-    // Player 2 status
-    Label playerPrompt2 = new Label("PlayerPrompt2",
-        112.5, 26.25, "Player : ");
-    playerPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(570).setY(playerPrompt1.getY());
-    addLocalItem(playerPrompt2);
-    
-    Label scorePrompt2 = new Label("ScorePrompt2",
-        112.5, 26.25, "Score : ");
-    scorePrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(570).setY(scorePrompt1.getY());
-    addLocalItem(scorePrompt2);
-    
-    Label livesPrompt2 = new Label("LivesPrompt2",
-        112.5, 26.25, "Lives : ");
-    livesPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(570).setY(livesPrompt1.getY());
-    addLocalItem(livesPrompt2);
-    
-    Label powerupPrompt2 = new Label("PowerupPrompt2",
-        112.5, 26.25, "PowerUp : ");
-    powerupPrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(570).setY(powerupPrompt1.getY());
-    addLocalItem(powerupPrompt2);
-    
-    Label score2 = new Label("Score2", score1.getW(), score1.getH(), "0");
-    score2.setTextSize(textSizeBoard).setX(570).setY(score1.getY());
-    addLocalItem(score2);
-    
-    Label playerName2 = new Label("PlayerName2",
-        playerName1.getW(), score2.getH(), gameInfo.getPlayerName2());
-    playerName2.setTextSize(textSizeBoard).setTextAlignHorizon(LEFT).setRightX(690).setY(playerName1.getY());
-    addLocalItem(playerName2);
-    
-    Label lives2 = new Label("Lives2", lives1.getW(), score2.getH(), "0");
-    lives2.setTextSize(textSizeBoard).setLeftX(570).setY(lives1.getY());
-    addLocalItem(lives2);
-    
-    Label powerupDesc2 = new Label("PowerupDesc2", powerupDesc1.getW(), powerupDesc1.getH(), "");
-    powerupDesc2.setTextSize(textSizeBoard).setLeftX(570).setY(powerupDesc1.getY());
-    addLocalItem(powerupDesc2);
-    
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
     }
@@ -169,6 +86,20 @@ public class PlayPage extends Page {
     if (this.gameOverWaitingTimeMs > 0) {
       this.gameOverWaitingTimeMs -= gameInfo.getLastFrameIntervalMs();
     }
+    if (this.gameOverWaitingTimeMs <= 2000) {
+      getPacman(1).setViewFactor(1.0);
+      getPacman(2).setViewFactor(1.0);
+    }
+    if (this.gameOverWaitingTimeMs <= 1000) {
+      Label gameOverLabel = (Label)getLocalItem("GameOver");
+      if (gameOverLabel == null) {
+        gameOverLabel = new Label("GameOver", 500, 100, "Game  Over");
+        gameOverLabel.setTextAlignHorizon(CENTER).setTextFont(fontMinecraft).setTextSize(80);
+        gameOverLabel.setDrawBox(true).setBoxFillColor(color(255, 253, 208));
+        gameOverLabel.setCenterX(gameInfo.getWinWidth() / 2).setCenterY(gameInfo.getWinHeight() / 2);
+        addLocalItem(gameOverLabel);
+      }
+    }
     if (this.gameOverWaitingTimeMs <= 0) {
       goToGameOverPage();
     }
@@ -182,7 +113,7 @@ public class PlayPage extends Page {
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     this.isGameOver = true;
-    this.gameOverWaitingTimeMs = 1000; // 1 second stand-still time.
+    this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
   }
 
   public void goToGameOverPage() {
@@ -233,6 +164,84 @@ public class PlayPage extends Page {
 
   @Override
   public void drawBackground() { background(PlayPageBackgroundColor); }
+
+  private void createPlayerStatusWidgets(int playerId, float xOffset, float yOffset) {
+    float verticalSpace = 2.0;
+    float lineHeight = 15;
+
+    RectArea playerIcon = new RectArea("PlayerIcon" + playerId, 2.0 * lineHeight, 2.0 * lineHeight);
+    PImage imgIcon = playerId == 1 ? imagePacman_1_U : imagePacman_2_U;
+    playerIcon.setImage(imgIcon).setLeftX(xOffset).setY(yOffset);
+    addLocalItem(playerIcon);
+
+    Label playerPrompt = new Label("PlayerPrompt" + playerId, 80, lineHeight, "Player : ");
+    playerPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setLeftX(playerIcon.getRightX()).setTopY(playerIcon.getTopY());
+    addLocalItem(playerPrompt);
+
+    String playerNameText = playerId == 1 ? gameInfo.getPlayerName1() : gameInfo.getPlayerName2();
+    Label playerName = new Label("PlayerName" + playerId, 180, lineHeight, playerNameText);
+    playerName.setTextSize(textSizeBoard).setLeftX(playerPrompt.getRightX()).setY(playerPrompt.getY());
+    addLocalItem(playerName);
+
+    Label scorePrompt = new Label("ScorePrompt" + playerId, playerPrompt.getW(), lineHeight, "Score : ");
+    scorePrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(playerPrompt.getRightX()).setTopY(playerPrompt.getBottomY() + verticalSpace);
+    addLocalItem(scorePrompt);
+
+    Label score = new Label("Score" + playerId, 100, lineHeight, "0");
+    score.setTextSize(textSizeBoard).setLeftX(scorePrompt.getRightX()).setY(scorePrompt.getY());
+    addLocalItem(score);
+
+    Label healthPrompt = new Label("healthPrompt" + playerId, playerPrompt.getW(), lineHeight, "Health : ");
+    healthPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(scorePrompt.getRightX()).setTopY(scorePrompt.getBottomY() + verticalSpace);
+    addLocalItem(healthPrompt);
+
+    for (int i = 1; i <= 3; ++i) {
+      float x = healthPrompt.getRightX() + lineHeight * (i - 1) + 3;
+      RectArea heart = new RectArea("Heart_" + playerId + "_" + i, lineHeight, lineHeight);
+      heart.setImage(imageHeart3).setLeftX(x).setCenterY(healthPrompt.getCenterY());
+      addLocalItem(heart);
+    }
+
+    RectArea bulletPrompt = new RectArea("BulletsPrompt" + playerId, 40, 12);
+    bulletPrompt.setImage(imageBulletPrompt)
+      .setLeftX(healthPrompt.getRightX() + 90).setCenterY(healthPrompt.getCenterY());
+    addLocalItem(bulletPrompt);
+
+    Label bulletNumber = new Label("BulletNumber" + playerId, 25, lineHeight, "0");
+    bulletNumber.setTextSize(textSizeBoard)
+      .setLeftX(bulletPrompt.getRightX()).setCenterY(bulletPrompt.getCenterY());
+    addLocalItem(bulletNumber);
+
+    Label buffPrompt = new Label("BuffPrompt" + playerId, playerPrompt.getW(), lineHeight, "Buff : ");
+    buffPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
+      .setRightX(healthPrompt.getRightX()).setTopY(healthPrompt.getBottomY() + verticalSpace);
+    addLocalItem(buffPrompt);
+
+    Label buffDesc = new Label("BuffDesc" + playerId, 200, lineHeight, "");
+    buffDesc.setTextSize(textSizeBoard).setLeftX(buffPrompt.getRightX()).setY(buffPrompt.getY());
+    addLocalItem(buffDesc);
+
+    PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
+    RectArea keyset = new RectArea("InstructionKeyset" + playerId, 180, 45);
+    keyset.setImage(imgKeyset)
+      .setLeftX(playerIcon.getCenterX()).setTopY(buffPrompt.getBottomY() + verticalSpace);
+    addLocalItem(keyset);
+
+    RectArea keysetLine = new RectArea("InstructionKeysetLine" + playerId, keyset.getW(), 1);
+    keysetLine.setDrawBox(true).setLeftX(keyset.getLeftX()).setBottomY(keyset.getTopY());
+    addLocalItem(keysetLine);
+
+    // // For debug use:
+    // playerPrompt.setDrawBox(true);
+    // playerName.setDrawBox(true);
+    // score.setDrawBox(true);
+    // bulletNumber.setDrawBox(true);
+    // buffDesc.setDrawBox(true);
+    // keyset.setDrawBox(true);
+  }
 
   private void loadMap(String mapPath) {
     generateMapBorders();
@@ -311,7 +320,7 @@ public class PlayPage extends Page {
     float anchorY = gameInfo.getMapHeight() / 2.0;
     if (!gameInfo.isSingleHost()) {
       int playerId = gameInfo.isServerHost() ? 1 : 2;
-      Pacman pacman = (Pacman)getSyncItem(itemTypePacman + playerId);
+      Pacman pacman = getPacman(playerId);
       factor = pacman.getViewFactor();
       anchorX = pacman.getCenterX();
       anchorY = pacman.getCenterY();

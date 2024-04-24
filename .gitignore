@@ -1,5 +1,6 @@
 *.swp
 *.autosave
+sketch.properties
 .~lock.*
 .DS_Store
 Game/data/leaderboard.csv

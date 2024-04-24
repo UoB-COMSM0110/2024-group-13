@@ -1,20 +1,21 @@
-final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
+final String imagePathInstructionSet = "data/InstructionSet.png";
 final String instructionSet1 = "data/objectiveImage1.png";
 final String instructionSet2 = "data/controlsImage2.png";
 final String instructionSet3 = "data/powerupImage3.png";
 final String instructionSet4 = "data/shootingImage4.png";
 final String instructionSet5 = "data/winningImage5.png";
+
 final String instructionSet6 = "data/objectiveImage1.png";
 final String instructionSet7 = "data/controlsImage2.png";
 
 // Objective Page of Instructions
 public class HelpPage1 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
+  private PImage imageInstruction;
   
   public HelpPage1(Page previousPage) {
     super("help1", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
+    this.imageInstruction = loadImage(imagePathInstructionSet);
     this.instructionImage = loadImage(instructionSet1);
 
     // Back to Start Page button
@@ -42,8 +43,8 @@ public class HelpPage1 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(this.imageInstruction, 58, 150, 720, 334);
   }
 
   @Override
@@ -57,12 +58,10 @@ public class HelpPage1 extends Page {
 
 // Controls Page of Instructions
 public class HelpPage2 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage2(Page previousPage) {
     super("help2", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet2);
 
     // Back to Start Page button
@@ -95,7 +94,7 @@ public class HelpPage2 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -110,12 +109,10 @@ public class HelpPage2 extends Page {
 
 // Powerups and Hazards Page of Instructions
 public class HelpPage3 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage3(Page previousPage) {
     super("help3", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet3);
 
     // Back to Start Page button
@@ -148,7 +145,7 @@ public class HelpPage3 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -163,12 +160,10 @@ public class HelpPage3 extends Page {
 
 // Shooting Mechanisms Page of Instructions
 public class HelpPage4 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage4(Page previousPage) {
     super("help4", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet4);
 
     // Back to Start Page button
@@ -201,7 +196,7 @@ public class HelpPage4 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -216,12 +211,10 @@ public class HelpPage4 extends Page {
 
 // Winning the Game Page of Instructions
 public class HelpPage5 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage5(Page previousPage) {
     super("help5", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet5);
 
     // Back to Start Page button
@@ -249,7 +242,7 @@ public class HelpPage5 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -264,12 +257,10 @@ public class HelpPage5 extends Page {
 
 // Local Multiplayer Instructions Page
 public class HelpPage6 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage6(Page previousPage) {
     super("help6", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet6);
 
     // Back to Start Page button
@@ -297,7 +288,7 @@ public class HelpPage6 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -312,12 +303,10 @@ public class HelpPage6 extends Page {
 
 // Online Multiplayer Instructions Page
 public class HelpPage7 extends Page {
-  private PImage imageOverlay;
   private PImage instructionImage;
   
   public HelpPage7(Page previousPage) {
     super("help7", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
     this.instructionImage = loadImage(instructionSet7);
 
     // Back to Start Page button
@@ -345,7 +334,7 @@ public class HelpPage7 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
