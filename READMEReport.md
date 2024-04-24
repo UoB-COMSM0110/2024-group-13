@@ -73,6 +73,61 @@ These were as follows:
 4. Customers (Outer Layer): In the event that the game is released beyond university any potential existing customers would appear in this layer as people who have an interest in the game but are not currently involved in its development or assessment
 5. University as a negative stakeholder (Outer Layer): The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g. the online multiplayer gaming distracting students from work or using university resources for purposes not aligned with the goals of the institution).
 
+#### Development of User Stories
+Considering these stakeholders we began to speak to some of them and capture their input into functional requirements in the form of User Stories in a standard format. 
+As a player, I want to play against someone else so that I can spend time with my friend.
+As a player, I want to achieve the highest score so that I can win the game.
+As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
+As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
+As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
+
+
+Each story was structured to emphasise the user type, their need, and the reason behind this need. This format was used to ensure that each functionality developed is directly tied to user benefits.
+
+Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them including the user story stating that:
+
+	As a player, I want to get the highest score so that I can win.
+
+Which led us to keeping in mind the effect that competition should have on the way that the game was played. Driven by this motivation, we implemented a leaderboard that persisted in memory allowing a player to enjoy their achievement as desired.
+
+Additionally, the following user requirement (relating to being able to easily understand how to play the game), was something we consistently tried to keep in mind and were particularly attuned to when capturing feedback in the later stages of the development process.
+
+  As a player, I want to have directions on the game so I know how to play.
+
+As such, right from the start we created the game with a tutorial page included. Coming back and reflecting on this user need in addition to the feedback received had us further look to improve the way in which instructions were presented (which would ultimately go on to use clever design principles to allow the game to be easily understood and played). This also led to the inclusion of text-based descriptions of the different special events that were taking place as the result of the collection of uranium coins.
+
+Finally, we decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends, as this would be a difficult functional aspect to both to develop and make as simple as possible for the user when setting up a game.
+
+#### Use Case Title: Multiplayer Game Session
+Primary Actor: Player
+Stakeholders and Interests:
+- Player: Wants an engaging and competitive gaming experience with friends.
+- Developer: Needs the game to maintain persistent connections and handle multiplayer interactions smoothly.
+- Lecturer: Interested in the game being accessible and quick to learn for demonstration purposes.
+
+Preconditions:
+- Players must have access to the game application on their devices.
+- Players must have an active local area or online connection for multiplayer functionality (with the correct settings enabled)
+
+Main Success Scenario:
+1. The first player (Player 1) opens the game and selects the option to create a new multiplayer game, which generates a unique room number.
+2. Player 1 shares this room number with their friend (Player 2) via a chosen communication method.
+3. Player 2 enters the room number in the designated field on their device to join the game.
+4. The game establishes a connection between the two players' devices over the internet.
+5. Player 1 selects the desired game mode and presses the 'Start' button to commence the game.
+6. Both players now participate in the game concurrently, with their actions and movements synchronised in real-time.
+7. The game interface updates continuously to reflect the players' scores, collected power-ups, and other relevant game statistics.
+8. When Player 1's character is defeated, the game transitions their character to a 'ghost' state, allowing limited interaction with the game environment.
+9. Similarly, when Player 2's character is defeated, the game concludes the current session and displays the final scores on a leaderboard.
+10. Players are presented with an option to initiate a new game session.
+
+#### Use Case Modelling
+Following this analysis we combined the identified use-cases into a use case diagram as a way to visually illustrate requirements and interactions within the game system.
+
+<img src="resources/GameUseCaseDiagram.png"
+alt="Use case diagram" width="70%">
+
+Interestingly, as the project evolved and we received further feedback from users in the evaluation stages we  noticed that some of the functionalities did not contribute to the user experience as expected and were removed. This was true of the mechanism by which we had intended for players who died to turn into ghosts after they had lost all their lives - which was found to add unnecessary confusion.
 
 ## Design
 ### Class Diagram
