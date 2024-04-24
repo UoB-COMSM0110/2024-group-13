@@ -280,7 +280,7 @@ public class ViewShader extends SynchronizedItem {
 
   @Override
   public void draw() { // Runs locally.
-    // if (gameInfo.isSingleHost()) { return; }
+    if (gameInfo.isSingleHost()) { return; }
     int playerId = gameInfo.isServerHost() ? 1 : 2;
     Pacman pacman = (Pacman)page.getSyncItem(itemTypePacman + playerId);
     if (pacman.getViewFactor() >= 1.0) { return; }

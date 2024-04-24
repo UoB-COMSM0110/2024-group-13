@@ -435,10 +435,29 @@ public class Pacman extends Figure {
   void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
-    Label livesLabel = (Label)page.getLocalItem("Lives" + getPlayerId());
-    if (livesLabel != null) { livesLabel.setText(String.valueOf(getLives())); }
+
+    Label bulletNumber = (Label)page.getLocalItem("BulletNumber" + getPlayerId());
+    if (bulletNumber != null) { bulletNumber.setText(String.valueOf(getNumberOfBullets())); }
+
+    for (int i = 1; i <= 3; ++i) {
+      RectArea heart = (RectArea)page.getLocalItem("Heart_" + getPlayerId() + "_" + i);
+      if (getLives() < i) {
+        heart.setImage(null);
+      } else if (i < getLives()) {
+        heart.setImage(imageHeart3);
+      } else {
+        if (3 <= getHp()) {
+          heart.setImage(imageHeart3);
+        } else if (getHp() == 2) {
+          heart.setImage(imageHeart2);
+        } else {
+          heart.setImage(imageHeart1);
+        }
+      }
+    }
+
     Label powerUpLabel = (Label)page.getLocalItem("PowerupDesc" + getPlayerId());
-    if (powerUpLabel != null) { powerUpLabel.setText(String.valueOf(getPowerupDesc())); }
+    if (powerUpLabel != null) { powerUpLabel.setText(getPowerupDesc()); }
   }
 
   public PImage getImage() {
