@@ -14,11 +14,16 @@ public class StartPage extends Page {
         () -> { trySwitchPage(new PlayPage(this)); });
     startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
     addLocalItem(startButton);
-    // Help button
-    Button helpButton = new Button("ButtonHelp", startButton.getW(), startButton.getH(), "Help",
-        () -> { trySwitchPage(new HelpPage(this)); });
-    helpButton.setX(startButton.getX()).setTopY(startButton.getBottomY() + 20);
-    addLocalItem(helpButton);
+    // Tutorial button
+    Button tutorialButton = new Button("TutorialHelp", startButton.getW(), startButton.getH(), "Tutorial",
+        () -> { trySwitchPage(new HelpPage1(this)); });
+    tutorialButton.setX(startButton.getX()).setTopY(startButton.getBottomY() + 10);
+    addLocalItem(tutorialButton);
+    // Game Modes button
+    Button gameModesButton = new Button("GameModesHelp", startButton.getW(), startButton.getH(), "Game Modes",
+        () -> { trySwitchPage(new HelpPage6(this)); });
+    gameModesButton.setX(startButton.getX()).setTopY(tutorialButton.getBottomY() + 10);
+    addLocalItem(gameModesButton);
 
     // Player name 1
     Label playerNamePrompt1 = new Label("PlayerNamePrompt1",

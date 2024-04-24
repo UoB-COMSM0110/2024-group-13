@@ -53,8 +53,6 @@ final String imagePathStartPageBackground = "data/StartPageBackground.png";
 PImage imageStartPageBackground;
 final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
 PImage imageOverlay;
-final String imagePathInstructionSet = "data/InstructionSet.png";
-PImage imageInstruction;
 
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
@@ -83,7 +81,6 @@ void loadResouces() {
 
   imageStartPageBackground = loadImage(imagePathStartPageBackground);
   imageOverlay = loadImage(imagePathHelpPageOverlay);
-  imageInstruction = loadImage(imagePathInstructionSet);
 
   imageButton = loadImage(imagePathButton);
   imageHeart3 = loadImage(imagePathHeart3);
