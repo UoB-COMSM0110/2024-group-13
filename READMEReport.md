@@ -1,8 +1,6 @@
-<img src="PacMinerBanner.png"
-alt="PacMiner" width="70%">
+![PacMinerBanner](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/01267c16-32d5-4446-8abb-08719795436f)
 
 ## Members
-
 Finn Lawton,
 Haolan Zhao,
 Daniel Parschau,
