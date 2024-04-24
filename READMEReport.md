@@ -39,7 +39,39 @@ As our game is multiplayer, the players could target one another to score more p
 
 
 ## Requirements
-Text
+### Initial Concept Discussion
+At the outset of this task we decided that in order to settle on a single concept for us to pursue, we would take a broad ideation approach which we would further narrow down through further thought and discussion. To this extent, we created a WhatsApp group to communicate and told each other to come up with two or three ideas for us to discuss in our next meeting. In order to help come up with as many ideas as possible we viewed websites that described older arcade style games (and then thought about in which ways these could be changed to create a novel and engaging concept). Ideas were written down and brought to our next meeting.
+
+### Selection of Game Concepts
+Once we had this list of ideas we sat down and pitched them to each other, describing the basic premise and seeing how the group reacted. This was done to narrow our vision down to two main ideas that focussed on the the old arcade games Tank and Pacman, with respective twists (of a protection focus and dynamic multiplayer game play respectively) and the technical challenges that we would be covering in each, as well as a paper prototype to better envision how the game would work and to what extent it would prove as engaging as was the ultimate ambition of the project.
+
+The results of this idea clinic analysis has been captured as per the paper prototypes shown below.
+
+### Game idea 1: Battle of the Tanks
+[<img src="https://i.ytimg.com/vi/0xlvFs2NJCI/hqdefault.jpg"
+width="70%">](https://www.youtube.com/watch?v=0xlvFs2NJCI
+"Game Idea: Tank")
+
+### Game idea 2: Multiplayer Pac-Man
+[<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
+width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
+"Game Idea: Pacman")
+
+### Combining Ideas
+Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that might enable us to take the most fun elements of both and combine these into a single game. Much discussion ensued with a version of Pacman that would allow for multiple players  but also allow for mutual collaboration, and the ability to modify the map by means of explosive projectiles.
+
+As soon as this became clear, we found that we could actually build a compelling narrative and story around this involving our pacman character fleeing underground from ghosts and exploitation in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. Additional potential for altering the game play mechanics through the effect of darkness underground different types of mine wall materials also resulted.
+
+### Requirements Gathering
+#### Stakeholder Analysis
+Finally we were ready to start more actively thinking about the people that would be involved in using, building, maintaining and assessing the quality of our game and the success of the software as a venture. To do this we made use of models such as the Onion Model to make sure all relevant parties were identified.
+These were as follows:
+
+1. Developers (Core Layer): Us as the students working on the project form the core of the onion as we are the most directly involved stakeholders  responsible for designing, coding, and testing the game 
+2. Lecturers/Markers (Inner Layer): While not part of the project’s daily development they were critical for helping in guide the process and ultimately responsible for assessing the quality of the software that we produce (much as a client would be)
+3. Players (Middle Layer): Different to the lecturers,  who would ultimately be playing the game in the final demo, these individuals were the important testers who helped us by providing valuable feedback and helping to test the game’s functionality and appeal
+4. Customers (Outer Layer): In the event that the game is released beyond university any potential existing customers would appear in this layer as people who have an interest in the game but are not currently involved in its development or assessment
+5. University as a negative stakeholder (Outer Layer): The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g. the online multiplayer gaming distracting students from work or using university resources for purposes not aligned with the goals of the institution).
 
 
 ## Design
