@@ -1,6 +1,22 @@
 ![PacMinerBanner](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/01267c16-32d5-4446-8abb-08719795436f)
 
-<!-- toc -->
+## Table of Contents
+- [Members](#members)
+- [Kanban Board](#project-kanban-board)
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Design](#design)
+  - [Class Diagram](#class-diagram)
+  - [Communication Diagram](#communication-diagram)
+  - [Design Summary](#design-summary)
+- [Implementation](#implementation)
+- [Evaluation](#evaluation)
+  - [Qualitative Evaluations](#qualitative-evaluations)
+  - [Quantitative Evaluations](#quantitative-evaluations)
+  - [Testing](#how-our-code-was-tested)
+- [Process](#process)
+- [Conclusion](#conclusion)
+
 
 ## Members
 Finn Lawton,
