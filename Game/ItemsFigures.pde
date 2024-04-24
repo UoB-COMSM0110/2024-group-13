@@ -174,6 +174,12 @@ public class Ghost extends Figure {
 
   @Override
   public void onLostAllLives(Object cause) {
+    if (cause instanceof Bullet) {
+      Bullet bullet = (Bullet)cause;
+      getPacman(bullet.getOwner()).incScore(5);
+    }
+    incLives(1);
+    refreshHp();
     discardFor(ghostRestoreTimeS);
   }
 
@@ -204,7 +210,8 @@ public class Ghost extends Figure {
 
 
 final String itemTypePacman = "Pacman";
-final float pacmanIncBulletDurationS = 2.0;
+final float pacmanIncBulletDurationS = 1.5;
+final int pacmanBulletsMax = 20;
 final float ghostRestoreTimeS = 12.0;
 
 public class Pacman extends Figure {
@@ -333,7 +340,9 @@ public class Pacman extends Figure {
   @Override
   public void evolve() {
     if (this.loadBulletTimer == null) {
-      this.loadBulletTimer = new Timer(0.0, pacmanIncBulletDurationS, () -> { incBullet(1); });
+      this.loadBulletTimer = new Timer(0.0, pacmanIncBulletDurationS, () -> {
+        if (getNumberOfBullets() < pacmanBulletsMax) { incBullet(1); }
+      });
       page.addTimer(this.loadBulletTimer);
     }
     super.evolve();
@@ -437,22 +446,25 @@ public class Pacman extends Figure {
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
 
     Label bulletNumber = (Label)page.getLocalItem("BulletNumber" + getPlayerId());
-    if (bulletNumber != null) { bulletNumber.setText(String.valueOf(getNumberOfBullets())); }
+    if (bulletNumber != null) {
+      bulletNumber.setText(String.valueOf(getNumberOfBullets()));
+      if (getNumberOfBullets() <= 0) {
+        bulletNumber.setTextColor(color(255, 0, 0)).setTextFont(fontMinecraft);
+      } else {
+        bulletNumber.setTextColor(textColorDefault).setTextFont(fontErikaType);
+      }
+    }
 
     for (int i = 1; i <= 3; ++i) {
       RectArea heart = (RectArea)page.getLocalItem("Heart_" + getPlayerId() + "_" + i);
-      if (getLives() < i) {
-        heart.setImage(null);
-      } else if (i < getLives()) {
-        heart.setImage(imageHeart3);
+      if (i < getLives()) { heart.setImage(imageHeart3); continue; }
+      if (getLives() < i) { heart.setImage(imageHeart0); continue; }
+      if (getHp() <= 1) {
+        heart.setImage(imageHeart1);
+      } else if (getHp() == 2) {
+        heart.setImage(imageHeart2);
       } else {
-        if (3 <= getHp()) {
-          heart.setImage(imageHeart3);
-        } else if (getHp() == 2) {
-          heart.setImage(imageHeart2);
-        } else {
-          heart.setImage(imageHeart1);
-        }
+        heart.setImage(imageHeart3);
       }
     }
 

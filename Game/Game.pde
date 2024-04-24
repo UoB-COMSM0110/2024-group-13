@@ -58,12 +58,14 @@ PImage imageInstruction;
 
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
-final String imagePathHeart3 = "data/Heart.png";
+final String imagePathHeart3 = "data/Heart3.png";
 PImage imageHeart3;
-final String imagePathHeart2 = "data/Heart.png";
+final String imagePathHeart2 = "data/Heart2.png";
 PImage imageHeart2;
-final String imagePathHeart1 = "data/Heart.png";
+final String imagePathHeart1 = "data/Heart1.png";
 PImage imageHeart1;
+final String imagePathHeart0 = "data/Heart0.png";
+PImage imageHeart0;
 final String imagePathBulletPrompt = "data/BulletPrompt.png";
 PImage imageBulletPrompt;
 final String imagePathKeyset1 = "data/Keyset1.png";
@@ -87,6 +89,7 @@ void loadResouces() {
   imageHeart3 = loadImage(imagePathHeart3);
   imageHeart2 = loadImage(imagePathHeart2);
   imageHeart1 = loadImage(imagePathHeart1);
+  imageHeart0 = loadImage(imagePathHeart0);
   imageBulletPrompt = loadImage(imagePathBulletPrompt );
   imageKeyset1 = loadImage(imagePathKeyset1);
   imageKeyset2 = loadImage(imagePathKeyset2);

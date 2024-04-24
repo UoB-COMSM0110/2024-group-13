@@ -32,8 +32,8 @@ public class PlayPage extends Page {
     addLocalTimer(new Timer(0.0, 1.0,
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
 
-    createPlayerStatusWidgets(1, 180, 5);
-    createPlayerStatusWidgets(2, 500, 5);
+    createPlayerStatusWidgets(1, 160, 5);
+    createPlayerStatusWidgets(2, 480, 5);
 
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
@@ -193,10 +193,10 @@ public class PlayPage extends Page {
 
     RectArea bulletPrompt = new RectArea("BulletsPrompt" + playerId, 40, 12);
     bulletPrompt.setImage(imageBulletPrompt)
-      .setLeftX(healthPrompt.getRightX() + 80).setCenterY(healthPrompt.getCenterY());
+      .setLeftX(healthPrompt.getRightX() + 90).setCenterY(healthPrompt.getCenterY());
     addLocalItem(bulletPrompt);
 
-    Label bulletNumber = new Label("BulletNumber" + playerId, 50, lineHeight, "0");
+    Label bulletNumber = new Label("BulletNumber" + playerId, 25, lineHeight, "0");
     bulletNumber.setTextSize(textSizeBoard)
       .setLeftX(bulletPrompt.getRightX()).setCenterY(bulletPrompt.getCenterY());
     addLocalItem(bulletNumber);
@@ -211,10 +211,14 @@ public class PlayPage extends Page {
     addLocalItem(powerupDesc);
 
     PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
-    RectArea keyset = new RectArea("InstructionKeyset" + playerId, 120, 40);
+    RectArea keyset = new RectArea("InstructionKeyset" + playerId, 180, 45);
     keyset.setImage(imgKeyset)
-      .setLeftX(playerIcon.getRightX()).setTopY(powerupPrompt.getBottomY() + verticalSpace);
+      .setLeftX(playerIcon.getCenterX()).setTopY(powerupPrompt.getBottomY() + verticalSpace);
     addLocalItem(keyset);
+
+    RectArea keysetLine = new RectArea("InstructionKeysetLine" + playerId, keyset.getW(), 1);
+    keysetLine.setDrawBox(true).setLeftX(keyset.getLeftX()).setBottomY(keyset.getTopY());
+    addLocalItem(keysetLine);
 
     // // For debug use:
     // playerPrompt.setDrawBox(true);
@@ -222,6 +226,7 @@ public class PlayPage extends Page {
     // score.setDrawBox(true);
     // bulletNumber.setDrawBox(true);
     // powerupDesc.setDrawBox(true);
+    // keyset.setDrawBox(true);
   }
 
   private void loadMap(String mapPath) {
