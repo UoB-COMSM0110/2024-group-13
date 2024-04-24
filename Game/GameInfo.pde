@@ -100,13 +100,13 @@ public class GameInfo {
     this.connectedToServer = false;
 
     this.windowWidth = 800.0;
-    this.windowHeight = 680.0;
+    this.windowHeight = 720.0;
     this.mapWidth = 800.0;
     this.mapHeight = 600.0;
     this.mapScaleX = 1.0;
     this.mapScaleY = 1.0;
     this.mapOffsetX = 0.0;
-    this.mapOffsetY = 80.0;
+    this.mapOffsetY = 120.0;
 
     this.frameRateConfig = 50;
     this.gameStartTimeMs = System.currentTimeMillis();

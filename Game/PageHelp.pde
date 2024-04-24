@@ -1,15 +1,7 @@
-final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
-final String instructionSet = "data/InstructionSet.png";
-
 // The first page of the game.
 public class HelpPage extends Page {
-  private PImage imageOverlay;
-  private PImage instructionImage;
-  
   public HelpPage(Page previousPage) {
     super("help", previousPage);
-    this.imageOverlay = loadImage(imagePathHelpPageOverlay);
-    this.instructionImage = loadImage(instructionSet);
 
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
         () -> { trySwitchPage(getPreviousPage()); });
@@ -30,8 +22,8 @@ public class HelpPage extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
+    image(imageInstruction, 58, 150, 720, 334);
   }
 
   @Override

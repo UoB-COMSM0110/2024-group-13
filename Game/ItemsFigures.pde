@@ -4,21 +4,33 @@ final String imagePathPacman_1_L = "data/Pacman_1_L.png";
 PImage imagePacman_1_L;
 final String imagePathPacman_1_R = "data/Pacman_1_R.png";
 PImage imagePacman_1_R;
+final String imagePathPacman_1_U = "data/Pacman_1_U.png";
+PImage imagePacman_1_U;
+final String imagePathPacman_1_D = "data/Pacman_1_D.png";
+PImage imagePacman_1_D;
 final String imagePathPacman_2_L = "data/Pacman_2_L.png";
 PImage imagePacman_2_L;
 final String imagePathPacman_2_R = "data/Pacman_2_R.png";
 PImage imagePacman_2_R;
+final String imagePathPacman_2_U = "data/Pacman_2_U.png";
+PImage imagePacman_2_U;
+final String imagePathPacman_2_D = "data/Pacman_2_D.png";
+PImage imagePacman_2_D;
 final String imagePathGhost_L = "data/Ghost_L.png";
 PImage imageGhost_L;
 final String imagePathGhost_R = "data/Ghost_R.png";
 PImage imageGhost_R;
 
-void loadResoucesForFigures() {
+void loadResourcesForFigures() {
   imagePacman_1_L = loadImage(imagePathPacman_1_L);
-  imagePacman_2_L = loadImage(imagePathPacman_2_L);
-  imageGhost_L = loadImage(imagePathGhost_L);
   imagePacman_1_R = loadImage(imagePathPacman_1_R);
+  imagePacman_1_U = loadImage(imagePathPacman_1_U);
+  imagePacman_1_D = loadImage(imagePathPacman_1_D);
+  imagePacman_2_L = loadImage(imagePathPacman_2_L);
   imagePacman_2_R = loadImage(imagePathPacman_2_R);
+  imagePacman_2_U = loadImage(imagePathPacman_2_U);
+  imagePacman_2_D = loadImage(imagePathPacman_2_D);
+  imageGhost_L = loadImage(imagePathGhost_L);
   imageGhost_R = loadImage(imagePathGhost_R);
 }
 
@@ -112,7 +124,10 @@ int itemCountGhost;
 final float defaultGhostSpeed = 50.0;
 
 public class Ghost extends Figure {
+  private boolean attracted;
+
   private Timer changeDirectionTimer;
+  private PImage img;
 
   public Ghost() {
     super(itemTypeGhost + itemCountGhost++, 2.0 * CHARACTER_SIZE, 2.0 * CHARACTER_SIZE);
@@ -120,14 +135,29 @@ public class Ghost extends Figure {
     refreshHp(3);
     setLayer(2);
     startMoving();
+    this.img = imageGhost_R;
+  }
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setBoolean("attracted", this.attracted);
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.attracted = json.getBoolean("attracted");
   }
 
   @Override
   public void evolve() {
     if (this.changeDirectionTimer == null) { randomizeDirection(); }
+    this.attracted = false;
     Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
     if (magnet != null && !magnet.isDiscarded()) {
       setDirectionTowards(magnet);
+      this.attracted = true;
     }
     super.evolve();
   }
@@ -144,6 +174,12 @@ public class Ghost extends Figure {
 
   @Override
   public void onLostAllLives(Object cause) {
+    if (cause instanceof Bullet) {
+      Bullet bullet = (Bullet)cause;
+      getPacman(bullet.getOwner()).incScore(5);
+    }
+    incLives(1);
+    refreshHp();
     discardFor(ghostRestoreTimeS);
   }
 
@@ -162,13 +198,20 @@ public class Ghost extends Figure {
   
   @Override
   public PImage getImage() {
-    return this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD ? imageGhost_R : imageGhost_L;
+    if (this.attracted) { return this.img; }
+    if (this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD) {
+      this.img = imageGhost_R;
+    } else {
+      this.img = imageGhost_L;
+    }
+    return this.img;
   }
 }
 
 
 final String itemTypePacman = "Pacman";
-final float pacmanIncBulletDurationS = 2.0;
+final float pacmanIncBulletDurationS = 1.5;
+final int pacmanBulletsMax = 20;
 final float ghostRestoreTimeS = 12.0;
 
 public class Pacman extends Figure {
@@ -177,14 +220,14 @@ public class Pacman extends Figure {
   private boolean ableToFire;
   private int numBullets;
   private float viewFactor;
-  private boolean isControlledByOpponent = false;
-  private boolean isFrozen = false;
-  private String powerupDesc;
+  private int controlledByOpponent;
+  private int frozen;
+  private String buffDesc;
 
   private Timer loadBulletTimer;
 
   public Pacman(int playerId) {
-    super(itemTypePacman + playerId, 1.8 * CHARACTER_SIZE, 1.8 * CHARACTER_SIZE);
+    super(itemTypePacman + playerId, 2.51 * CHARACTER_SIZE, 2.51 * CHARACTER_SIZE);
     this.playerId = playerId;
     enableFire();
     setViewFactor(0.4);
@@ -192,7 +235,7 @@ public class Pacman extends Figure {
     setSpeed(100.0);
     setLives(3);
     refreshHp(3);
-    powerupDesc = "";
+    buffDesc = "";
   }
 
   @Override
@@ -203,9 +246,9 @@ public class Pacman extends Figure {
     json.setBoolean("ableToFire", isAbleToFire());
     json.setInt("numBullets", getNumberOfBullets());
     json.setFloat("viewFactor", getViewFactor());
-    json.setBoolean("isControlledByOpponent", getIsControlledByOpponent());
-    json.setBoolean("isFrozen", this.isFrozen);
-    json.setString("powerupDesc", getPowerupDesc());
+    json.setInt("controlledByOpponent", getControlledByOpponent());
+    json.setInt("frozen", this.frozen);
+    json.setString("buffDesc", getBuffDesc());
     return json;
   }
   @Override
@@ -217,27 +260,26 @@ public class Pacman extends Figure {
     else { disableFire(); }
     this.numBullets = json.getInt("numBullets");
     setViewFactor(json.getFloat("viewFactor"));
-    setIsControlledByOpponent(json.getBoolean("isControlledByOpponent"));
-    this.isFrozen = json.getBoolean("isFrozen");
-    setPowerupDesc(json.getString("powerupDesc"));
+    setControlledByOpponent(json.getInt("controlledByOpponent"));
+    this.frozen = json.getInt("frozen");
+    setBuffDesc(json.getString("buffDesc"));
   }
   
   public int getPlayerId() { return this.playerId; }
   
-  public boolean getIsControlledByOpponent() { return this.isControlledByOpponent; }
-
-  public void setIsControlledByOpponent(boolean controlled) {
-    this.isControlledByOpponent = controlled;
+  public boolean isControlledByOpponent() { return 0 < getControlledByOpponent(); }
+  public int getControlledByOpponent() { return this.controlledByOpponent; }
+  public void setControlledByOpponent(int controlled) {
+    this.controlledByOpponent = controlled;
   }
 
-  public void freeze() {
-    this.isFrozen = true;
-    stopMoving();
+  public void setFrozen(int frozen) {
+    this.frozen = frozen;
+    if (this.frozen > 0) {
+      stopMoving();
+    }
   }
-
-  public void unfreeze(){
-    this.isFrozen = false;
-  }
+  public int getFrozen(){ return this.frozen; }
 
   @Override
   public void onLostLife(Object cause) {
@@ -263,8 +305,8 @@ public class Pacman extends Figure {
     this.score += increment;
   }
   
-  public void setPowerupDesc(String desc) { this.powerupDesc = desc; }
-  public String getPowerupDesc() { return this.powerupDesc; }
+  public void setBuffDesc(String desc) { this.buffDesc = desc; }
+  public String getBuffDesc() { return this.buffDesc; }
 
   public boolean isAbleToFire() { return this.ableToFire; }
   public Pacman enableFire() { this.ableToFire = true; return this; }
@@ -278,8 +320,8 @@ public class Pacman extends Figure {
     if (!isAbleToFire()) { return; }
     if (getNumberOfBullets() <= 0) { return; }
     Bullet bullet = new Bullet(getPlayerId());
-    bullet.setDirection(getFacing());
-    switch (getFacing()) {
+    bullet.setDirection(getDirection());
+    switch (getDirection()) {
       case UPWARD: { bullet.setCenterX(getCenterX()).setBottomY(getTopY() - epsilon); break; }
       case RIGHTWARD: { bullet.setLeftX(getRightX() + epsilon).setCenterY(getCenterY()); break; }
       case DOWNWARD: { bullet.setCenterX(getCenterX()).setTopY(getBottomY() + epsilon); break; }
@@ -297,7 +339,9 @@ public class Pacman extends Figure {
   @Override
   public void evolve() {
     if (this.loadBulletTimer == null) {
-      this.loadBulletTimer = new Timer(0.0, pacmanIncBulletDurationS, () -> { incBullet(1); });
+      this.loadBulletTimer = new Timer(0.0, pacmanIncBulletDurationS, () -> {
+        if (getNumberOfBullets() < pacmanBulletsMax) { incBullet(1); }
+      });
       page.addTimer(this.loadBulletTimer);
     }
     super.evolve();
@@ -325,23 +369,19 @@ public class Pacman extends Figure {
   }
 
   public boolean usingKeySetA() { // W A S D Space
-    if (this.isFrozen) { return false; }
-    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
-      return getPlayerId() != 1;
-    }
-    return getPlayerId() == 1;
+    if (this.frozen > 0) { return false; }
+    if (isControlledByOpponent()) { return getPlayerId() != 1; }
+    else { return getPlayerId() == 1; }
   }
   public boolean usingKeySetB() { // Arrows 0
-    if (this.isFrozen) { return false; }
-    if (gameInfo.isSingleHost() && getIsControlledByOpponent()) {
-      return getPlayerId() != 2;
-    }
-    return  getPlayerId() == 2;
+    if (this.frozen > 0) { return false; }
+    if (isControlledByOpponent()) { return getPlayerId() != 2; }
+    else { return  getPlayerId() == 2; }
   }
 
   public boolean acceptKeyboardEvent(KeyboardEvent e) {
     if (gameInfo.isSingleHost()) { return true; }
-    if (getIsControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
+    if (isControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
     return e.getHostId() == getPlayerId();
   }
 
@@ -360,7 +400,6 @@ public class Pacman extends Figure {
     if (e.getKey() == '0' && usingKeySetB()) { fire(); return; }
     Integer direction = getDirectionFromKeyEvent(e);
     if (direction != null) {
-      setFacing(direction.intValue());
       setDirection(direction.intValue());
       startMoving();
       return;
@@ -397,20 +436,77 @@ public class Pacman extends Figure {
   }
 
   @Override
-  void update() {
+  public void update() {
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
-    Label livesLabel = (Label)page.getLocalItem("Lives" + getPlayerId());
-    if (livesLabel != null) { livesLabel.setText(String.valueOf(getLives())); }
-    Label powerUpLabel = (Label)page.getLocalItem("PowerupDesc" + getPlayerId());
-    if (powerUpLabel != null) { powerUpLabel.setText(String.valueOf(getPowerupDesc())); }
+
+    Label bulletNumber = (Label)page.getLocalItem("BulletNumber" + getPlayerId());
+    if (bulletNumber != null) {
+      bulletNumber.setText(String.valueOf(getNumberOfBullets()));
+      if (getNumberOfBullets() <= 0) {
+        bulletNumber.setTextColor(color(255, 0, 0)).setTextFont(fontMinecraft);
+      } else {
+        bulletNumber.setTextColor(textColorDefault).setTextFont(fontErikaType);
+      }
+    }
+
+    updateHealthWidgets();
+    updateBuffLabel();
+  }
+
+  private void updateHealthWidgets() {
+    for (int i = 1; i <= 3; ++i) {
+      RectArea heart = (RectArea)page.getLocalItem("Heart_" + getPlayerId() + "_" + i);
+      if (heart == null) { continue; }
+      if (i < getLives()) { heart.setImage(imageHeart3); continue; }
+      if (getLives() < i) { heart.setImage(imageHeart0); continue; }
+      if (getHp() <= 1) {
+        heart.setImage(imageHeart1);
+      } else if (getHp() == 2) {
+        heart.setImage(imageHeart2);
+      } else {
+        heart.setImage(imageHeart3);
+      }
+    }
+  }
+
+  private void updateBuffLabel() {
+    Label buffLabel = (Label)page.getLocalItem("BuffDesc" + getPlayerId());
+    if (buffLabel == null) { return; }
+    buffLabel.setText("None").setTextColor(textColorDefault);
+    String buffDesc = getBuffDesc();
+    if (buffDesc == null || buffDesc.length() <= 0) { return; }
+    char type = 0;
+    int pos = 0;
+    while (pos < buffDesc.length()) {
+      type = buffDesc.charAt(pos);
+      if (type == '+' || type == '-') { break; }
+      ++pos;
+    }
+    if (type != '+' && type != '-') { return; }
+    buffLabel.setText(buffDesc.substring(pos + 1));
+    if (type == '+') {
+      buffLabel.setTextColor(color(0, 0, 255));
+    } else {
+      buffLabel.setTextColor(color(255, 0, 0));
+    }
   }
 
   public PImage getImage() {
     if (this.playerId == 1) {
-      return this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD ? imagePacman_1_R : imagePacman_1_L;
+      switch (getDirection()) {
+        case LEFTWARD: return imagePacman_1_L;
+        case RIGHTWARD: return imagePacman_1_R;
+        case UPWARD: return imagePacman_1_U;
+        default: return imagePacman_1_D;
+      }
     }
-    return this.getDirection() == DOWNWARD || this.getDirection() == LEFTWARD ? imagePacman_2_R : imagePacman_2_L;
+    switch (getDirection()) {
+      case LEFTWARD: return imagePacman_2_L;
+      case RIGHTWARD: return imagePacman_2_R;
+      case UPWARD: return imagePacman_2_U;
+      default: return imagePacman_2_D;
+    }
   }
 }
 
