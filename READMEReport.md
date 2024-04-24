@@ -1,4 +1,5 @@
-# Group 13 Game Project
+<img src="PacMinerBanner.png"
+alt="PacMiner" width="70%">
 
 ## Members
 
