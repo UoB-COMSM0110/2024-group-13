@@ -45,7 +45,7 @@ public class LocalModePage extends Page {
     items.add(playerNamePrompt);
     InputBox playerName = new InputBox("InputBoxPlayerName" + playerId,
         210, playerNamePrompt.getH(), 15, (bx, oStr, nStr) -> {
-        gameInfo.setPlayerName1(nStr);
+        gameInfo.setPlayerName(playerId, nStr);
         onPlayerNameSet();
     });
 
