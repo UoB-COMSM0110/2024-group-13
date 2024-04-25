@@ -17,68 +17,89 @@ public class OnlineModePage extends Page {
 
     // This must be called before adding player widgets.
     // As player widgets need to use control widgets.
-    addControlWidgets();
+    addControlWidgets1(280, 50, 205, 447);
+    addControlWidgets2(280, 50, 605, 447);
 
     // `createPlayerWidgets` defined in 'PageModeLocal.pde'
     addLocalItems(createPlayerWidgets(1, 100, 220, () -> { onPlayerNameSet(); }));
     addLocalItems(createPlayerWidgets(2, 500, 220, () -> { onPlayerNameSet(); }));
   }
 
-  private void addControlWidgets() {
+  private void addControlWidgets1(float buttonW, float buttonH, float xOffset, float yOffset) {
     // Create button
-    Button createGameButton = new Button("CreateGame", 270, 50, "Create  Game",
-        () -> {
+    Button createButton = new Button("CreateGame", buttonW, buttonH, "Create  Game", () -> {
           if (gameInfo.isSingleHost()) { startSyncGame(); }
           else { prepareToLeaveGame(); }
     });
-    createGameButton.setLeftX(110).setTopY(450);
-    addLocalItem(createGameButton);
-
-    // Ip box
-    InputBox ipBox = new InputBox("IpBox",
-        createGameButton.getW(), createGameButton.getH() - 10, 15, null);
-    ipBox.setPromptText("Game Ip Here").setTextAlignHorizon(CENTER).setBoxRadius(10.0)
-      .setLeftX(createGameButton.getLeftX() - 20).setTopY(createGameButton.getBottomY() + 40);
-    addLocalItem(ipBox);
-
-    // Join button
-    Button joinGameButton = new Button("JoinGame", ipBox.getW(), ipBox.getH(), "Join  Game",
-        () -> {
-          if (gameInfo.isSingleHost()) { startSyncGame(ipBox.getText()); }
-          else { prepareToLeaveGame(); }
-    });
-    joinGameButton.setCenterX(ipBox.getCenterX()).setTopY(ipBox.getBottomY() + 10);
-    addLocalItem(joinGameButton);
+    createButton.setCenterX(xOffset).setCenterY(yOffset);
+    addLocalItem(createButton);
 
     // Start button
-    Button startButton = new Button("ButtonStart",
-        createGameButton.getW(), createGameButton.getH(), "Start  Game",
+    Button startButton = new Button("ButtonStart", buttonW, buttonH, "Start  Game",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setLeftX(createGameButton.getRightX() + 40).setTopY(createGameButton.getTopY());
+    startButton.setCenterX(createButton.getCenterX()).setCenterY(createButton.getCenterY() + 60);
     addLocalItem(startButton);
 
     // Instruction
     int textSize = 14;
-    Label simpleInstruct = new Label("CreateInstruct", 310, textSize * 7,
-        "If you're player 1, enter your name,\n" +
-        "create game to see your ip,\n" +
-        "start game after player 2 joins.\n" +
-        "\n" +
-        "If you're player 2, enter your name,\n" +
-        "enter the ip from player 1,\n" +
-        "then join the game.\n");
+    Label simpleInstruct = new Label("CreateInstruct", 280, textSize * 4,
+        "If you're player 1,\n" +
+        "enter your name,\n" +
+        "create game to see your game ip,\n" +
+        "start game after player 2 joins.");
     simpleInstruct.setTextSize(textSize).setTextAlignVertical(TOP)
-      .setLeftX(ipBox.getRightX() + 60).setBottomY(joinGameButton.getBottomY());
+      .setLeftX(startButton.getLeftX()).setTopY(startButton.getBottomY() + 30);
     addLocalItem(simpleInstruct);
 
     // Box
-    float boxLeft = min(ipBox.getLeftX(), createGameButton.getLeftX()) - 30;
-    float boxRight = max(simpleInstruct.getRightX(), startButton.getRightX()) + 30;
-    float boxTop = createGameButton.getTopY() - 20;
-    float boxBottom = joinGameButton.getBottomY() + 20;
-    RectArea controlBox = new RectArea("ControlBox", boxRight - boxLeft, boxBottom - boxTop);
+    float boxLeft = createButton.getLeftX() - 20;
+    float boxRight = createButton.getRightX() + 20;
+    float boxTop = createButton.getCenterY() - 45;
+    float boxBottom = simpleInstruct.getBottomY() + 20;
+    RectArea controlBox = new RectArea("CreateControlBox", boxRight - boxLeft, boxBottom - boxTop);
     controlBox.setDrawBox(true).setBoxFillColor(color(205, 147, 102))
-      .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(10)
+      .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(5)
+      .setLayer(-1).setLeftX(boxLeft).setTopY(boxTop);
+    addLocalItem(controlBox);
+
+    // // For debug:
+    // simpleInstruct.setDrawBox(true);
+  }
+
+  private void addControlWidgets2(float buttonW, float buttonH, float xOffset, float yOffset) {
+    // Ip box
+    InputBox ipBox = new InputBox("IpBox", buttonW - 5, buttonH - 15, 15, null);
+    ipBox.setPromptText("Game Ip Here").setTextAlignHorizon(CENTER).setBoxRadius(8)
+      .setCenterX(xOffset).setCenterY(yOffset);
+    addLocalItem(ipBox);
+
+    // Join button
+    Button joinButton = new Button("JoinGame", buttonW, buttonH, "Join  Game", () -> {
+        if (gameInfo.isSingleHost()) { startSyncGame(ipBox.getText()); }
+        else { prepareToLeaveGame(); }
+    });
+    joinButton.setCenterX(ipBox.getCenterX()).setCenterY(ipBox.getCenterY() + 60);
+    addLocalItem(joinButton);
+
+    // Instruction
+    int textSize = 14;
+    Label simpleInstruct = new Label("JoinInstruct", 280, textSize * 4,
+        "If you're player 2,\n" +
+        "enter your name,\n" +
+        "enter the game ip from player 1,\n" +
+        "then join the game.");
+    simpleInstruct.setTextSize(textSize).setTextAlignVertical(TOP)
+      .setLeftX(joinButton.getLeftX()).setTopY(joinButton.getBottomY() + 30);
+    addLocalItem(simpleInstruct);
+
+    // Box
+    float boxLeft = ipBox.getLeftX() - 20;
+    float boxRight = ipBox.getRightX() + 20;
+    float boxTop = ipBox.getCenterY() - 45;
+    float boxBottom = simpleInstruct.getBottomY() + 20;
+    RectArea controlBox = new RectArea("JoinControlBox", boxRight - boxLeft, boxBottom - boxTop);
+    controlBox.setDrawBox(true).setBoxFillColor(color(205, 147, 102))
+      .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(5)
       .setLayer(-1).setLeftX(boxLeft).setTopY(boxTop);
     addLocalItem(controlBox);
 
@@ -166,26 +187,26 @@ public class OnlineModePage extends Page {
   }
 
   public void updateWidgets() {
-    Button createGameButton = (Button)getLocalItem("CreateGame");
-    Button joinGameButton = (Button)getLocalItem("JoinGame");
+    Button createButton = (Button)getLocalItem("CreateGame");
+    Button joinButton = (Button)getLocalItem("JoinGame");
     InputBox ipBox = (InputBox)getLocalItem("IpBox");
     InputBox playerName1 = (InputBox)getLocalItem("InputBoxPlayerName1");
     InputBox playerName2 = (InputBox)getLocalItem("InputBoxPlayerName2");
     if (gameInfo.isServerHost()) {
-      createGameButton.enable().setText("Leave Game");
-      joinGameButton.disable().setText("Join Game");
+      createButton.enable().setText("Leave Game");
+      joinButton.disable().setText("Join Game");
       ipBox.disable().setPrefix("Ip: ").setText(getIpAddr());
       playerName1.enable();
       playerName2.disable().setText("");
     } else if (gameInfo.isClientHost()) {
-      createGameButton.disable().setText("Create Game");
-      joinGameButton.enable().setText("Leave Game");
+      createButton.disable().setText("Create Game");
+      joinButton.enable().setText("Leave Game");
       ipBox.disable().setPrefix("");
       playerName1.disable().setText("");
       playerName2.enable();
     } else {
-      createGameButton.enable().setText("Create Game");
-      joinGameButton.enable().setText("Join Game");
+      createButton.enable().setText("Create Game");
+      joinButton.enable().setText("Join Game");
       ipBox.enable().setPrefix("");
       if (ipBox.getText().equals(getIpAddr())) { ipBox.setText(""); }
       playerName1.enable();

@@ -68,8 +68,8 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
     .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 20);
   items.add(keyset);
 
-  float boxLeft = playerNamePrompt.getLeftX() - 15;
-  float boxRight = playerName.getRightX() + 15;
+  float boxLeft = playerNamePrompt.getLeftX() - 20;
+  float boxRight = playerName.getRightX() + 20;
   float boxTop = playerBanner.getTopY() - 20;
   float boxBottom = keyset.getBottomY() + 20;
   RectArea playerBox = new RectArea("PlayerBox" + playerId, boxRight - boxLeft, boxBottom - boxTop);
