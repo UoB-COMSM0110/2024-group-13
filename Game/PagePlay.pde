@@ -19,9 +19,9 @@ public class PlayPage extends Page {
     RectArea localArea = new RectArea("LocalArea",
         gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
-      .setBoxStrokeWeight(2.0)
+      .setBoxStrokeWeight(3.0)
       .setBoxStrokeColor(color(66, 33, 11))
-      .setBoxFillColor(color(255, 253, 208))
+      .setBoxFillColor(PlayPageBackgroundColor)
       .setLayer(-9);
     addLocalItem(localArea);
 
