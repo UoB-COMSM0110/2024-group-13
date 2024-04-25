@@ -3,6 +3,8 @@
 
 final String imagePathBreakableWall = "data/BreakableWall.png";
 PImage imageBreakableWall;
+final String imagePathBreakableWallWeak = "data/BreakableWallWeak.png";
+PImage imageBreakableWallWeak;
 final String imagePathIndestructableWall = "data/IndestructableWall.png";
 PImage imageIndestructableWall;
 final String imagePathCoin = "data/Coin.png";
@@ -15,6 +17,7 @@ PImage imageShade;
 
 void loadResourcesForItems() {
   imageBreakableWall = loadImage(imagePathBreakableWall);
+  imageBreakableWallWeak = loadImage(imagePathBreakableWallWeak);
   imageIndestructableWall = loadImage(imagePathIndestructableWall);
   imageCoin = loadImage(imagePathCoin);
   imageBullet = loadImage(imagePathBullet);
@@ -111,6 +114,9 @@ public class BreakableWall extends Wall {
   
   @Override
   public PImage getImage() {
+    if (this.strength <= 1) {
+      return imageBreakableWallWeak;
+    }
     return imageBreakableWall;
   }
 }

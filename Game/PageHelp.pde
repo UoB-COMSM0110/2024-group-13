@@ -1,12 +1,11 @@
-final String imagePathInstructionSet = "data/objectiveImage1.png";
-final String instructionSet1 = "data/objectiveImage1.png";
-final String instructionSet2 = "data/controlsImage2.png";
-final String instructionSet3 = "data/powerupImage3.png";
-final String instructionSet4 = "data/shootingImage4.png";
-final String instructionSet5 = "data/winningImage5.png";
+final String instructionSet1 = "data/Help1_objective.png";
+final String instructionSet2 = "data/Help2_controls.png";
+final String instructionSet3 = "data/Help3_powerup.png";
+final String instructionSet4 = "data/Help4_shooting.png";
+final String instructionSet5 = "data/Help5_winning.png";
 
-final String instructionSet6 = "data/localmultiplayer.png";
-final String instructionSet7 = "data/onlinemultiplayer.png";
+final String instructionSet6 = "data/Help6_localmultiplayer.png";
+final String instructionSet7 = "data/Help7_onlinemultiplayer.png";
 
 // Objective Page of Instructions
 public class HelpPage1 extends Page {

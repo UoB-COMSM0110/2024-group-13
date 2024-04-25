@@ -51,8 +51,6 @@ PFont fontErikaType;
 
 final String imagePathStartPageBackground = "data/StartPageBackground.png";
 PImage imageStartPageBackground;
-final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
-PImage imageOverlay;
 
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
@@ -80,7 +78,6 @@ void loadResouces() {
   fontErikaType = createFont(fontPathErikaType, fontSizeDefault, true);
 
   imageStartPageBackground = loadImage(imagePathStartPageBackground);
-  imageOverlay = loadImage(imagePathHelpPageOverlay);
 
   imageButton = loadImage(imagePathButton);
   imageHeart3 = loadImage(imagePathHeart3);
