@@ -111,17 +111,18 @@ public class GameOverPage extends Page {
     super.draw();
 
     String scoreMessage = this.player1Score + "  vs  " + this.player2Score;
-    drawTextWithOutline(scoreMessage, 410, 150, 60, 5, color(255));
-    drawTextWithOutline(winnerMessage, 410, 250, 60, 5, color(255));
+    drawTextWithOutline(scoreMessage, gameInfo.getWinWidth() / 2 + 10, 150, 60, 5, color(255));
+    drawTextWithOutline(winnerMessage, gameInfo.getWinWidth() / 2 + 10, 250, 60, 5, color(255));
 
     textSize(32); 
     int yPos = 350; 
     int counter = 1;
 
-    drawTextWithOutline("Highscores", 400, 310, 32, 3, color(255));
+    drawTextWithOutline("Highscores", gameInfo.getWinWidth() / 2, 310, 32, 3, color(255));
 
     for(String scoreLine : this.topScores) {
-      drawTextWithOutline(counter + ". " + scoreLine, 400, yPos, 32, 3, color(255)); 
+      drawTextWithOutline(counter + ". " + scoreLine,
+          gameInfo.getWinWidth() / 2, yPos, 32, 3, color(255)); 
       counter++;
       yPos += 40; 
     }

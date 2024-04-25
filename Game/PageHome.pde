@@ -21,6 +21,6 @@ public class HomePage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("PAC-MINER", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("PAC-MINER", gameInfo.getWinWidth() / 2, 220, 80, 3, color(255));
   }
 }

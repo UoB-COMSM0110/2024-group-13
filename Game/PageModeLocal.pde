@@ -13,11 +13,11 @@ public class LocalModePage extends Page {
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(580);
     addLocalItem(startButton);
 
-    addLocalItems(createPlayerWidgets(1, 320, 330, () -> { onPlayerNameSet(); }));
-    addLocalItems(createPlayerWidgets(2, 320, 385, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(1, 100, 320, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(2, 500, 320, () -> { onPlayerNameSet(); }));
   }
 
   public void onPlayerNameSet() {
@@ -32,7 +32,7 @@ public class LocalModePage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("Local  Game", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("Local  Game", gameInfo.getWinWidth() / 2, 200, 80, 3, color(255));
   }
 }
 
@@ -41,20 +41,45 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
     Action onPlayerNameSet) {
   ArrayList<LocalItem> items = new ArrayList<LocalItem>();
 
-  Label playerNamePrompt = new Label("PlayerNamePrompt" + playerId, 150, 35,
-      "Player " + playerId + " : ");
-  playerNamePrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-    .setRightX(xOffset).setTopY(yOffset);
-  items.add(playerNamePrompt);
+  RectArea playerBanner = new RectArea("PlayerBanner" + playerId, 220, 45);
+  PImage imgBanner = playerId == 1 ? imagePlayerBanner1 : imagePlayerBanner2;
+  playerBanner.setImage(imgBanner).setLeftX(xOffset).setTopY(yOffset);
+  items.add(playerBanner);
 
-  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId,
-      210, playerNamePrompt.getH(), 15,
-      (bx, oStr, nStr) -> { gameInfo.setPlayerName(playerId, nStr); onPlayerNameSet.run(); });
+  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId, 210, 30, 15,
+      (bx, oStr, nStr) -> {
+        gameInfo.setPlayerName(playerId, nStr);
+        onPlayerNameSet.run();
+      });
   String defaultName = playerId == 1 ? "Happy Bunny" : "Merry Kitty";
   playerName.setDefaultText(defaultName)
     .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
-    .setLeftX(playerNamePrompt.getRightX()).setY(playerNamePrompt.getY());
+    .setCenterX(playerBanner.getCenterX() + 30).setTopY(playerBanner.getBottomY() + 10);
   items.add(playerName);
+
+  Label playerNamePrompt = new Label("PlayerNamePrompt" + playerId, 70, playerName.getH(), "NAME:");
+  playerNamePrompt.setTextAlignHorizon(RIGHT)
+    .setRightX(playerName.getLeftX()).setY(playerName.getY());
+  items.add(playerNamePrompt);
+
+  PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
+  RectArea keyset = new RectArea("InstructionKeyset" + playerId, 240, 60);
+  keyset.setImage(imgKeyset)
+    .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 20);
+  items.add(keyset);
+
+  float boxLeft = playerNamePrompt.getLeftX() - 15;
+  float boxRight = playerName.getRightX() + 15;
+  float boxTop = playerBanner.getTopY() - 20;
+  float boxBottom = keyset.getBottomY() + 20;
+  RectArea playerBox = new RectArea("PlayerBox" + playerId, boxRight - boxLeft, boxBottom - boxTop);
+  playerBox.setDrawBox(true).setBoxFillColor(color(205, 147, 102))
+    .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(5)
+    .setLayer(-1).setLeftX(boxLeft).setTopY(boxTop);
+  items.add(playerBox);
+
+  // // For debug
+  // playerNamePrompt.setDrawBox(true);
 
   return items;
 }

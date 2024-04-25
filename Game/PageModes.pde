@@ -34,6 +34,6 @@ public class ModesPage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("Let's  Play !", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("Let's  Play !", gameInfo.getWinWidth() / 2, 200, 80, 3, color(255));
   }
 }

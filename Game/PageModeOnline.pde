@@ -15,37 +15,75 @@ public class OnlineModePage extends Page {
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
 
-    // Start button
-    Button startButton = new Button("ButtonStart", 200, 50, "Start Game",
-        () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
-    addLocalItem(startButton);
+    // This must be called before adding player widgets.
+    // As player widgets need to use control widgets.
+    addControlWidgets();
 
     // `createPlayerWidgets` defined in 'PageModeLocal.pde'
-    addLocalItems(createPlayerWidgets(1, 170, 330, () -> { onPlayerNameSet(); }));
-    addLocalItems(createPlayerWidgets(2, 170, 385, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(1, 100, 220, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(2, 500, 220, () -> { onPlayerNameSet(); }));
+  }
 
-    // Ip box
-    InputBox ipBox = new InputBox("IpBox", 270, 40, 15, (bx, oStr, nStr) -> {});
-    ipBox.setPromptText("Enter Game Ip Here").setTextAlignHorizon(CENTER).setBoxRadius(10.0)
-      .setX(500).setTopY(360);
-    addLocalItem(ipBox);
+  private void addControlWidgets() {
     // Create button
-    Button createGameButton = new Button("CreateGame", ipBox.getW(), ipBox.getH(), "Create Game",
+    Button createGameButton = new Button("CreateGame", 270, 50, "Create  Game",
         () -> {
           if (gameInfo.isSingleHost()) { startSyncGame(); }
           else { prepareToLeaveGame(); }
     });
-    createGameButton.setX(ipBox.getX()).setBottomY(ipBox.getTopY() - 10);
+    createGameButton.setLeftX(110).setTopY(450);
     addLocalItem(createGameButton);
+
+    // Ip box
+    InputBox ipBox = new InputBox("IpBox",
+        createGameButton.getW(), createGameButton.getH() - 10, 15, null);
+    ipBox.setPromptText("Game Ip Here").setTextAlignHorizon(CENTER).setBoxRadius(10.0)
+      .setLeftX(createGameButton.getLeftX() - 20).setTopY(createGameButton.getBottomY() + 40);
+    addLocalItem(ipBox);
+
     // Join button
-    Button joinGameButton = new Button("JoinGame", ipBox.getW(), ipBox.getH(), "Join Game",
+    Button joinGameButton = new Button("JoinGame", ipBox.getW(), ipBox.getH(), "Join  Game",
         () -> {
           if (gameInfo.isSingleHost()) { startSyncGame(ipBox.getText()); }
           else { prepareToLeaveGame(); }
     });
-    joinGameButton.setX(ipBox.getX()).setTopY(ipBox.getBottomY() + 10);
+    joinGameButton.setCenterX(ipBox.getCenterX()).setTopY(ipBox.getBottomY() + 10);
     addLocalItem(joinGameButton);
+
+    // Start button
+    Button startButton = new Button("ButtonStart",
+        createGameButton.getW(), createGameButton.getH(), "Start  Game",
+        () -> { trySwitchPage(new PlayPage(this)); });
+    startButton.setLeftX(createGameButton.getRightX() + 40).setTopY(createGameButton.getTopY());
+    addLocalItem(startButton);
+
+    // Instruction
+    int textSize = 14;
+    Label simpleInstruct = new Label("CreateInstruct", 310, textSize * 7,
+        "If you're player 1, enter your name,\n" +
+        "create game to see your ip,\n" +
+        "start game after player 2 joins.\n" +
+        "\n" +
+        "If you're player 2, enter your name,\n" +
+        "enter the ip from player 1,\n" +
+        "then join the game.\n");
+    simpleInstruct.setTextSize(textSize).setTextAlignVertical(TOP)
+      .setLeftX(ipBox.getRightX() + 60).setBottomY(joinGameButton.getBottomY());
+    addLocalItem(simpleInstruct);
+
+    // Box
+    float boxLeft = min(ipBox.getLeftX(), createGameButton.getLeftX()) - 30;
+    float boxRight = max(simpleInstruct.getRightX(), startButton.getRightX()) + 30;
+    float boxTop = createGameButton.getTopY() - 20;
+    float boxBottom = joinGameButton.getBottomY() + 20;
+    RectArea controlBox = new RectArea("ControlBox", boxRight - boxLeft, boxBottom - boxTop);
+    controlBox.setDrawBox(true).setBoxFillColor(color(205, 147, 102))
+      .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(10)
+      .setLayer(-1).setLeftX(boxLeft).setTopY(boxTop);
+    addLocalItem(controlBox);
+
+    // // For debug:
+    // simpleInstruct.setDrawBox(true);
   }
 
   void startSyncGame() {
@@ -173,6 +211,6 @@ public class OnlineModePage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("Online  Game", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("Online  Game", gameInfo.getWinWidth() / 2, 130, 80, 3, color(255));
   }
 }

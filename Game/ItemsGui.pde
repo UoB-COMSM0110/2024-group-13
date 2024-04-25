@@ -7,18 +7,21 @@ public class RectArea extends LocalItem {
   private boolean drawBox;
   private float boxStrokeWeight;
   private int boxStrokeColor;
+  private boolean boxFill;
   private int boxFillColor;
   private float boxRadius;
   private PImage image;
 
   public RectArea(String name, float w, float h) {
     super(name, w, h);
+    this.boxFill = true;
     this.boxFillColor = 255;
   }
 
   public RectArea setDrawBox(boolean drawBox) { this.drawBox = drawBox; return this; }
   public RectArea setBoxStrokeWeight(float boxStrokeWeight) { this.boxStrokeWeight = boxStrokeWeight; return this; }
   public RectArea setBoxStrokeColor(int boxStrokeColor) { this.boxStrokeColor = boxStrokeColor; return this; }
+  public RectArea setBoxFill(boolean fill) { this.boxFill = fill; return this; }
   public RectArea setBoxFillColor(int boxFillColor) { this.boxFillColor = boxFillColor; return this; }
   public RectArea setBoxRadius(float boxRadius) { this.boxRadius = boxRadius; return this; }
   public RectArea setImage(PImage image) { this.image = image; return this; }
@@ -37,7 +40,8 @@ public class RectArea extends LocalItem {
   public void drawBox() {
     strokeWeight(this.boxStrokeWeight);
     stroke(this.boxStrokeColor);
-    fill(this.boxFillColor);
+    if (this.boxFill) { fill(this.boxFillColor); }
+    else { noFill(); }
     float x = getX() + this.boxStrokeWeight / 2.0;
     float y = getY() + this.boxStrokeWeight / 2.0;
     float w = getW() - this.boxStrokeWeight;
@@ -74,6 +78,7 @@ public class Label extends RectArea {
   public Label setTextSize(int textSize) { this.textSize = textSize; return this; }
   public Label setTextFont(PFont textFont) { this.textFont = textFont; return this; }
   public Label setTextAlignHorizon(int align) { this.textAlignHorizon = align; return this; }
+  public Label setTextAlignVertical(int align) { this.textAlignVertical = align; return this; }
   public Label setUpdater(Action updater) { this.updater = updater; return this; }
 
   public String getText() { return this.text; }
