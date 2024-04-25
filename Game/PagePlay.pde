@@ -178,7 +178,7 @@ public class PlayPage extends Page {
       .setLeftX(playerIcon.getRightX()).setTopY(playerIcon.getTopY());
     addLocalItem(playerPrompt);
 
-    String playerNameText = playerId == 1 ? gameInfo.getPlayerName1() : gameInfo.getPlayerName2();
+    String playerNameText = gameInfo.getPlayerName(playerId);
     Label playerName = new Label("PlayerName" + playerId, 180, lineHeight, playerNameText);
     playerName.setTextSize(textSizeBoard).setLeftX(playerPrompt.getRightX()).setY(playerPrompt.getY());
     addLocalItem(playerName);

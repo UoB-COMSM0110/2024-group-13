@@ -129,10 +129,10 @@ public class GameOverPage extends Page {
 }
 
 public class ScoreComparator implements Comparator<TableRow> {
-    @Override
+  @Override
     public int compare(TableRow r1, TableRow r2) {
-        int score1 = r1.getInt("Score");
-        int score2 = r2.getInt("Score");
-        return score2 - score1; // For descending order
+      int score1 = r1.getInt("Score");
+      int score2 = r2.getInt("Score");
+      return score2 - score1; // For descending order
     }
-  }
+}

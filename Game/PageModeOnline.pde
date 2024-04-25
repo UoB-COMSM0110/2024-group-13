@@ -16,41 +16,14 @@ public class OnlineModePage extends Page {
     addLocalItem(backButton);
 
     // Start button
-    Button startButton = new Button("ButtonStart", 200, 50, "Start",
+    Button startButton = new Button("ButtonStart", 200, 50, "Start Game",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(600);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
     addLocalItem(startButton);
 
-    // Player name 1
-    Label playerNamePrompt1 = new Label("PlayerNamePrompt1",
-        150, 35, "Player 1 : ");
-    playerNamePrompt1.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(170).setY(330);
-    addLocalItem(playerNamePrompt1);
-    InputBox playerName1 = new InputBox("InputBoxPlayerName1",
-        210, playerNamePrompt1.getH(), 15, (bx, oStr, nStr) -> {
-        gameInfo.setPlayerName1(nStr);
-        onPlayerNameSet();
-    });
-    playerName1.setDefaultText("Happy Bunny")
-      .setUpdater(() -> { playerName1.setText(gameInfo.getPlayerName1()); })
-      .setLeftX(playerNamePrompt1.getRightX()).setY(playerNamePrompt1.getY());
-    addLocalItem(playerName1);
-    // Player name 2
-    Label playerNamePrompt2 = new Label("PlayerNamePrompt2",
-        playerNamePrompt1.getW(), playerNamePrompt1.getH(), "Player 2 : ");
-    playerNamePrompt2.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setX(playerNamePrompt1.getX()).setTopY(playerNamePrompt1.getBottomY() + 20);
-    addLocalItem(playerNamePrompt2);
-    InputBox playerName2 = new InputBox("InputBoxPlayerName2",
-        playerName1.getW(), playerName1.getH(), playerName1.getMaxLen(), (bx, oStr, nStr) -> {
-        gameInfo.setPlayerName2(nStr);
-        onPlayerNameSet();
-    });
-    playerName2.setDefaultText("Merry Kitty")
-      .setUpdater(() -> { playerName2.setText(gameInfo.getPlayerName2()); })
-      .setLeftX(playerNamePrompt2.getRightX()).setY(playerNamePrompt2.getY());
-    addLocalItem(playerName2);
+    // `createPlayerWidgets` defined in 'PageModeLocal.pde'
+    addLocalItems(createPlayerWidgets(1, 170, 330, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(2, 170, 385, () -> { onPlayerNameSet(); }));
 
     // Ip box
     InputBox ipBox = new InputBox("IpBox", 270, 40, 15, (bx, oStr, nStr) -> {});

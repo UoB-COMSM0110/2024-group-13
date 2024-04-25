@@ -10,22 +10,21 @@ final String instructionSet7 = "data/onlinemultiplayer.png";
 
 // Objective Page of Instructions
 public class HelpPage1 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage1(Page previousPage, Page homePage) {
+  public HelpPage1(Page previousPage, Page backPage) {
     super("help1", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet1);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Next page button 
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage2(this, this.homePage)); });
+        () -> { trySwitchPage(new HelpPage2(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
   }
@@ -44,17 +43,16 @@ public class HelpPage1 extends Page {
 
 // Controls Page of Instructions
 public class HelpPage2 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage2(Page previousPage, Page homePage) {
+  public HelpPage2(Page previousPage, Page backPage) {
     super("help2", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet2);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -64,7 +62,7 @@ public class HelpPage2 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage3(this, this.homePage)); });
+        () -> { trySwitchPage(new HelpPage3(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
   }
@@ -83,17 +81,16 @@ public class HelpPage2 extends Page {
 
 // Powerups and Hazards Page of Instructions
 public class HelpPage3 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage3(Page previousPage, Page homePage) {
+  public HelpPage3(Page previousPage, Page backPage) {
     super("help3", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet3);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -103,7 +100,7 @@ public class HelpPage3 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage4(this, this.homePage)); });
+        () -> { trySwitchPage(new HelpPage4(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
   }
@@ -122,17 +119,16 @@ public class HelpPage3 extends Page {
 
 // Shooting Mechanisms Page of Instructions
 public class HelpPage4 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage4(Page previousPage, Page homePage) {
+  public HelpPage4(Page previousPage, Page backPage) {
     super("help4", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet4);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -142,7 +138,7 @@ public class HelpPage4 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage5(this, this.homePage)); });
+        () -> { trySwitchPage(new HelpPage5(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
   }
@@ -161,17 +157,16 @@ public class HelpPage4 extends Page {
 
 // Winning the Game Page of Instructions
 public class HelpPage5 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage5(Page previousPage, Page homePage) {
+  public HelpPage5(Page previousPage, Page backPage) {
     super("help5", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet5);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -196,22 +191,21 @@ public class HelpPage5 extends Page {
 
 // Local Multiplayer Instructions Page
 public class HelpPage6 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage6(Page previousPage, Page homePage) {
+  public HelpPage6(Page previousPage, Page backPage) {
     super("help6", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet6);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Next game mode page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage7(this, this.homePage)); });
+        () -> { trySwitchPage(new HelpPage7(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
   }
@@ -231,17 +225,16 @@ public class HelpPage6 extends Page {
 
 // Online Multiplayer Instructions Page
 public class HelpPage7 extends Page {
-  private Page homePage;
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage7(Page previousPage, Page homePage) {
+  public HelpPage7(Page previousPage, Page backPage) {
     super("help7", previousPage);
-    this.homePage = homePage;
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet7);
 
-    // Back to Home Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Home",
-        () -> { trySwitchPage(this.homePage); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button

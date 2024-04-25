@@ -9,15 +9,24 @@ public class ModesPage extends Page {
     addLocalItem(backButton);
 
     // Local Mode button
-    Button localGameButton = new Button("ButtonLocalGame", 200, 50,
-        "Local", () -> { trySwitchPage(new LocalModePage(this)); });
-    localGameButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
+    Button localGameButton = new Button("ButtonLocalGame", 200, 50, "Local  Mode",
+        () -> { trySwitchPage(new LocalModePage(this)); });
+    localGameButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(300);
     addLocalItem(localGameButton);
+
     // Online Mode button
-    Button onlineGameButton = new Button("ButtonOnlineGame", localGameButton.getW(), localGameButton.getH(),
-        "Online", () -> { trySwitchPage(new OnlineModePage(this)); });
+    Button onlineGameButton = new Button("ButtonOnlineGame",
+        localGameButton.getW(), localGameButton.getH(), "Online  Mode",
+        () -> { trySwitchPage(new OnlineModePage(this)); });
     onlineGameButton.setX(localGameButton.getX()).setTopY(localGameButton.getBottomY() + 10);
     addLocalItem(onlineGameButton);
+
+    // Modes Help button
+    Button gameModesButton = new Button("GameModesHelp",
+        localGameButton.getW(), localGameButton.getH(), "Modes  Help",
+        () -> { trySwitchPage(new HelpPage6(this, this)); });
+    gameModesButton.setX(onlineGameButton.getX()).setTopY(onlineGameButton.getBottomY() + 40);
+    addLocalItem(gameModesButton);
   }
   
   @Override

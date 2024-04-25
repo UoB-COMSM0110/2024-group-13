@@ -13,11 +13,11 @@ public class LocalModePage extends Page {
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(600);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
     addLocalItem(startButton);
 
-    addLocalItems(createPlayerWidgets(1, 320, 330));
-    addLocalItems(createPlayerWidgets(2, 320, 385));
+    addLocalItems(createPlayerWidgets(1, 320, 330, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(2, 320, 385, () -> { onPlayerNameSet(); }));
   }
 
   public void onPlayerNameSet() {
@@ -34,27 +34,27 @@ public class LocalModePage extends Page {
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
       drawTextWithOutline("Local  Game", 400, 220, 80, 3, color(255));
   }
+}
 
-  public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yOffset) {
-    ArrayList<LocalItem> items = new ArrayList<LocalItem>();
 
-    Label playerNamePrompt = new Label("PlayerNamePrompt" + playerId, 150, 35,
-        "Player " + playerId + " : ");
-    playerNamePrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
-      .setRightX(xOffset).setTopY(yOffset);
-    items.add(playerNamePrompt);
-    InputBox playerName = new InputBox("InputBoxPlayerName" + playerId,
-        210, playerNamePrompt.getH(), 15, (bx, oStr, nStr) -> {
-        gameInfo.setPlayerName(playerId, nStr);
-        onPlayerNameSet();
-    });
+public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yOffset,
+    Action onPlayerNameSet) {
+  ArrayList<LocalItem> items = new ArrayList<LocalItem>();
 
-    String defaultName = playerId == 1 ? "Happy Bunny" : "Merry Kitty";
-    playerName.setDefaultText(defaultName)
-      .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
-      .setLeftX(playerNamePrompt.getRightX()).setY(playerNamePrompt.getY());
-    items.add(playerName);
+  Label playerNamePrompt = new Label("PlayerNamePrompt" + playerId, 150, 35,
+      "Player " + playerId + " : ");
+  playerNamePrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft)
+    .setRightX(xOffset).setTopY(yOffset);
+  items.add(playerNamePrompt);
 
-    return items;
-  }
+  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId,
+      210, playerNamePrompt.getH(), 15,
+      (bx, oStr, nStr) -> { gameInfo.setPlayerName(playerId, nStr); onPlayerNameSet.run(); });
+  String defaultName = playerId == 1 ? "Happy Bunny" : "Merry Kitty";
+  playerName.setDefaultText(defaultName)
+    .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
+    .setLeftX(playerNamePrompt.getRightX()).setY(playerNamePrompt.getY());
+  items.add(playerName);
+
+  return items;
 }

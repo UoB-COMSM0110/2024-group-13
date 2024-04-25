@@ -6,18 +6,14 @@ public class HomePage extends Page {
     // Play button
     Button playButton = new Button("ButtonPlay", 200, 50, "Play",
         () -> { trySwitchPage(new ModesPage(this)); });
-    playButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
+    playButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(350);
     addLocalItem(playButton);
+
     // Tutorial button
     Button tutorialButton = new Button("TutorialHelp", playButton.getW(), playButton.getH(),
         "Tutorial", () -> { trySwitchPage(new HelpPage1(this, this)); });
-    tutorialButton.setX(playButton.getX()).setTopY(playButton.getBottomY() + 10);
+    tutorialButton.setX(playButton.getX()).setTopY(playButton.getBottomY() + 30);
     addLocalItem(tutorialButton);
-    // Game Modes button
-    Button gameModesButton = new Button("GameModesHelp", playButton.getW(), playButton.getH(),
-        "Game  Modes", () -> { trySwitchPage(new HelpPage6(this, this)); });
-    gameModesButton.setX(playButton.getX()).setTopY(tutorialButton.getBottomY() + 10);
-    addLocalItem(gameModesButton);
   }
 
   @Override
