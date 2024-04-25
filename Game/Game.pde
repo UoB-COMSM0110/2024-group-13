@@ -1,28 +1,28 @@
+import ddf.minim.*;
+
 GameInfo gameInfo;
 EventRecorder eventRecorder;
-import ddf.minim.*;
-Minim minim;
-AudioPlayer player;
-static final String BackgroundMusic = "data/background.mp3";
 
 Page page;
 
+AudioPlayer backgroundMusicPlayer;
+
 void setup(){
   size(800, 680); // Needs to be the first line of `setup`.
-  minim = new Minim(this);
+
   // Create the top-level game objects.
   gameInfo = new GameInfo();
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
   eventRecorder = new EventRecorder();
 
   frameRate(gameInfo.getFrameRateConfig());
-  loadResouces();
 
-  // Create the start page.
-  page = new StartPage(null);
+  loadResouces();
+  backgroundMusicPlayer.loop();
+
+  // Create the home page.
+  page = new HomePage();
   page.onSwitchIn();
-  player = minim.loadFile(BackgroundMusic);
-  player.play();
 }
 
 void draw() {
@@ -61,8 +61,6 @@ PFont fontSFBold;
 
 final String imagePathStartPageBackground = "data/StartPageBackground.png";
 PImage imageStartPageBackground;
-final String imagePathHelpPageOverlay = "data/HelpPageOverlay.png";
-PImage imageOverlay;
 
 final String imagePathButton = "data/Button.png";
 PImage imageButton;
@@ -76,10 +74,17 @@ final String imagePathHeart0 = "data/Heart0.png";
 PImage imageHeart0;
 final String imagePathBulletPrompt = "data/BulletPrompt.png";
 PImage imageBulletPrompt;
+final String imagePathPlayerBanner1 = "data/PlayerBanner1.png";
+PImage imagePlayerBanner1;
+final String imagePathPlayerBanner2 = "data/PlayerBanner2.png";
+PImage imagePlayerBanner2;
 final String imagePathKeyset1 = "data/Keyset1.png";
 PImage imageKeyset1;
 final String imagePathKeyset2 = "data/Keyset2.png";
 PImage imageKeyset2;
+
+static final String BackgroundMusic = "data/background.mp3";
+Minim minim;
 
 void loadResouces() {
   loadResourcesForItems();
@@ -92,7 +97,6 @@ void loadResouces() {
   fontSFBold = createFont(fontPathSFBold, fontSizeDefault, true);
 
   imageStartPageBackground = loadImage(imagePathStartPageBackground);
-  imageOverlay = loadImage(imagePathHelpPageOverlay);
 
   imageButton = loadImage(imagePathButton);
   imageHeart3 = loadImage(imagePathHeart3);
@@ -100,8 +104,13 @@ void loadResouces() {
   imageHeart1 = loadImage(imagePathHeart1);
   imageHeart0 = loadImage(imagePathHeart0);
   imageBulletPrompt = loadImage(imagePathBulletPrompt );
+  imagePlayerBanner1 = loadImage(imagePathPlayerBanner1);
+  imagePlayerBanner2 = loadImage(imagePathPlayerBanner2);
   imageKeyset1 = loadImage(imagePathKeyset1);
   imageKeyset2 = loadImage(imagePathKeyset2);
+
+  minim = new Minim(this);
+  backgroundMusicPlayer = minim.loadFile(BackgroundMusic);
 }
 
 

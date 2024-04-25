@@ -448,11 +448,9 @@ public class Pacman extends Figure {
       } else {
         if (getPlayerId() == 1){
           bulletNumber.setTextColor(textColorDefault).setTextFont(fontSFPro);
-        }
-        else {
+        } else {
           bulletNumber.setTextColor((color(224, 223, 224))).setTextFont(fontSFPro);
         }
-        
       }
     }
 
@@ -481,8 +479,7 @@ public class Pacman extends Figure {
     if (buffLabel == null) { return; }
     if (getPlayerId() == 1){
        buffLabel.setText("-").setTextFont(fontSFBold).setTextColor(textColorDefault);
-    }
-    else {
+    } else {
       buffLabel.setText("-").setTextFont(fontSFBold).setTextColor((color(224, 223, 224)));
     }
     String buffDesc = getBuffDesc();

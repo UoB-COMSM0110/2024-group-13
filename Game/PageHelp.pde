@@ -1,41 +1,31 @@
-final String imagePathInstructionSet = "data/objectiveImage1.png";
-final String instructionSet1 = "data/objectiveImage1.png";
-final String instructionSet2 = "data/controlsImage2.png";
-final String instructionSet3 = "data/powerupImage3.png";
-final String instructionSet4 = "data/shootingImage4.png";
-final String instructionSet5 = "data/winningImage5.png";
+final String instructionSet1 = "data/Help1_objective.png";
+final String instructionSet2 = "data/Help2_controls.png";
+final String instructionSet3 = "data/Help3_powerup.png";
+final String instructionSet4 = "data/Help4_shooting.png";
+final String instructionSet5 = "data/Help5_winning.png";
 
-final String instructionSet6 = "data/localmultiplayer.png";
-final String instructionSet7 = "data/onlinemultiplayer.png";
+final String instructionSet6 = "data/Help6_localmultiplayer.png";
+final String instructionSet7 = "data/Help7_onlinemultiplayer.png";
 
 // Objective Page of Instructions
 public class HelpPage1 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage1(Page previousPage) {
+  public HelpPage1(Page previousPage, Page backPage) {
     super("help1", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet1);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(getPreviousPage()); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Next page button 
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage2(this)); });
+        () -> { trySwitchPage(new HelpPage2(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -52,15 +42,16 @@ public class HelpPage1 extends Page {
 
 // Controls Page of Instructions
 public class HelpPage2 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage2(Page previousPage) {
+  public HelpPage2(Page previousPage, Page backPage) {
     super("help2", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet2);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(new StartPage(null)); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -70,19 +61,9 @@ public class HelpPage2 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage3(this)); });
+        () -> { trySwitchPage(new HelpPage3(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -99,15 +80,16 @@ public class HelpPage2 extends Page {
 
 // Powerups and Hazards Page of Instructions
 public class HelpPage3 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage3(Page previousPage) {
+  public HelpPage3(Page previousPage, Page backPage) {
     super("help3", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet3);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(new StartPage(null)); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -117,19 +99,9 @@ public class HelpPage3 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage4(this)); });
+        () -> { trySwitchPage(new HelpPage4(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -146,15 +118,16 @@ public class HelpPage3 extends Page {
 
 // Shooting Mechanisms Page of Instructions
 public class HelpPage4 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage4(Page previousPage) {
+  public HelpPage4(Page previousPage, Page backPage) {
     super("help4", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet4);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(new StartPage(null)); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -164,19 +137,9 @@ public class HelpPage4 extends Page {
     addLocalItem(previousButton);
     // Next page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage5(this)); });
+        () -> { trySwitchPage(new HelpPage5(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -193,15 +156,16 @@ public class HelpPage4 extends Page {
 
 // Winning the Game Page of Instructions
 public class HelpPage5 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage5(Page previousPage) {
+  public HelpPage5(Page previousPage, Page backPage) {
     super("help5", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet5);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(new StartPage(null)); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -209,16 +173,6 @@ public class HelpPage5 extends Page {
         () -> { trySwitchPage(getPreviousPage()); });
     previousButton.setX(55).setY(620);
     addLocalItem(previousButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -236,32 +190,23 @@ public class HelpPage5 extends Page {
 
 // Local Multiplayer Instructions Page
 public class HelpPage6 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage6(Page previousPage) {
+  public HelpPage6(Page previousPage, Page backPage) {
     super("help6", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet6);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(getPreviousPage()); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Next game mode page button
     Button nextButton = new Button("NextButton", 200, 40, "Next",
-        () -> { trySwitchPage(new HelpPage7(this)); });
+        () -> { trySwitchPage(new HelpPage7(this, this.backPage)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -279,15 +224,16 @@ public class HelpPage6 extends Page {
 
 // Online Multiplayer Instructions Page
 public class HelpPage7 extends Page {
+  private Page backPage;
   private PImage instructionImage;
   
-  public HelpPage7(Page previousPage) {
+  public HelpPage7(Page previousPage, Page backPage) {
     super("help7", previousPage);
+    this.backPage = backPage;
     this.instructionImage = loadImage(instructionSet7);
 
-    // Back to Start Page button
     Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(new StartPage(null)); });
+        () -> { trySwitchPage(this.backPage); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
     // Previous page button
@@ -295,16 +241,6 @@ public class HelpPage7 extends Page {
         () -> { trySwitchPage(getPreviousPage()); });
     previousButton.setX(55).setY(620);
     addLocalItem(previousButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override

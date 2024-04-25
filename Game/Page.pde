@@ -27,6 +27,9 @@ public abstract class Page {
   public String getName() { return this.name; }
 
   public void addLocalItem(LocalItem item) { this.localItems.put(item.getName(), item); }
+  public void addLocalItems(List<LocalItem> items) {
+    items.forEach((item) -> { this.localItems.put(item.getName(), item); });
+  }
   public void addSyncItem(SynchronizedItem item) { this.syncItems.put(item.getName(), item); }
 
   public LocalItem getLocalItem(String name) { return this.localItems.get(name); }

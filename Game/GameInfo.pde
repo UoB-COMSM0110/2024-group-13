@@ -128,6 +128,10 @@ public class GameInfo {
 
   public void setPlayerName1(String name) { this.playerName1 = name; }
   public void setPlayerName2(String name) { this.playerName2 = name; }
+  public void setPlayerName(int playerId, String name) {
+    if (playerId == 1) { this.playerName1 = name; }
+    else { this.playerName2 = name; }
+  }
 
   public void update() {
     long lastFrameTimeMs = this.currentFrameTimeMs;
@@ -176,6 +180,9 @@ public class GameInfo {
 
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
+  public String getPlayerName(int playerId) {
+    return playerId == 1 ? getPlayerName1() : getPlayerName2();
+  }
 
   public boolean startSyncAsServer() {
     try {

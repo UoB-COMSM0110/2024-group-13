@@ -111,46 +111,29 @@ public class GameOverPage extends Page {
     super.draw();
 
     String scoreMessage = this.player1Score + "  vs  " + this.player2Score;
-    drawTextWithOutline(scoreMessage, 410, 150, 60, 5, color(255));
-    drawTextWithOutline(winnerMessage, 410, 250, 60, 5, color(255));
+    drawTextWithOutline(scoreMessage, gameInfo.getWinWidth() / 2 + 10, 150, 60, 5, color(255));
+    drawTextWithOutline(winnerMessage, gameInfo.getWinWidth() / 2 + 10, 250, 60, 5, color(255));
 
     textSize(32); 
     int yPos = 350; 
     int counter = 1;
 
-    drawTextWithOutline("Highscores", 400, 310, 32, 3, color(255));
+    drawTextWithOutline("Highscores", gameInfo.getWinWidth() / 2, 310, 32, 3, color(255));
 
     for(String scoreLine : this.topScores) {
-      drawTextWithOutline(counter + ". " + scoreLine, 400, yPos, 32, 3, color(255)); 
+      drawTextWithOutline(counter + ". " + scoreLine,
+          gameInfo.getWinWidth() / 2, yPos, 32, 3, color(255)); 
       counter++;
       yPos += 40; 
     }
   }
-
-  // Helper method to draw text with an outline
-  void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset, color textColor) {
-    textSize(textSize);
-
-    // Draw the outline
-    fill(116, 54, 18); 
-    for (int dx = -outlineOffset; dx <= outlineOffset; dx++) {
-      for (int dy = -outlineOffset; dy <= outlineOffset; dy++) {
-        if (dx != 0 || dy != 0) { 
-          text(text, x + dx, y + dy);
-        }
-      }
-    }
-
-    fill(textColor); 
-    text(text, x, y);
-  }
 }
 
 public class ScoreComparator implements Comparator<TableRow> {
-    @Override
+  @Override
     public int compare(TableRow r1, TableRow r2) {
-        int score1 = r1.getInt("Score");
-        int score2 = r2.getInt("Score");
-        return score2 - score1; // For descending order
+      int score1 = r1.getInt("Score");
+      int score2 = r2.getInt("Score");
+      return score2 - score1; // For descending order
     }
-  }
+}

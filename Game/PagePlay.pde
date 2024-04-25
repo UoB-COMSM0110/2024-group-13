@@ -33,7 +33,6 @@ public class PlayPage extends Page {
     createPlayerStatusWidgets(1, 50, 8);
     createPlayerStatusWidgets(2, 425, 8);
 
-
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
     }
@@ -136,13 +135,12 @@ public class PlayPage extends Page {
         onNetworkFailure("server is not playing");
         return false;
       } else {
-        if (otherPlayerPage.equals("start")) { return true; }
-        if (otherPlayerPage.equals("help")) { return true; }
+        if (otherPlayerPage.equals("onlinemode")) { return true; }
         onNetworkFailure("client is not playing");
         return false;
       }
     }
-    if (json.getString("nextPage").equals("start")) {
+    if (json.getString("nextPage").equals("onlinemode")) {
       trySwitchPage(getPreviousPage());
     }
     if (gameInfo.isClientHost()) {
@@ -168,7 +166,7 @@ public class PlayPage extends Page {
     float verticalSpace = 14;
     float lineHeight = 15;
 
-    if(playerId == 1){
+    if (playerId == 1) {
       // Player name
       String player1NameText = gameInfo.getPlayerName1();
       Label playerName1 = new Label("PlayerName1", 180, lineHeight, player1NameText);
@@ -231,10 +229,9 @@ public class PlayPage extends Page {
       buffPrompt.setTextFont(fontSFBold).setTextSize(textLabels)
         .setLeftX(buffDesc.getLeftX()).setCenterY(bulletNumber.getCenterY()).setLayer(4);
       addLocalItem(buffPrompt);
-      
     }
     
-    if(playerId == 2){
+    if (playerId == 2) {
       // Player name
       String player2NameText = gameInfo.getPlayerName2();
       Label playerName2 = new Label("PlayerName2", 180, lineHeight, player2NameText);
@@ -411,8 +408,8 @@ public class PlayPage extends Page {
   
   @Override
   public void onSwitchOut() {
-    player.pause();
-    player.play();
+    backgroundMusicPlayer.mute();
+    backgroundMusicPlayer.unmute();
   }
 }
 
