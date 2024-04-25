@@ -1,21 +1,19 @@
-final String imagePathInstructionSet = "data/InstructionSet.png";
+final String imagePathInstructionSet = "data/objectiveImage1.png";
 final String instructionSet1 = "data/objectiveImage1.png";
 final String instructionSet2 = "data/controlsImage2.png";
 final String instructionSet3 = "data/powerupImage3.png";
 final String instructionSet4 = "data/shootingImage4.png";
 final String instructionSet5 = "data/winningImage5.png";
 
-final String instructionSet6 = "data/objectiveImage1.png";
-final String instructionSet7 = "data/controlsImage2.png";
+final String instructionSet6 = "data/localmultiplayer.png";
+final String instructionSet7 = "data/onlinemultiplayer.png";
 
 // Objective Page of Instructions
 public class HelpPage1 extends Page {
   private PImage instructionImage;
-  private PImage imageInstruction;
   
   public HelpPage1(Page previousPage) {
     super("help1", previousPage);
-    this.imageInstruction = loadImage(imagePathInstructionSet);
     this.instructionImage = loadImage(instructionSet1);
 
     // Back to Start Page button
@@ -43,16 +41,12 @@ public class HelpPage1 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.imageInstruction, 58, 150, 720, 334);
+    image(this.instructionImage, 58, 150, 720, 334);
   }
 
   @Override
   public void draw() {
     super.draw();
-    fill(255);
-    textSize(25);
-    text("Objective", 300, 110);
   }
 }
 
@@ -94,16 +88,12 @@ public class HelpPage2 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
   @Override
   public void draw() {
     super.draw();
-    fill(255);
-    textSize(25);
-    text("Controls", 300, 110);
   }
 }
 
@@ -145,16 +135,12 @@ public class HelpPage3 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
   @Override
   public void draw() {
     super.draw();
-    fill(255);
-    textSize(25);
-    text("Powerups and Hazards", 300, 110);
   }
 }
 
@@ -196,16 +182,12 @@ public class HelpPage4 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
   @Override
   public void draw() {
     super.draw();
-    fill(255);
-    textSize(25);
-    text("Shooting Mechanisms", 300, 110);
   }
 }
 
@@ -242,7 +224,6 @@ public class HelpPage5 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -250,8 +231,6 @@ public class HelpPage5 extends Page {
   public void draw() {
     super.draw();
     fill(255);
-    textSize(25);
-    text("Winning the Game", 300, 110);
   }
 }
 
@@ -288,7 +267,6 @@ public class HelpPage6 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -296,8 +274,6 @@ public class HelpPage6 extends Page {
   public void draw() {
     super.draw();
     fill(255);
-    textSize(25);
-    text("Local Multiplayer", 300, 110);
   }
 }
 
@@ -334,7 +310,6 @@ public class HelpPage7 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(this.instructionImage, 58, 150, 720, 334);
   }
 
@@ -343,6 +318,5 @@ public class HelpPage7 extends Page {
     super.draw();
     fill(255);
     textSize(25);
-    text("Online Multiplayer", 300, 110);
   }
 }
