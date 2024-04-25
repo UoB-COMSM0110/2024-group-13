@@ -30,14 +30,6 @@ public class PlayPage extends Page {
     backButton.setX(10).setY(5);
     addLocalItem(backButton);
 
-/*
-    Label fps = new Label("Fps", backButton.getW(), backButton.getH(), "");
-    fps.setPrefix("fps:").setX(backButton.getX()).setTopY(backButton.getBottomY());
-    addLocalItem(fps);
-    addLocalTimer(new Timer(0.0, 1.0,
-          () -> { fps.setText(String.format("%.2f", frameRate)); }));
-*/
-
     createPlayerStatusWidgets(1, 50, 8);
     createPlayerStatusWidgets(2, 425, 8);
 
