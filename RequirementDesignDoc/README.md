@@ -1,8 +1,3 @@
 # Requirements/Designs Documents
 
-Documents for each game feature:
-requirements pecifications,
-designs,
-UML diagrams,
-considerations,
-etc.
+Some game feature documents: requirements, designs, considerations, etc.
