@@ -54,6 +54,10 @@ final String fontPathMinecraft = "data/Minecraft.ttf";
 PFont fontMinecraft;
 final String fontPathErikaType = "data/ErikaType.ttf";
 PFont fontErikaType;
+final String fontPathSFPro = "data/SF-Pro.ttf";
+PFont fontSFPro;
+final String fontPathSFBold = "data/SF-Pro-Display-Bold.otf";
+PFont fontSFBold;
 
 final String imagePathStartPageBackground = "data/StartPageBackground.png";
 PImage imageStartPageBackground;
@@ -84,6 +88,8 @@ void loadResouces() {
 
   fontMinecraft = createFont(fontPathMinecraft, fontSizeDefault, true);
   fontErikaType = createFont(fontPathErikaType, fontSizeDefault, true);
+  fontSFPro = createFont(fontPathSFPro, fontSizeDefault, true);
+  fontSFBold = createFont(fontPathSFBold, fontSizeDefault, true);
 
   imageStartPageBackground = loadImage(imagePathStartPageBackground);
   imageOverlay = loadImage(imagePathHelpPageOverlay);
