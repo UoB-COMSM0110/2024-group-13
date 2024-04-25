@@ -64,6 +64,7 @@ public void drawTextWithOutline(String text, float x, float y, float textSize, i
     color textColor) {
   textFont(fontMinecraft);
   textSize(textSize);
+  textAlign(CENTER, CENTER);
 
   // Draw the outline
   fill(116, 54, 18); 

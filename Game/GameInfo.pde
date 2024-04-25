@@ -176,6 +176,9 @@ public class GameInfo {
 
   public String getPlayerName1() { return this.playerName1; }
   public String getPlayerName2() { return this.playerName2; }
+  public String getPlayerName(int playerId) {
+    return playerId == 1 ? getPlayerName1() : getPlayerName2();
+  }
 
   public boolean startSyncAsServer() {
     try {

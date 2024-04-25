@@ -10,12 +10,12 @@ public class HomePage extends Page {
     addLocalItem(playButton);
     // Tutorial button
     Button tutorialButton = new Button("TutorialHelp", playButton.getW(), playButton.getH(),
-        "Tutorial", () -> { trySwitchPage(new HelpPage1(this)); });
+        "Tutorial", () -> { trySwitchPage(new HelpPage1(this, this)); });
     tutorialButton.setX(playButton.getX()).setTopY(playButton.getBottomY() + 10);
     addLocalItem(tutorialButton);
     // Game Modes button
     Button gameModesButton = new Button("GameModesHelp", playButton.getW(), playButton.getH(),
-        "Game  Modes", () -> { trySwitchPage(new HelpPage6(this)); });
+        "Game  Modes", () -> { trySwitchPage(new HelpPage6(this, this)); });
     gameModesButton.setX(playButton.getX()).setTopY(tutorialButton.getBottomY() + 10);
     addLocalItem(gameModesButton);
   }

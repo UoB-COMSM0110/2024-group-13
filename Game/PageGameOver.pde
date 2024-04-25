@@ -126,24 +126,6 @@ public class GameOverPage extends Page {
       yPos += 40; 
     }
   }
-
-  // Helper method to draw text with an outline
-  void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset, color textColor) {
-    textSize(textSize);
-
-    // Draw the outline
-    fill(116, 54, 18); 
-    for (int dx = -outlineOffset; dx <= outlineOffset; dx++) {
-      for (int dy = -outlineOffset; dy <= outlineOffset; dy++) {
-        if (dx != 0 || dy != 0) { 
-          text(text, x + dx, y + dy);
-        }
-      }
-    }
-
-    fill(textColor); 
-    text(text, x, y);
-  }
 }
 
 public class ScoreComparator implements Comparator<TableRow> {

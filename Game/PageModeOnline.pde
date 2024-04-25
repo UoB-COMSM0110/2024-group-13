@@ -18,7 +18,7 @@ public class OnlineModePage extends Page {
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(600);
     addLocalItem(startButton);
 
     // Player name 1
@@ -190,7 +190,7 @@ public class OnlineModePage extends Page {
     enable = enable && gameInfo.getPlayerName2().length() > 0;
     enable = enable && gameInfo.isConnected();
     enable = enable && !isLeavingGame();
-    enable = enable && (this.otherPlayerPage.equals("onlinemode");
+    enable = enable && this.otherPlayerPage.equals("onlinemode");
     if (enable) { startButton.enable(); }
     else { startButton.disable(); }
   }
@@ -200,6 +200,6 @@ public class OnlineModePage extends Page {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("Online  Game  Setup", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("Online  Game", 400, 220, 80, 3, color(255));
   }
 }
