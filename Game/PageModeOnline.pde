@@ -8,8 +8,10 @@ public class OnlineModePage extends Page {
     this.leavingGame = false;
     this.otherPlayerPage = "";
 
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
-        () -> { trySwitchPage(getPreviousPage()); });
+    Button backButton = new Button("ButtonBack", 200, 40, "Back", () -> {
+        prepareToLeaveGame();
+        trySwitchPage(getPreviousPage());
+    });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
 
@@ -18,16 +20,6 @@ public class OnlineModePage extends Page {
         () -> { trySwitchPage(new PlayPage(this)); });
     startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(500);
     addLocalItem(startButton);
-    // Tutorial button
-    Button tutorialButton = new Button("TutorialHelp", startButton.getW(), startButton.getH(), "Tutorial",
-        () -> { trySwitchPage(new HelpPage1(this)); });
-    tutorialButton.setX(startButton.getX()).setTopY(startButton.getBottomY() + 10);
-    addLocalItem(tutorialButton);
-    // Game Modes button
-    Button gameModesButton = new Button("GameModesHelp", startButton.getW(), startButton.getH(), "Game Modes",
-        () -> { trySwitchPage(new HelpPage6(this)); });
-    gameModesButton.setX(startButton.getX()).setTopY(tutorialButton.getBottomY() + 10);
-    addLocalItem(gameModesButton);
 
     // Player name 1
     Label playerNamePrompt1 = new Label("PlayerNamePrompt1",
@@ -193,19 +185,12 @@ public class OnlineModePage extends Page {
 
   public void updateStartButton() {
     Button startButton = (Button)getLocalItem("ButtonStart");
-    boolean enable = !gameInfo.isClientHost();
+    boolean enable = gameInfo.isServerHost();
     enable = enable && gameInfo.getPlayerName1().length() > 0;
     enable = enable && gameInfo.getPlayerName2().length() > 0;
-    if (gameInfo.isSingleHost()) {
-      startButton.setText("Start");
-    } else {
-      startButton.setText("Start Online");
-      // Below for server only
-      enable = enable && gameInfo.isConnected();
-      enable = enable && !isLeavingGame();
-      enable = enable && (this.otherPlayerPage.equals("start")
-          || this.otherPlayerPage.equals("help"));
-    }
+    enable = enable && gameInfo.isConnected();
+    enable = enable && !isLeavingGame();
+    enable = enable && (this.otherPlayerPage.equals("onlinemode");
     if (enable) { startButton.enable(); }
     else { startButton.disable(); }
   }

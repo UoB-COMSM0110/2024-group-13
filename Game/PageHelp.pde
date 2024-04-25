@@ -31,16 +31,6 @@ public class HelpPage1 extends Page {
   }
 
   @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
-  }
-
-  @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
@@ -79,16 +69,6 @@ public class HelpPage2 extends Page {
         () -> { trySwitchPage(new HelpPage3(this)); });
     nextButton.setX(545).setY(620);
     addLocalItem(nextButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -133,16 +113,6 @@ public class HelpPage3 extends Page {
   }
 
   @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
-  }
-
-  @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
@@ -184,16 +154,6 @@ public class HelpPage4 extends Page {
   }
 
   @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
-  }
-
-  @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
@@ -227,16 +187,6 @@ public class HelpPage5 extends Page {
         () -> { trySwitchPage(getPreviousPage()); });
     previousButton.setX(55).setY(620);
     addLocalItem(previousButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override
@@ -276,16 +226,6 @@ public class HelpPage6 extends Page {
   }
 
   @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
-  }
-
-  @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
     image(imageOverlay, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
@@ -319,16 +259,6 @@ public class HelpPage7 extends Page {
         () -> { trySwitchPage(getPreviousPage()); });
     previousButton.setX(55).setY(620);
     addLocalItem(previousButton);
-  }
-
-  @Override
-  public boolean dispatchSyncInfo(JSONObject json) {
-    if (!super.dispatchSyncInfo(json)) { return false; }
-    if (gameInfo.isClientHost() && json.getString("page").equals("start")
-        && json.getString("nextPage").equals("play")) {
-      trySwitchPage(new PlayPage(getPreviousPage()));
-    }
-    return true;
   }
 
   @Override

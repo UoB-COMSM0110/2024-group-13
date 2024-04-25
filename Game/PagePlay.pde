@@ -137,13 +137,12 @@ public class PlayPage extends Page {
         onNetworkFailure("server is not playing");
         return false;
       } else {
-        if (otherPlayerPage.equals("start")) { return true; }
-        if (otherPlayerPage.equals("help")) { return true; }
+        if (otherPlayerPage.equals("onlinemode")) { return true; }
         onNetworkFailure("client is not playing");
         return false;
       }
     }
-    if (json.getString("nextPage").equals("start")) {
+    if (json.getString("nextPage").equals("onlinemode")) {
       trySwitchPage(getPreviousPage());
     }
     if (gameInfo.isClientHost()) {

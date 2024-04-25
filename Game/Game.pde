@@ -14,7 +14,7 @@ void setup(){
   frameRate(gameInfo.getFrameRateConfig());
   loadResouces();
 
-  // Create the start page.
+  // Create the home page.
   page = new HomePage();
   page.onSwitchIn();
 }
