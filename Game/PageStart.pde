@@ -32,14 +32,15 @@ public class StartPage extends Page {
       .setRightX(170).setY(330);
     addLocalItem(playerNamePrompt1);
     InputBox playerName1 = new InputBox("InputBoxPlayerName1",
-        210, playerNamePrompt1.getH(), 15, (bx, oStr, nStr) -> {
+        210, playerNamePrompt1.getH(), 11, (bx, oStr, nStr) -> {
         gameInfo.setPlayerName1(nStr);
         onPlayerNameSet();
     });
-    playerName1.setDefaultText("Happy Bunny")
+    playerName1.setDefaultText("<Enter>")
       .setUpdater(() -> { playerName1.setText(gameInfo.getPlayerName1()); })
       .setLeftX(playerNamePrompt1.getRightX()).setY(playerNamePrompt1.getY());
     addLocalItem(playerName1);
+    
     // Player name 2
     Label playerNamePrompt2 = new Label("PlayerNamePrompt2",
         playerNamePrompt1.getW(), playerNamePrompt1.getH(), "Player 2 : ");
@@ -51,7 +52,7 @@ public class StartPage extends Page {
         gameInfo.setPlayerName2(nStr);
         onPlayerNameSet();
     });
-    playerName2.setDefaultText("Merry Kitty")
+    playerName2.setDefaultText("<Enter>")
       .setUpdater(() -> { playerName2.setText(gameInfo.getPlayerName2()); })
       .setLeftX(playerNamePrompt2.getRightX()).setY(playerNamePrompt2.getY());
     addLocalItem(playerName2);

@@ -2,6 +2,10 @@ final String mapPath = "data/map.csv";
 final int PlayPageBackgroundColor = color(155, 82, 52);
 
 final int textSizeBoard = 17;
+final int textScore = 45;
+final int textEvent = 17;
+final int textBullet = 15;
+final int textLabels = 12;
 
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
@@ -16,24 +20,27 @@ public class PlayPage extends Page {
         gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
       .setBoxStrokeWeight(2.0)
-      .setBoxStrokeColor(color(102, 51, 0))
+      .setBoxStrokeColor(color(66, 33, 11))
       .setBoxFillColor(color(255, 253, 208))
       .setLayer(-9);
     addLocalItem(localArea);
 
-    Button backButton = new Button("ButtonBack", 120, 35, "End Game",
+    Button backButton = new Button("ButtonBack", 35, 35, "X",
         () -> { trySwitchPage(getPreviousPage()); });
     backButton.setX(10).setY(5);
     addLocalItem(backButton);
 
+/*
     Label fps = new Label("Fps", backButton.getW(), backButton.getH(), "");
     fps.setPrefix("fps:").setX(backButton.getX()).setTopY(backButton.getBottomY());
     addLocalItem(fps);
     addLocalTimer(new Timer(0.0, 1.0,
           () -> { fps.setText(String.format("%.2f", frameRate)); }));
+*/
 
-    createPlayerStatusWidgets(1, 160, 5);
-    createPlayerStatusWidgets(2, 480, 5);
+    createPlayerStatusWidgets(1, 50, 8);
+    createPlayerStatusWidgets(2, 425, 8);
+
 
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
@@ -166,74 +173,139 @@ public class PlayPage extends Page {
   public void drawBackground() { background(PlayPageBackgroundColor); }
 
   private void createPlayerStatusWidgets(int playerId, float xOffset, float yOffset) {
-    float verticalSpace = 2.0;
+    float verticalSpace = 14;
     float lineHeight = 15;
 
-    RectArea playerIcon = new RectArea("PlayerIcon" + playerId, 2.0 * lineHeight, 2.0 * lineHeight);
-    PImage imgIcon = playerId == 1 ? imagePacman_1_U : imagePacman_2_U;
-    playerIcon.setImage(imgIcon).setLeftX(xOffset).setY(yOffset);
-    addLocalItem(playerIcon);
+    if(playerId == 1){
+      // Player name
+      String player1NameText = gameInfo.getPlayerName1();
+      Label playerName1 = new Label("PlayerName1", 180, lineHeight, player1NameText);
+      playerName1.setTextSize(textSizeBoard).setLeftX(xOffset + 223).setY(84).setLayer(6);
+      playerName1.setTextFont(fontSFBold);
+      addLocalItem(playerName1); 
+      
+      // Name Prompt
+      Label namePrompt = new Label("NamePrompt" + playerId, 80, lineHeight, "Name");
+      namePrompt.setTextFont(fontSFBold).setTextSize(textLabels)
+        .setLeftX(playerName1.getLeftX()).setBottomY(playerName1.getTopY() - 8).setLayer(4);
+      addLocalItem(namePrompt);
 
-    Label playerPrompt = new Label("PlayerPrompt" + playerId, 80, lineHeight, "Player : ");
-    playerPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setLeftX(playerIcon.getRightX()).setTopY(playerIcon.getTopY());
-    addLocalItem(playerPrompt);
-
-    String playerNameText = playerId == 1 ? gameInfo.getPlayerName1() : gameInfo.getPlayerName2();
-    Label playerName = new Label("PlayerName" + playerId, 180, lineHeight, playerNameText);
-    playerName.setTextSize(textSizeBoard).setLeftX(playerPrompt.getRightX()).setY(playerPrompt.getY());
-    addLocalItem(playerName);
-
-    Label scorePrompt = new Label("ScorePrompt" + playerId, playerPrompt.getW(), lineHeight, "Score : ");
-    scorePrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(playerPrompt.getRightX()).setTopY(playerPrompt.getBottomY() + verticalSpace);
-    addLocalItem(scorePrompt);
-
-    Label score = new Label("Score" + playerId, 100, lineHeight, "0");
-    score.setTextSize(textSizeBoard).setLeftX(scorePrompt.getRightX()).setY(scorePrompt.getY());
-    addLocalItem(score);
-
-    Label healthPrompt = new Label("healthPrompt" + playerId, playerPrompt.getW(), lineHeight, "Health : ");
-    healthPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(scorePrompt.getRightX()).setTopY(scorePrompt.getBottomY() + verticalSpace);
-    addLocalItem(healthPrompt);
-
-    for (int i = 1; i <= 3; ++i) {
-      float x = healthPrompt.getRightX() + lineHeight * (i - 1) + 3;
-      RectArea heart = new RectArea("Heart_" + playerId + "_" + i, lineHeight, lineHeight);
-      heart.setImage(imageHeart3).setLeftX(x).setCenterY(healthPrompt.getCenterY());
-      addLocalItem(heart);
+      // Background box
+      PImage player1Box = loadImage("data/player1Labels.png");
+      RectArea box = new RectArea("InstructionKeyset" + playerId, 353, 103);
+      box.setImage(player1Box)
+        .setLeftX(xOffset).setTopY(yOffset).setLayer(1);
+      addLocalItem(box);
+      
+      // Score
+      Label score = new Label("Score" + playerId, 150, lineHeight, "0");
+      score.setTextSize(textScore).setLeftX(xOffset+5).setY(70).setLayer(6);
+      score.setTextFont(fontMinecraft);  
+      addLocalItem(score);
+      
+      // Score Prompt
+      Label scorePrompt = new Label("ScorePrompt" + playerId, 80, lineHeight, "Score");
+      scorePrompt.setTextFont(fontSFBold).setTextSize(15)
+        .setLeftX(score.getLeftX()).setBottomY(score.getTopY() - verticalSpace).setLayer(4);
+      addLocalItem(scorePrompt);
+      
+      // Lives
+      for (int i = 1; i <= 3; ++i) {
+        float x = (xOffset + 30) + lineHeight * (i - 1) + 3;
+        RectArea heart = new RectArea("Heart_" + playerId + "_" + i, lineHeight, lineHeight);
+        heart.setImage(imageHeart3).setLeftX(x).setCenterY(24).setLayer(5);
+        addLocalItem(heart);
+      }    
+      
+      // Number of bullets
+      Label bulletNumber = new Label("BulletNumber" + playerId, 25, lineHeight, "0");
+      bulletNumber.setTextSize(textBullet)
+        .setLeftX(xOffset + 200).setCenterY(21).setLayer(5);
+      addLocalItem(bulletNumber);
+      
+      // Bullets Prompt
+      Label bulletsPrompt = new Label("ExplosivesPrompt" + playerId, 80, lineHeight, "Explosives");
+      bulletsPrompt.setTextFont(fontSFBold).setTextSize(textLabels)
+        .setRightX(bulletNumber.getLeftX() + 17).setCenterY(bulletNumber.getCenterY()).setLayer(4);
+      addLocalItem(bulletsPrompt);
+      
+      // Current PowerUp
+      Label buffDesc = new Label("BuffDesc" + playerId, 200, lineHeight, "");
+      buffDesc.setTextSize(textEvent).setLeftX(xOffset + 223).setY(38).setLayer(6);
+      addLocalItem(buffDesc);
+      
+      // PowerUp Prompt
+      Label buffPrompt = new Label("BuffPrompt" + playerId, 80, lineHeight, "Special Event");
+      buffPrompt.setTextFont(fontSFBold).setTextSize(textLabels)
+        .setLeftX(buffDesc.getLeftX()).setCenterY(bulletNumber.getCenterY()).setLayer(4);
+      addLocalItem(buffPrompt);
+      
     }
+    
+    if(playerId == 2){
+      // Player name
+      String player2NameText = gameInfo.getPlayerName2();
+      Label playerName2 = new Label("PlayerName2", 180, lineHeight, player2NameText);
+      playerName2.setTextSize(textSizeBoard).setLeftX(xOffset + 223).setY(84).setLayer(6);
+      playerName2.setTextFont(fontSFBold).setTextColor(color(224, 223, 224));
+      addLocalItem(playerName2); 
+      
+      // Name Prompt
+      Label namePrompt = new Label("NamePrompt" + playerId, 80, lineHeight, "Name");
+      namePrompt.setTextFont(fontSFBold).setTextSize(textLabels).setTextColor(color(224, 223, 224))
+        .setLeftX(playerName2.getLeftX()).setBottomY(playerName2.getTopY() - 8).setLayer(4);
+      addLocalItem(namePrompt);
+      
+      // Background box
+      PImage player1Box = loadImage("data/player2Labels.png");
+      RectArea box = new RectArea("InstructionKeyset" + playerId, 353, 103);
+      box.setImage(player1Box)
+        .setLeftX(xOffset).setTopY(yOffset).setLayer(1);
+      addLocalItem(box);
+            
+      // Score
+      Label score = new Label("Score" + playerId, 150, lineHeight, "0");
+      score.setTextSize(textScore).setLeftX(xOffset+5).setY(70).setLayer(6);
+      score.setTextFont(fontMinecraft).setTextColor(color(224, 223, 224));  
+      addLocalItem(score);
+      
+      // Score Prompt
+      Label scorePrompt = new Label("ScorePrompt" + playerId, 80, lineHeight, "Score");
+      scorePrompt.setTextFont(fontSFBold).setTextSize(15).setTextColor(color(224, 223, 224))
+        .setLeftX(score.getLeftX()).setBottomY(score.getTopY() - verticalSpace).setLayer(4);
+      addLocalItem(scorePrompt);
+      
+      // Lives
+      for (int i = 1; i <= 3; ++i) {
+        float x = (xOffset + 30) + lineHeight * (i - 1) + 3;
+        RectArea heart = new RectArea("Heart_" + playerId + "_" + i, lineHeight, lineHeight);
+        heart.setImage(imageHeart3).setLeftX(x).setCenterY(24).setLayer(5);
+        addLocalItem(heart);
+      }
+      
+      // Number of bullets
+      Label bulletNumber2 = new Label("BulletNumber" + playerId, 25, lineHeight, "0");
+      bulletNumber2.setTextSize(textBullet).setLeftX(xOffset + 200).setCenterY(21).setLayer(5);
+      addLocalItem(bulletNumber2);
 
-    RectArea bulletPrompt = new RectArea("BulletsPrompt" + playerId, 40, 12);
-    bulletPrompt.setImage(imageBulletPrompt)
-      .setLeftX(healthPrompt.getRightX() + 90).setCenterY(healthPrompt.getCenterY());
-    addLocalItem(bulletPrompt);
+      // Bullets Prompt
+      Label bulletsPrompt = new Label("ExplosivesPrompt" + playerId, 80, lineHeight, "Explosives");
+      bulletsPrompt.setTextFont(fontSFBold).setTextSize(textLabels).setTextColor(color(224, 223, 224))
+        .setRightX(bulletNumber2.getLeftX() + 17).setCenterY(bulletNumber2.getCenterY()).setLayer(4);
+      addLocalItem(bulletsPrompt);
+      
+      // Current PowerUp
+      Label buffDesc = new Label("BuffDesc" + playerId, 200, lineHeight, "");
+      buffDesc.setTextSize(textEvent).setLeftX(xOffset + 223).setY(38).setLayer(6);
+      addLocalItem(buffDesc);      
 
-    Label bulletNumber = new Label("BulletNumber" + playerId, 25, lineHeight, "0");
-    bulletNumber.setTextSize(textSizeBoard)
-      .setLeftX(bulletPrompt.getRightX()).setCenterY(bulletPrompt.getCenterY());
-    addLocalItem(bulletNumber);
-
-    Label buffPrompt = new Label("BuffPrompt" + playerId, playerPrompt.getW(), lineHeight, "Buff : ");
-    buffPrompt.setTextAlignHorizon(RIGHT).setTextFont(fontMinecraft).setTextSize(textSizeBoard)
-      .setRightX(healthPrompt.getRightX()).setTopY(healthPrompt.getBottomY() + verticalSpace);
-    addLocalItem(buffPrompt);
-
-    Label buffDesc = new Label("BuffDesc" + playerId, 200, lineHeight, "");
-    buffDesc.setTextSize(textSizeBoard).setLeftX(buffPrompt.getRightX()).setY(buffPrompt.getY());
-    addLocalItem(buffDesc);
-
-    PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
-    RectArea keyset = new RectArea("InstructionKeyset" + playerId, 180, 45);
-    keyset.setImage(imgKeyset)
-      .setLeftX(playerIcon.getCenterX()).setTopY(buffPrompt.getBottomY() + verticalSpace);
-    addLocalItem(keyset);
-
-    RectArea keysetLine = new RectArea("InstructionKeysetLine" + playerId, keyset.getW(), 1);
-    keysetLine.setDrawBox(true).setLeftX(keyset.getLeftX()).setBottomY(keyset.getTopY());
-    addLocalItem(keysetLine);
-
+      // PowerUp Prompt
+      Label buffPrompt = new Label("BuffPrompt" + playerId, 80, lineHeight, "Special Event");
+      buffPrompt.setTextFont(fontSFBold).setTextSize(textLabels).setTextColor(color(224, 223, 224))
+        .setLeftX(buffDesc.getLeftX()).setCenterY(bulletNumber2.getCenterY()).setLayer(4);
+      addLocalItem(buffPrompt);
+    }
+    
     // // For debug use:
     // playerPrompt.setDrawBox(true);
     // playerName.setDrawBox(true);
