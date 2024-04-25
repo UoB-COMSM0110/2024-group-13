@@ -1,11 +1,15 @@
 GameInfo gameInfo;
 EventRecorder eventRecorder;
+import ddf.minim.*;
+Minim minim;
+AudioPlayer player;
+static final String BackgroundMusic = "data/background.mp3";
 
 Page page;
 
 void setup(){
   size(800, 680); // Needs to be the first line of `setup`.
-
+  minim = new Minim(this);
   // Create the top-level game objects.
   gameInfo = new GameInfo();
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
@@ -17,6 +21,8 @@ void setup(){
   // Create the start page.
   page = new StartPage(null);
   page.onSwitchIn();
+  player = minim.loadFile(BackgroundMusic);
+  player.play();
 }
 
 void draw() {

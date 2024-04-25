@@ -344,6 +344,12 @@ public class PlayPage extends Page {
     coord[3] = h;
     return coord;
   }
+  
+  @Override
+  public void onSwitchOut() {
+    player.pause();
+    player.play();
+  }
 }
 
 
