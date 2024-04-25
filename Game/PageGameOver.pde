@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Comparator; 
 
 static final String leaderboardFile = "data/leaderboard.csv";
 
@@ -58,24 +58,48 @@ public class GameOverPage extends Page {
   }
 
 
-  public List<String> readAndSortScores() {
-    Table scoresTable = loadTable(leaderboardFile, "header");
-    if (scoresTable == null) {
-      return new ArrayList<>(); 
-    }
-
-    scoresTable.sortReverse("Score");
-
-    List<String> topScores = new ArrayList<>();
-    for (int i = 0; i < Math.min(5, scoresTable.getRowCount()); i++) {
-      TableRow row = scoresTable.getRow(i);
-      String playerName = row.getString("PlayerName");
-      int score = row.getInt("Score");
-      topScores.add(playerName + ": " + score);
-    }
-
-    return topScores;
+  class PlayerScore {
+      String playerName;
+      int score;
+  
+      PlayerScore(String playerName, int score) {
+          this.playerName = playerName;
+          this.score = score;
+      }
   }
+  
+  public List<String> readAndSortScores() {
+      Table scoresTable = loadTable(leaderboardFile, "header");
+      if (scoresTable == null) {
+          System.out.println("No data found in leaderboard file.");
+          return new ArrayList<>();
+      }
+  
+      List<PlayerScore> scores = new ArrayList<>();
+      for (TableRow row : scoresTable.rows()) {
+          String playerName = row.getString("PlayerName");
+          int score = row.getInt("Score");
+          scores.add(new PlayerScore(playerName, score));
+          System.out.println("Read row: " + playerName + ", " + score);
+      }
+  
+      scores.sort((s1, s2) -> Integer.compare(s2.score, s1.score));
+      System.out.println("After sorting:");
+      for (PlayerScore score : scores) {
+          System.out.println("Sorted row: " + score.playerName + ", " + score.score);
+      }
+  
+      List<String> topScores = new ArrayList<>();
+      for (int i = 0; i < Math.min(5, scores.size()); i++) {
+          PlayerScore score = scores.get(i);
+          topScores.add(score.playerName + ": " + score.score);
+          System.out.println("Adding to topScores: " + score.playerName + ": " + score.score);
+      }
+  
+      return topScores;
+  }
+
+
 
   @Override
   public void drawBackground() {
@@ -94,10 +118,10 @@ public class GameOverPage extends Page {
     int yPos = 350; 
     int counter = 1;
 
-    drawTextWithOutline("Highscores", 370, 310, 32, 3, color(255));
+    drawTextWithOutline("Highscores", 400, 310, 32, 3, color(255));
 
     for(String scoreLine : this.topScores) {
-      drawTextWithOutline(counter + ". " + scoreLine, 370, yPos, 32, 3, color(255)); 
+      drawTextWithOutline(counter + ". " + scoreLine, 400, yPos, 32, 3, color(255)); 
       counter++;
       yPos += 40; 
     }
@@ -121,3 +145,12 @@ public class GameOverPage extends Page {
     text(text, x, y);
   }
 }
+
+public class ScoreComparator implements Comparator<TableRow> {
+    @Override
+    public int compare(TableRow r1, TableRow r2) {
+        int score1 = r1.getInt("Score");
+        int score2 = r2.getInt("Score");
+        return score2 - score1; // For descending order
+    }
+  }
