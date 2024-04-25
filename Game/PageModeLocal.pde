@@ -13,11 +13,20 @@ public class LocalModePage extends Page {
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(580);
+    startButton.disable().setCenterX(gameInfo.getWinWidth() / 2.0).setY(530);
     addLocalItem(startButton);
 
-    addLocalItems(createPlayerWidgets(1, 100, 320, () -> { onPlayerNameSet(); }));
-    addLocalItems(createPlayerWidgets(2, 500, 320, () -> { onPlayerNameSet(); }));
+    // Start instruction
+    int textSize = 14;
+    Label simpleInstruct = new Label("CreateInstruct", 320, textSize,
+        "Enter names first, then let's start!");
+    simpleInstruct.setTextSize(textSize).setTextAlignHorizon(CENTER)
+      .setCenterX(startButton.getCenterX()).setBottomY(startButton.getTopY() - 5);
+    addLocalItem(simpleInstruct);
+    // simpleInstruct.setDrawBox(true);
+
+    addLocalItems(createPlayerWidgets(1, 100, 300, () -> { onPlayerNameSet(); }));
+    addLocalItems(createPlayerWidgets(2, 500, 300, () -> { onPlayerNameSet(); }));
   }
 
   public void onPlayerNameSet() {
@@ -51,8 +60,7 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
         gameInfo.setPlayerName(playerId, nStr);
         onPlayerNameSet.run();
       });
-  String defaultName = playerId == 1 ? "Happy Bunny" : "Merry Kitty";
-  playerName.setDefaultText(defaultName)
+  playerName.setPromptText("Your Name Here")
     .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
     .setCenterX(playerBanner.getCenterX() + 30).setTopY(playerBanner.getBottomY() + 5);
   items.add(playerName);

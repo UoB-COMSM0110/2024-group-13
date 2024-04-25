@@ -71,7 +71,7 @@ public class OpponentControlPowerUp extends PowerUp {
         int buffId = getNextBuffId();
         opponentPacman.setControlledByOpponent(buffId);
         pacman.setBuffDesc(buffId + "+Control rival");
-        opponentPacman.setBuffDesc(buffId + "-Loose control");
+        opponentPacman.setBuffDesc(buffId + "-Lose control");
 
         Timer controlEndTimer = new OneOffTimer(defaultPowerUpDurationS, () -> {
             if (opponentPacman.getControlledByOpponent() == buffId) {

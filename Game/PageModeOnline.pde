@@ -15,14 +15,12 @@ public class OnlineModePage extends Page {
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
 
-    // This must be called before adding player widgets.
-    // As player widgets need to use control widgets.
-    addControlWidgets1(280, 50, 205, 447);
-    addControlWidgets2(280, 50, 605, 447);
-
     // `createPlayerWidgets` defined in 'PageModeLocal.pde'
     addLocalItems(createPlayerWidgets(1, 100, 220, () -> { onPlayerNameSet(); }));
     addLocalItems(createPlayerWidgets(2, 500, 220, () -> { onPlayerNameSet(); }));
+
+    addControlWidgets1(280, 50, 205, 447);
+    addControlWidgets2(280, 50, 605, 447);
   }
 
   private void addControlWidgets1(float buttonW, float buttonH, float xOffset, float yOffset) {
@@ -43,7 +41,7 @@ public class OnlineModePage extends Page {
     // Instruction
     int textSize = 14;
     Label simpleInstruct = new Label("CreateInstruct", 280, textSize * 4,
-        "If you're player 1,\n" +
+        "To play as player 1,\n" +
         "enter your name,\n" +
         "create game to see your game ip,\n" +
         "start game after player 2 joins.");
@@ -84,7 +82,7 @@ public class OnlineModePage extends Page {
     // Instruction
     int textSize = 14;
     Label simpleInstruct = new Label("JoinInstruct", 280, textSize * 4,
-        "If you're player 2,\n" +
+        "To play as player 2,\n" +
         "enter your name,\n" +
         "enter the game ip from player 1,\n" +
         "then join the game.");

@@ -1,7 +1,11 @@
+import ddf.minim.*;
+
 GameInfo gameInfo;
 EventRecorder eventRecorder;
 
 Page page;
+
+AudioPlayer backgroundMusicPlayer;
 
 void setup(){
   size(800, 680); // Needs to be the first line of `setup`.
@@ -12,7 +16,9 @@ void setup(){
   eventRecorder = new EventRecorder();
 
   frameRate(gameInfo.getFrameRateConfig());
+
   loadResouces();
+  backgroundMusicPlayer.loop();
 
   // Create the home page.
   page = new HomePage();
@@ -48,6 +54,10 @@ final String fontPathMinecraft = "data/Minecraft.ttf";
 PFont fontMinecraft;
 final String fontPathErikaType = "data/ErikaType.ttf";
 PFont fontErikaType;
+final String fontPathSFPro = "data/SF-Pro.ttf";
+PFont fontSFPro;
+final String fontPathSFBold = "data/SF-Pro-Display-Bold.otf";
+PFont fontSFBold;
 
 final String imagePathStartPageBackground = "data/StartPageBackground.png";
 PImage imageStartPageBackground;
@@ -73,6 +83,9 @@ PImage imageKeyset1;
 final String imagePathKeyset2 = "data/Keyset2.png";
 PImage imageKeyset2;
 
+static final String BackgroundMusic = "data/background.mp3";
+Minim minim;
+
 void loadResouces() {
   loadResourcesForItems();
   loadResourcesForFigures();
@@ -80,6 +93,8 @@ void loadResouces() {
 
   fontMinecraft = createFont(fontPathMinecraft, fontSizeDefault, true);
   fontErikaType = createFont(fontPathErikaType, fontSizeDefault, true);
+  fontSFPro = createFont(fontPathSFPro, fontSizeDefault, true);
+  fontSFBold = createFont(fontPathSFBold, fontSizeDefault, true);
 
   imageStartPageBackground = loadImage(imagePathStartPageBackground);
 
@@ -93,6 +108,9 @@ void loadResouces() {
   imagePlayerBanner2 = loadImage(imagePathPlayerBanner2);
   imageKeyset1 = loadImage(imagePathKeyset1);
   imageKeyset2 = loadImage(imagePathKeyset2);
+
+  minim = new Minim(this);
+  backgroundMusicPlayer = minim.loadFile(BackgroundMusic);
 }
 
 
