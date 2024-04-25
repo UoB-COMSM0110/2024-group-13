@@ -58,3 +58,23 @@ public class OneOffTimer extends Timer {
     super(offsetS, 0.0, action);
   }
 }
+
+
+public void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset,
+    color textColor) {
+  textFont(fontMinecraft);
+  textSize(textSize);
+
+  // Draw the outline
+  fill(116, 54, 18); 
+  for (int dx = -outlineOffset; dx <= outlineOffset; dx++) {
+    for (int dy = -outlineOffset; dy <= outlineOffset; dy++) {
+      if (dx != 0 || dy != 0) { 
+        text(text, x + dx, y + dy);
+      }
+    }
+  }
+
+  fill(textColor); 
+  text(text, x, y);
+}

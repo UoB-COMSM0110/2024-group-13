@@ -18,8 +18,8 @@ public class HelpPage1 extends Page {
     this.imageInstruction = loadImage(imagePathInstructionSet);
     this.instructionImage = loadImage(instructionSet1);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(getPreviousPage()); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -64,8 +64,8 @@ public class HelpPage2 extends Page {
     super("help2", previousPage);
     this.instructionImage = loadImage(instructionSet2);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(new StartPage(null)); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -115,8 +115,8 @@ public class HelpPage3 extends Page {
     super("help3", previousPage);
     this.instructionImage = loadImage(instructionSet3);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(new StartPage(null)); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -166,8 +166,8 @@ public class HelpPage4 extends Page {
     super("help4", previousPage);
     this.instructionImage = loadImage(instructionSet4);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(new StartPage(null)); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -217,8 +217,8 @@ public class HelpPage5 extends Page {
     super("help5", previousPage);
     this.instructionImage = loadImage(instructionSet5);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(new StartPage(null)); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -263,8 +263,8 @@ public class HelpPage6 extends Page {
     super("help6", previousPage);
     this.instructionImage = loadImage(instructionSet6);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(getPreviousPage()); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);
@@ -309,8 +309,8 @@ public class HelpPage7 extends Page {
     super("help7", previousPage);
     this.instructionImage = loadImage(instructionSet7);
 
-    // Back to Start Page button
-    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+    // Back to Home Page button
+    Button backButton = new Button("ButtonBack", 200, 40, "Home",
         () -> { trySwitchPage(new StartPage(null)); });
     backButton.setX(55).setY(28);
     addLocalItem(backButton);

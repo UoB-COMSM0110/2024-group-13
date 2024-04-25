@@ -1,13 +1,17 @@
-
-// The first page of the game.
-public class StartPage extends Page {
+// The page for starting an online game.
+public class OnlineModePage extends Page {
   private boolean leavingGame;
   private String otherPlayerPage;
 
-  public StartPage(Page previousPage) {
-    super("start", previousPage);
+  public OnlineModePage(Page previousPage) {
+    super("onlinemode", previousPage);
     this.leavingGame = false;
     this.otherPlayerPage = "";
+
+    Button backButton = new Button("ButtonBack", 200, 40, "Back",
+        () -> { trySwitchPage(getPreviousPage()); });
+    backButton.setX(55).setY(28);
+    addLocalItem(backButton);
 
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
@@ -206,29 +210,11 @@ public class StartPage extends Page {
     else { startButton.disable(); }
   }
   
-  void drawTextWithOutline(String text, float x, float y, float textSize, int outlineOffset, color textColor) {
-    textFont(fontMinecraft);
-    textSize(textSize);
-
-    // Draw the outline
-    fill(116, 54, 18); 
-    for (int dx = -outlineOffset; dx <= outlineOffset; dx++) {
-      for (int dy = -outlineOffset; dy <= outlineOffset; dy++) {
-        if (dx != 0 || dy != 0) { 
-          text(text, x + dx, y + dy);
-        }
-      }
-    }
-
-    fill(textColor); 
-    text(text, x, y);
-  }
-
   @Override
   public void drawBackground() {
       float winWidth = gameInfo.getWinWidth();
       float winHeight = gameInfo.getWinHeight();
       image(imageStartPageBackground, 0, 0, winWidth, winHeight);
-      drawTextWithOutline("PACMINER", 400, 220, 80, 3, color(255));
+      drawTextWithOutline("Online  Game  Setup", 400, 220, 80, 3, color(255));
   }
 }

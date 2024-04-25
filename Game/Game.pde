@@ -15,7 +15,7 @@ void setup(){
   loadResouces();
 
   // Create the start page.
-  page = new StartPage(null);
+  page = new HomePage();
   page.onSwitchIn();
 }
 
