@@ -33,7 +33,7 @@ public class HelpPage1 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -72,7 +72,7 @@ public class HelpPage2 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -111,7 +111,7 @@ public class HelpPage3 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -150,7 +150,7 @@ public class HelpPage4 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -184,7 +184,7 @@ public class HelpPage5 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -219,7 +219,7 @@ public class HelpPage6 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
@@ -254,7 +254,7 @@ public class HelpPage7 extends Page {
   @Override
   public void drawBackground() {
     image(imageStartPageBackground, 0, 0, gameInfo.getWinWidth(), gameInfo.getWinHeight());
-    image(this.instructionImage, 58, 150, 720, 334);
+    image(this.instructionImage, 40, 200, 720, 276);
   }
 
   @Override
