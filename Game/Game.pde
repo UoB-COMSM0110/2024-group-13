@@ -4,8 +4,8 @@ EventRecorder eventRecorder;
 Page page;
 
 void setup(){
+  test();
   size(800, 680); // Needs to be the first line of `setup`.
-
   // Create the top-level game objects.
   gameInfo = new GameInfo();
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
@@ -17,6 +17,7 @@ void setup(){
   // Create the start page.
   page = new StartPage(null);
   page.onSwitchIn();
+    
 }
 
 void draw() {
@@ -118,4 +119,8 @@ void mouseClicked() {
 
 void mouseMoved() {
   eventRecorder.recordMouseMoved();
+}
+
+void test() {
+  new Test().test();
 }
