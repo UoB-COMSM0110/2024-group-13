@@ -113,6 +113,7 @@ public class OnlineModePage extends Page {
     }
   }
   void startSyncGame(String serverIp) {
+    if (serverIp == null || serverIp.isEmpty()) { return; }
     if (gameInfo.startSyncAsClient(serverIp)) {
       updateWidgets();
     }

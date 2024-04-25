@@ -54,7 +54,7 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
   String defaultName = playerId == 1 ? "Happy Bunny" : "Merry Kitty";
   playerName.setDefaultText(defaultName)
     .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
-    .setCenterX(playerBanner.getCenterX() + 30).setTopY(playerBanner.getBottomY() + 10);
+    .setCenterX(playerBanner.getCenterX() + 30).setTopY(playerBanner.getBottomY() + 5);
   items.add(playerName);
 
   Label playerNamePrompt = new Label("PlayerNamePrompt" + playerId, 70, playerName.getH(), "NAME:");
@@ -65,8 +65,15 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
   PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
   RectArea keyset = new RectArea("InstructionKeyset" + playerId, 240, 60);
   keyset.setImage(imgKeyset)
-    .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 20);
+    .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 25);
   items.add(keyset);
+
+  Label keyMove = new Label("KeyMove" + playerId, 50, 15, "move:");
+  keyMove.setTextSize(15).setLeftX(keyset.getLeftX() - 30).setTopY(keyset.getTopY() - 6);
+  items.add(keyMove);
+  Label keyFire = new Label("KeyFire" + playerId, 100, 15, "explosive:");
+  keyFire.setTextSize(15).setLeftX(keyset.getLeftX() + 120).setTopY(keyset.getTopY() - 6);
+  items.add(keyFire);
 
   float boxLeft = playerNamePrompt.getLeftX() - 20;
   float boxRight = playerName.getRightX() + 20;
@@ -80,6 +87,8 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
 
   // // For debug
   // playerNamePrompt.setDrawBox(true);
+  // keyMove.setDrawBox(true);
+  // keyFire.setDrawBox(true);
 
   return items;
 }
