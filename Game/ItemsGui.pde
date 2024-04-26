@@ -347,7 +347,7 @@ public class InputBox extends InteractiveWidget {
 
   public void shade() {
     float step = 1.0;
-    int nStep = 10;
+    int nStep = 8;
     strokeWeight(step);
     noFill();
     int c = color(0, 200, 200);
