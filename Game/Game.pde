@@ -8,6 +8,7 @@ Page page;
 AudioPlayer backgroundMusicPlayer;
 
 void setup(){
+  test();
   size(800, 680); // Needs to be the first line of `setup`.
 
   // Create the top-level game objects.
@@ -111,6 +112,10 @@ void loadResouces() {
 
   minim = new Minim(this);
   backgroundMusicPlayer = minim.loadFile(BackgroundMusic);
+}
+
+void test() {
+  new Test().test();
 }
 
 
