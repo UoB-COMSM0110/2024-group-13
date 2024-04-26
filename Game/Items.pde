@@ -334,6 +334,7 @@ public class GameState extends SynchronizedItem {
 
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
+    if (this.isGameOver) { return; }
     this.isGameOver = true;
     this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
   }

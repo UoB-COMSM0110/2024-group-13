@@ -34,6 +34,7 @@ private void removeBuffDesc(int buffId, Pacman pacman) {
 final String itemTypePowerUp = "PowerUp";
 int itemCountPowerUp;
 final float powerUpRestoreTimeS = 10.0;
+final float trapLastTimeS = 30.0;
 
 public abstract class PowerUp extends SynchronizedItem {
   public PowerUp() {
@@ -211,7 +212,7 @@ public class TrapPowerUp extends PowerUp {
       Trap trap = new Trap(pacman.getPlayerId());
       trap.setGenerator(this).setX(this.getX()).setY(this.getY());
       page.addSyncItem(trap);
-      page.addTimer(new OneOffTimer(20.0, () -> { trap.discard().delete(); }));
+      page.addTimer(new OneOffTimer(trapLastTimeS, () -> { trap.discard().delete(); }));
       discard();
     }
   }

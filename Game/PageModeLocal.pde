@@ -19,8 +19,8 @@ public class LocalModePage extends Page {
     // Start instruction
     int textSize = 14;
     Label simpleInstruct = new Label("CreateInstruct", 320, textSize,
-        "Enter names first, then let's start!");
-    simpleInstruct.setTextSize(textSize).setTextAlignHorizon(CENTER)
+        "Enter players' names first, then let's start!");
+    simpleInstruct.setTextSize(textSize).setTextAlignHorizon(CENTER).setTextFont(fontSFPro)
       .setCenterX(startButton.getCenterX()).setBottomY(startButton.getTopY() - 5);
     addLocalItem(simpleInstruct);
     // simpleInstruct.setDrawBox(true);
