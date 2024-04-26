@@ -72,8 +72,6 @@ final String imagePathHeart1 = "data/Heart1.png";
 PImage imageHeart1;
 final String imagePathHeart0 = "data/Heart0.png";
 PImage imageHeart0;
-final String imagePathBulletPrompt = "data/BulletPrompt.png";
-PImage imageBulletPrompt;
 final String imagePathPlayerBanner1 = "data/PlayerBanner1.png";
 PImage imagePlayerBanner1;
 final String imagePathPlayerBanner2 = "data/PlayerBanner2.png";
@@ -103,7 +101,6 @@ void loadResouces() {
   imageHeart2 = loadImage(imagePathHeart2);
   imageHeart1 = loadImage(imagePathHeart1);
   imageHeart0 = loadImage(imagePathHeart0);
-  imageBulletPrompt = loadImage(imagePathBulletPrompt );
   imagePlayerBanner1 = loadImage(imagePathPlayerBanner1);
   imagePlayerBanner2 = loadImage(imagePathPlayerBanner2);
   imageKeyset1 = loadImage(imagePathKeyset1);
