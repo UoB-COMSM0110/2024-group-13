@@ -13,7 +13,7 @@ public class LocalModePage extends Page {
     // Start button
     Button startButton = new Button("ButtonStart", 200, 50, "Start",
         () -> { trySwitchPage(new PlayPage(this)); });
-    startButton.disable().setCenterX(gameInfo.getWinWidth() / 2.0).setY(530);
+    startButton.setCenterX(gameInfo.getWinWidth() / 2.0).setY(530);
     addLocalItem(startButton);
 
     // Start instruction
@@ -27,6 +27,8 @@ public class LocalModePage extends Page {
 
     addLocalItems(createPlayerWidgets(1, 100, 300, () -> { onPlayerNameSet(); }));
     addLocalItems(createPlayerWidgets(2, 500, 300, () -> { onPlayerNameSet(); }));
+
+    onPlayerNameSet(); // Check usability of start button
   }
 
   public void onPlayerNameSet() {

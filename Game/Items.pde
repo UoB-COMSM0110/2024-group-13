@@ -163,7 +163,7 @@ public class Coin extends SynchronizedItem {
 
 final String itemTypeBullet = "Bullet";
 int itemCountBullet;
-final float defaultBulletSpeed = 200.0;
+final float defaultBulletSpeed = 220.0;
 
 public class Bullet extends MovableItem {
   private int owner;
@@ -203,6 +203,7 @@ public class Bullet extends MovableItem {
     if(item instanceof Wall){
       delete();
     } else if (item instanceof Figure) {
+      if ((item instanceof Pacman) && isFiredBy((Pacman)item)) { return; }
       delete();
     }
   }  

@@ -91,8 +91,8 @@ public class OnlineModePage extends Page {
     addLocalItem(simpleInstruct);
 
     // Box
-    float boxLeft = ipBox.getLeftX() - 20;
-    float boxRight = ipBox.getRightX() + 20;
+    float boxLeft = joinButton.getLeftX() - 20;
+    float boxRight = joinButton.getRightX() + 20;
     float boxTop = ipBox.getCenterY() - 45;
     float boxBottom = simpleInstruct.getBottomY() + 20;
     RectArea controlBox = new RectArea("JoinControlBox", boxRight - boxLeft, boxBottom - boxTop);
