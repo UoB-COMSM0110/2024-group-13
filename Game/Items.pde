@@ -303,3 +303,67 @@ public class ViewShader extends SynchronizedItem {
     image(imageShade, x, y, imgSize, imgSize);
   }
 }
+
+
+final String itemTypeGameState = "GameState";
+
+public class GameState extends SynchronizedItem {
+  private boolean isGameOver;
+  private int gameOverWaitingTimeMs;
+  private boolean showGameOverBanner;
+
+  public GameState() {
+    super(itemTypeGameState, 0.0, 0.0);
+  }
+
+  @Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setBoolean("isGameOver", this.isGameOver);
+    json.setInt("gameOverWaitingTimeMs", this.gameOverWaitingTimeMs);
+    json.setBoolean("showGameOverBanner", this.showGameOverBanner);
+    return json;
+  }
+  @Override
+  public void setStateJson(JSONObject json) {
+    super.setStateJson(json);
+    this.isGameOver = json.getBoolean("isGameOver");
+    this.gameOverWaitingTimeMs = json.getInt("gameOverWaitingTimeMs");
+    this.showGameOverBanner = json.getBoolean("showGameOverBanner");
+  }
+
+  public boolean isGameOver() { return this.isGameOver; }
+  public void gameOver() {
+    if (this.isGameOver) { return; }
+    this.isGameOver = true;
+    this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
+  }
+
+  public boolean isGameFinished() {
+    return isGameOver() && this.gameOverWaitingTimeMs <= 0;
+  }
+
+  public void step() {
+    if (!isGameOver()) { return; }
+    if (this.gameOverWaitingTimeMs > 0) {
+      this.gameOverWaitingTimeMs -= (int)gameInfo.getLastFrameIntervalMs();
+    }
+    if (this.gameOverWaitingTimeMs <= 2000) {
+      getPacman(1).setViewFactor(1.0);
+      getPacman(2).setViewFactor(1.0);
+    }
+    if (this.gameOverWaitingTimeMs <= 1000) {
+      this.showGameOverBanner = true;
+    }
+  }
+
+  @Override
+  public void update() {
+    if (!isGameOver()) { return; }
+    backgroundMusicPlayer.mute();
+    if (this.showGameOverBanner) {
+      Label gameOverLabel = (Label)page.getLocalItem("LabelGameOver");
+      if (gameOverLabel != null) { gameOverLabel.restore(); }
+    }
+  }
+}

@@ -9,8 +9,6 @@ final int textLabels = 12;
 
 public class PlayPage extends Page {
   private JSONArray syncDeletesRecord;
-  private boolean isGameOver;
-  private long gameOverWaitingTimeMs;
 
   public PlayPage(Page previousPage) {
     super("play", previousPage);
@@ -32,6 +30,12 @@ public class PlayPage extends Page {
 
     createPlayerStatusWidgets(1, 50, 8);
     createPlayerStatusWidgets(2, 425, 8);
+
+    Label gameOverLabel = new Label("LabelGameOver", 500, 100, "Game  Over");
+    gameOverLabel.setTextAlignHorizon(CENTER).setTextFont(fontMinecraft).setTextSize(80)
+      .setDrawBox(true).setBoxFillColor(color(255, 253, 208))
+      .setCenterX(gameInfo.getWinWidth() / 2).setCenterY(gameInfo.getWinHeight() / 2).discard();
+    addLocalItem(gameOverLabel);
 
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
@@ -77,41 +81,19 @@ public class PlayPage extends Page {
 
   @Override
   public void doEvolve(ArrayList<KeyboardEvent> events) {
-    if (!isGameOver()) {
+    GameState gameState = (GameState)getSyncItem("GameState");
+    gameState.step();
+    if (!gameState.isGameOver()) {
       super.doEvolve(events);
-      return;
-    }
-    if (this.gameOverWaitingTimeMs > 0) {
-      this.gameOverWaitingTimeMs -= gameInfo.getLastFrameIntervalMs();
-    }
-    if (this.gameOverWaitingTimeMs <= 2000) {
-      getPacman(1).setViewFactor(1.0);
-      getPacman(2).setViewFactor(1.0);
-    }
-    if (this.gameOverWaitingTimeMs <= 1000) {
-      Label gameOverLabel = (Label)getLocalItem("GameOver");
-      if (gameOverLabel == null) {
-        gameOverLabel = new Label("GameOver", 500, 100, "Game  Over");
-        gameOverLabel.setTextAlignHorizon(CENTER).setTextFont(fontMinecraft).setTextSize(80);
-        gameOverLabel.setDrawBox(true).setBoxFillColor(color(255, 253, 208));
-        gameOverLabel.setCenterX(gameInfo.getWinWidth() / 2).setCenterY(gameInfo.getWinHeight() / 2);
-        addLocalItem(gameOverLabel);
-      }
-    }
-    if (this.gameOverWaitingTimeMs <= 0) {
+    } else if (gameState.isGameFinished()) {
       goToGameOverPage();
     }
   }
 
   @Override
   public void solveCollisions() {
-    (new CollisionEngine()).solveCollisions(() -> isGameOver());
-  }
-
-  public boolean isGameOver() { return this.isGameOver; }
-  public void gameOver() {
-    this.isGameOver = true;
-    this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
+    GameState gameState = (GameState)getSyncItem("GameState");
+    (new CollisionEngine()).solveCollisions(() -> gameState.isGameOver());
   }
 
   public void goToGameOverPage() {
@@ -307,6 +289,7 @@ public class PlayPage extends Page {
   private void loadMap(String mapPath) {
     generateMapBorders();
     addSyncItem(new ViewShader());
+    addSyncItem(new GameState());
 
     String[] lines = loadStrings(mapPath);
     for (int row = 0; row <lines.length; row++) {
@@ -408,7 +391,6 @@ public class PlayPage extends Page {
   
   @Override
   public void onSwitchOut() {
-    backgroundMusicPlayer.mute();
     backgroundMusicPlayer.unmute();
   }
 }

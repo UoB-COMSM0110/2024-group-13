@@ -17,10 +17,10 @@ public class LocalModePage extends Page {
     addLocalItem(startButton);
 
     // Start instruction
-    int textSize = 14;
-    Label simpleInstruct = new Label("CreateInstruct", 320, textSize,
-        "Enter names first, then let's start!");
-    simpleInstruct.setTextSize(textSize).setTextAlignHorizon(CENTER)
+    int instructTextSize = 14;
+    Label simpleInstruct = new Label("CreateInstruct", 320, instructTextSize,
+        "Enter players' names first, then let's start!");
+    simpleInstruct.setTextSize(instructTextSize).setTextAlignHorizon(CENTER).setTextFont(fontSFPro)
       .setCenterX(startButton.getCenterX()).setBottomY(startButton.getTopY() - 5);
     addLocalItem(simpleInstruct);
     // simpleInstruct.setDrawBox(true);
@@ -55,12 +55,12 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
   playerBanner.setImage(imgBanner).setLeftX(xOffset).setTopY(yOffset);
   items.add(playerBanner);
 
-  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId, 210, 30, 15,
+  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId, 210, 25, 11,
       (bx, oStr, nStr) -> {
         gameInfo.setPlayerName(playerId, nStr);
         onPlayerNameSet.run();
       });
-  playerName.setPromptText("Your Name Here")
+  playerName.setPromptText("Your Name Here").setTextAlignHorizon(CENTER)
     .setUpdater(() -> { playerName.setText(gameInfo.getPlayerName(playerId)); })
     .setCenterX(playerBanner.getCenterX() + 30).setTopY(playerBanner.getBottomY() + 5);
   items.add(playerName);
@@ -70,23 +70,31 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
     .setRightX(playerName.getLeftX()).setY(playerName.getY());
   items.add(playerNamePrompt);
 
+  Label nameMaxLen = new Label("NameMaxLen" + playerId, playerName.getW(), 13,
+      "( max len : " + playerName.getMaxLen() + " )");
+  nameMaxLen.setTextAlignHorizon(CENTER).setTextSize(13).setTextFont(fontSFPro)
+    .setCenterX(playerName.getCenterX()).setTopY(playerName.getBottomY());
+  items.add(nameMaxLen);
+
   PImage imgKeyset = playerId == 1 ? imageKeyset1 : imageKeyset2;
   RectArea keyset = new RectArea("InstructionKeyset" + playerId, 240, 60);
   keyset.setImage(imgKeyset)
-    .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 25);
+    .setX(playerBanner.getX() + 10).setTopY(playerName.getBottomY() + 35);
   items.add(keyset);
 
   Label keyMove = new Label("KeyMove" + playerId, 50, 15, "move:");
-  keyMove.setTextSize(15).setLeftX(keyset.getLeftX() - 30).setTopY(keyset.getTopY() - 6);
+  keyMove.setTextFont(fontSFPro).setTextSize(15)
+    .setLeftX(keyset.getLeftX() - 30).setTopY(keyset.getTopY() - 3);
   items.add(keyMove);
   Label keyFire = new Label("KeyFire" + playerId, 100, 15, "explosive:");
-  keyFire.setTextSize(15).setLeftX(keyset.getLeftX() + 120).setTopY(keyset.getTopY() - 6);
+  keyFire.setTextFont(fontSFPro).setTextSize(15)
+    .setLeftX(keyset.getLeftX() + 120).setTopY(keyset.getTopY() - 3);
   items.add(keyFire);
 
   float boxLeft = playerNamePrompt.getLeftX() - 20;
   float boxRight = playerName.getRightX() + 20;
-  float boxTop = playerBanner.getTopY() - 20;
-  float boxBottom = keyset.getBottomY() + 20;
+  float boxTop = playerBanner.getTopY() - 15;
+  float boxBottom = keyset.getBottomY() + 15;
   RectArea playerBox = new RectArea("PlayerBox" + playerId, boxRight - boxLeft, boxBottom - boxTop);
   playerBox.setDrawBox(true).setBoxFillColor(color(205, 147, 102))
     .setBoxStrokeWeight(3).setBoxStrokeColor(color(96, 32, 32)).setBoxRadius(5)
@@ -95,6 +103,7 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
 
   // // For debug
   // playerNamePrompt.setDrawBox(true);
+  // nameMaxLen.setDrawBox(true);
   // keyMove.setDrawBox(true);
   // keyFire.setDrawBox(true);
 

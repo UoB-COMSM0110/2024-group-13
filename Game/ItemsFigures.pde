@@ -295,8 +295,8 @@ public class Pacman extends Figure {
     if (cause instanceof Bullet) {
       this.getOpponent().incScore(50);
     }
-    PlayPage playPage = (PlayPage)page;
-    playPage.gameOver();
+    GameState gameState = (GameState)page.getSyncItem("GameState");
+    gameState.gameOver();
   }
 
   public int getScore() { return this.score; }
