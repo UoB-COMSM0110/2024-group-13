@@ -55,7 +55,7 @@ public List<LocalItem> createPlayerWidgets(int playerId, float xOffset, float yO
   playerBanner.setImage(imgBanner).setLeftX(xOffset).setTopY(yOffset);
   items.add(playerBanner);
 
-  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId, 210, 30, 15,
+  InputBox playerName = new InputBox("InputBoxPlayerName" + playerId, 210, 30, 11,
       (bx, oStr, nStr) -> {
         gameInfo.setPlayerName(playerId, nStr);
         onPlayerNameSet.run();
