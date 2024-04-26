@@ -122,6 +122,7 @@ public abstract class Figure extends MovableItem {
 final String itemTypeGhost = "Ghost";
 int itemCountGhost;
 final float defaultGhostSpeed = 50.0;
+final float ghostRestoreTimeS = 12.0;
 
 public class Ghost extends Figure {
   private boolean attracted;
@@ -210,9 +211,9 @@ public class Ghost extends Figure {
 
 
 final String itemTypePacman = "Pacman";
+final float defaultPacmanSpeed = 90.0;
 final float pacmanIncBulletDurationS = 1.5;
 final int pacmanBulletsMax = 20;
-final float ghostRestoreTimeS = 12.0;
 
 public class Pacman extends Figure {
   private int playerId; // Valid values: 1, 2
@@ -232,7 +233,7 @@ public class Pacman extends Figure {
     enableFire();
     setViewFactor(0.4);
     setLayer(1);
-    setSpeed(100.0);
+    setSpeed(defaultPacmanSpeed);
     setLives(3);
     refreshHp(3);
     buffDesc = "";
