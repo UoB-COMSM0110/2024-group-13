@@ -14,16 +14,19 @@ package Game {
   usecase "Move Character" as mch
   usecase "Shoot" as sht
   usecase "Character Dies" as chd
+  usecase "Turns into Ghost" as tgst
   usecase "Collect Point" as clpt
   usecase "Collect Power-ups" as cpu
   usecase "Check Points" as chpts
 
   usecase "Check the Leader Board" as clb
+  usecase "Exit the Game" as eg
 }
 
 pg <.... mch : <<extends>>
 pg <.... sht : <<extends>>
 pg <.... chd : <<extends>>
+pg <.... tgst : <<extends>>
 pg <.... clpt : <<extends>>
 pg <.... cpu : <<extends>>
 pg <.... chpts : <<extends>>
@@ -35,5 +38,7 @@ p1 --> pg
 p2 --> pg
 p1 --> clb
 p2 --> clb
+p1 --> eg
+p2 --> eg
 
 @enduml
