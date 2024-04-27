@@ -117,23 +117,33 @@ Interestingly, as the project evolved we noticed that some of the functionalitie
 
 
 ## Design
-### Class Diagram
-At the beginning of this project, we decided that we would take our time planning the architecture for the system before coding the game. This decision was made so that we could think through how we could implement the online multiplayer version without having to do major code refactoring further into the project. This process was complicated and resulted in a long time deliberating and discussing the options before starting the minimum viable product (MVP), however, this approach has allowed our coding to be very structured and align with our implementation challenges.
+At the beginning of this project, we allocated most of our time to designing the system architecture. This decision was made so that we could consider how we would implement the online multiplayer version without requiring a major code refactoring further into the project. This process was complicated and resulted in a long time deliberating and discussing the options before starting the minimum viable product (MVP), however, this approach has allowed our coding to be very structured and align with our three implementation challenges. A part of this initial design was creating the class and communication diagrams shown below.
 
-The image below is the class diagram we agreed upon before starting implementation. As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we had the classes: localItems and synchronisedItems which both extended Items. LocalItems would be used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
+The following sections briefly discuss the diagrams we created before code implementation before summarising the overall architecture of the final product.
+
+### Class Diagram
+As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we have the classes: localItems and synchronisedItems which both extended Items. LocalItems would be used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
 
 <img src="resources/PacClassDiagram.jpg"
 alt="ClassDiagram" width="70%">
 
+*Final class diagram before implementation.*
+
 ### Communication Diagram
-Text
+Our challenge to create an online multiplayer mode, meant that it was difficult to visualise the complex structure of the game. Therefore, we created a communication diagram to model the behaviour of our code; displaying the flow of data between the classes whilst the online multiplayer game mode is activated. This diagram focussed on how the two players connected over online multiplayer to interact with objects and how this is updated through the GameInfo class to synchronise with the other player.
 
 <img src="resources/PacCommunicationDiagram.jpg"
 alt="CommunicationDiagram" width="70%">
 
-### Design Summary
-Text
+*Final communication diagram before implementation.*
 
+### System Archietecture Summary
+Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. Below we have detailed the classes in the final version of the game, these are encompassed by Page, GameInfo, Item and Collision Engine.
+
+
+/
+/ add in class descriptions
+/
 
 ## Implementation
 Text
