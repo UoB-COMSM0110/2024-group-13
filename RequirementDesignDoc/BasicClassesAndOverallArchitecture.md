@@ -4,16 +4,24 @@
 
 ### Top-level classes
 
-Top-level classes are Game, GameInfo, EventRecorder, and Page.
-Page holds all Items.
+Three top-level classes are `Page`, `GameInfo`, and `EventRecorder`.
+
+- A `Page` is what is displayed at the window.
+The game has different pages, e.g., home page, play page, game over page, etc.
+Each page comprises of various `Item`s.
+
+- `GameInfo` holds information that exists across different pages.
+
+- `EventRecorder` stores user input events: keyboard events and mouse events.
 
 <img src="./GameClassesDiagram.png"
 alt="Top-level Classes" width="70%">
 
 ### Item classes
 
-Item represents everything that displays on the screen and
-affects game logic.
+`Item`s make up a page.
+They are drawn on the page.
+They also react to user events and implement game logic.
 
 Game logic is represented by the updates of items and
 by the interactions between items.
@@ -28,7 +36,7 @@ alt="Item Classes" width="70%">
 <img src="./OverallArchitectureSequenceDiagram.png"
 alt="Overall Game Sequence" width="70%">
 
-## How to Store and Manage All the Items
+## Consideration: How to Store and Manage All the Items
 
 ### map-oriented
 
@@ -37,19 +45,21 @@ Item may not need a position attribute.
 For example, in some simple cases, map is a cell array,
 and cell holds items.
 
-Easy to find out whether a particular position is occupied,
+- Easy to find out whether a particular position is occupied,
 and by which item it is occupied.
 
-Difficult to list items or to retrieve a specific item.
+- Difficult to list items or to retrieve a specific item.
 
 ### item-oriented
 
 Items are managed by some list or hash.
 Item needs a position attribute.
 
-Easy to retrieve items.
+This method is what we've chosen.
 
-Difficult to deal with spatial problems,
+- Easy to retrieve items.
+
+- Difficult to deal with spatial problems,
 e.g., what items are in the neighbour of a specific item.
 
 ### hybrid
