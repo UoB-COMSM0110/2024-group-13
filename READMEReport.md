@@ -51,77 +51,52 @@ Both players compete against each other by collecting the coins generated throug
 
 
 ## Requirements
-### Initial Concept Discussion
-At the outset of this task we decided that in order to settle on a single concept for us to pursue, we would take a broad ideation approach which we would further narrow down through further thought and discussion. To this extent, we created a WhatsApp group to communicate and told each other to come up with two or three ideas for us to discuss in our next meeting. In order to help come up with as many ideas as possible we viewed websites that described older arcade style games (and then thought about in which ways these could be changed to create a novel and engaging concept). Ideas were written down and brought to our next meeting.
+### Ideation
+We brainstormed a list of arcade style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to: Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game.
 
-### Selection of Game Concepts
-Once we had this list of ideas we sat down and pitched them to each other, describing the basic premise and seeing how the group reacted. This was done to narrow our vision down to two main ideas that focussed on the the old arcade games Tank and Pacman, with respective twists (of a protection focus and dynamic multiplayer game play respectively) and the technical challenges that we would be covering in each, as well as a paper prototype to better envision how the game would work and to what extent it would prove as engaging as was the ultimate ambition of the project.
+Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that might enable us to combine these into a single game. We decided on a version of Pac-Man with the ability to modify the map by means of explosive projectiles as shown in the paper prototype below.
 
-The results of this idea clinic analysis has been captured as per the paper prototypes shown below.
-
-### Game idea 1: Battle of the Tanks
-[<img src="https://i.ytimg.com/vi/0xlvFs2NJCI/hqdefault.jpg"
-width="70%">](https://www.youtube.com/watch?v=0xlvFs2NJCI
-"Game Idea: Tank")
-
-### Game idea 2: Multiplayer Pac-Man
 [<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
 width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 "Game Idea: Pacman")
 
-### Combining Ideas
-Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that might enable us to take the most fun elements of both and combine these into a single game. Much discussion ensued with a version of Pacman that would allow for multiple players  but also allow for mutual collaboration, and the ability to modify the map by means of explosive projectiles.
+*Pac-Miner paper prototype.*
 
-As soon as this became clear, we found that we could actually build a compelling narrative and story around this involving our pacman character fleeing underground from ghosts and exploitation in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. Additional potential for altering the game play mechanics through the effect of darkness underground different types of mine wall materials also resulted.
+We then built a narrative involving our Pac-Man character fleeing underground from ghosts in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. With additional potential for altering the game play mechanics through the effect of darkness underground and different types of mine wall materials. Throughout this process, we used Adobe Illustrator to create accurate mockups of the interface we would be building towards in the future.
 
-### Requirements Gathering
+[side by side images of adobe illustrator mockups]
+
 #### Stakeholder Analysis
-Finally we were ready to start more actively thinking about the people that would be involved in using, building, maintaining and assessing the quality of our game and the success of the software as a venture. To do this we made use of models such as the Onion Model to make sure all relevant parties were identified.
-These were as follows:
-
-1. Developers (Core Layer): Us as the students working on the project form the core of the onion as we are the most directly involved stakeholders  responsible for designing, coding, and testing the game 
-2. Lecturers/Markers (Inner Layer): While not part of the project’s daily development they were critical for helping in guide the process and ultimately responsible for assessing the quality of the software that we produce (much as a client would be)
-3. Players (Middle Layer): Different to the lecturers,  who would ultimately be playing the game in the final demo, these individuals were the important testers who helped us by providing valuable feedback and helping to test the game’s functionality and appeal
-4. Customers (Outer Layer): In the event that the game is released beyond university any potential existing customers would appear in this layer as people who have an interest in the game but are not currently involved in its development or assessment
-5. University as a negative stakeholder (Outer Layer): The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g. the online multiplayer gaming distracting students from work or using university resources for purposes not aligned with the goals of the institution).
+We were ready to start more actively thinking about the people that would be involved in using, building, maintaining and assessing the quality of our game by using the Onion Model:
+1. Developers (Core Layer): We were responsible for designing, coding, and testing the game
+2. Lecturers/Markers (Inner Layer): Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would
+3. Players (Middle Layer): The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal
+4. Customers (Outer Layer): In the event that the game is released beyond university
+5. University as a negative stakeholder (Outer Layer): The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g. the online multiplayer gaming distracting students from work).
 
 #### Development of User Stories
-Considering these stakeholders we began to speak to some of them and capture their input into functional requirements in the form of User Stories in a standard format. 
-As a player, I want to play against someone else so that I can spend time with my friend.
-As a player, I want to achieve the highest score so that I can win the game.
-As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
-As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
-As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
+Considering these stakeholders we created functional requirements in the form of User Stories: 
+1. As a player, I want to play against someone else so that I can spend time with my friend.
+2. As a player, I want to achieve the highest score so that I can win the game.
+3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
+4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
+5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
 
+Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them; including the user story stating that:
 
-Each story was structured to emphasise the user type, their need, and the reason behind this need. This format was used to ensure that each functionality developed is directly tied to user benefits.
+>As a player, I want to get the highest score so that I can win.
 
-Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them including the user story stating that:
+Which led us to discuss how we could increase competition. Driven by this motivation, we implemented a leaderboard that persisted in memory allowing a player to enjoy their achievement as desired.
 
-	As a player, I want to get the highest score so that I can win.
+Additionally, the following user requirement (relating to being able to easily understand how to play the game), was something we consistently tried to keep in mind and had feedback on in the later stages of the development process.
 
-Which led us to keeping in mind the effect that competition should have on the way that the game was played. Driven by this motivation, we implemented a leaderboard that persisted in memory allowing a player to enjoy their achievement as desired.
+>As a player, I want to have directions on the game so I know how to play.
 
-Additionally, the following user requirement (relating to being able to easily understand how to play the game), was something we consistently tried to keep in mind and were particularly attuned to when capturing feedback in the later stages of the development process.
+As such, from the start we had a tutorial page included. Reflecting reflecting on to the feedback received during evaluation, we improved the way in which instructions were presented by making them more visual. This feedback also led to the inclusion of text-based descriptions of the different special events that occur when the player collects uranium.
 
-  As a player, I want to have directions on the game so I know how to play.
+#### Multiplayer Use Case Specification and Diagram
+We decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends.
 
-As such, right from the start we created the game with a tutorial page included. Coming back and reflecting on this user need in addition to the feedback received had us further look to improve the way in which instructions were presented (which would ultimately go on to use clever design principles to allow the game to be easily understood and played). This also led to the inclusion of text-based descriptions of the different special events that were taking place as the result of the collection of uranium coins.
-
-Finally, we decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends, as this would be a difficult functional aspect to both to develop and make as simple as possible for the user when setting up a game.
-
-#### Use Case Title: Multiplayer Game Session
-Primary Actor: Player
-Stakeholders and Interests:
-- Player: Wants an engaging and competitive gaming experience with friends.
-- Developer: Needs the game to maintain persistent connections and handle multiplayer interactions smoothly.
-- Lecturer: Interested in the game being accessible and quick to learn for demonstration purposes.
-
-Preconditions:
-- Players must have access to the game application on their devices.
-- Players must have an active local area or online connection for multiplayer functionality (with the correct settings enabled)
-
-Main Success Scenario:
 1. The first player (Player 1) opens the game and selects the option to create a new multiplayer game, which generates a unique room number.
 2. Player 1 shares this room number with their friend (Player 2) via a chosen communication method.
 3. Player 2 enters the room number in the designated field on their device to join the game.
@@ -133,13 +108,13 @@ Main Success Scenario:
 9. Similarly, when Player 2's character is defeated, the game concludes the current session and displays the final scores on a leaderboard.
 10. Players are presented with an option to initiate a new game session.
 
-#### Use Case Modelling
-Following this analysis we combined the identified use-cases into a use case diagram as a way to visually illustrate requirements and interactions within the game system.
+We transformed the identified use-cases into a use case diagram to visually illustrate requirements and interactions within the game system.
 
 <img src="resources/GameUseCaseDiagram.png"
 alt="Use case diagram" width="70%">
 
-Interestingly, as the project evolved and we received further feedback from users in the evaluation stages we  noticed that some of the functionalities did not contribute to the user experience as expected and were removed. This was true of the mechanism by which we had intended for players who died to turn into ghosts after they had lost all their lives - which was found to add unnecessary confusion.
+Interestingly, as the project evolved we noticed that some of the functionalities did not contribute to the user experience as expected. This was true of the mechanism by which we had intended for players who died to turn into ghosts after they had lost all their lives.
+
 
 ## Design
 ### Class Diagram
