@@ -8,6 +8,8 @@ public class Test {
     gameInfo = new GameInfo();
     pacman_1 = new Pacman(1);
     pacman_2 = new Pacman(2);
+    pacman_1.setSpeed(100);
+    pacman_2.setSpeed(100);
     page = new PlayPage(null);
     page.addSyncItem(pacman_1);
     page.addSyncItem(pacman_2);
