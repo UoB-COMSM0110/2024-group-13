@@ -37,7 +37,7 @@ Throughout this project we worked cohesively as a team and always had productive
 
 As the name indicates, Pac-Miner uses the classic Pac-Man style map with ghosts and powerups. However, Pac-Man has escaped their original habitat to retreat underground. Along the journey Pac-Man has gained the ability to release explosives which can kill ghosts and destroy walls, enabling the players to escape imminent death and create a route of their own choosing.
 
-[GIF OF DESTROYING WALLS]
+![Croppedshooting-ezgif com-video-to-gif-converter](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/5f436701-edef-468d-8dc9-efa658a1718c)
 
 *Demonstrating our twist: the ability to destroy walls.*
 
