@@ -9,7 +9,7 @@ AudioPlayer backgroundMusicPlayer;
 
 // Load resouces and create the top-level class objects.
 void setup(){
-  test(); // Uncomment to run unit tests.
+  // test(); // Uncomment to run unit tests.
 
   size(800, 680); // Needs to be the first line of `setup`.
 
