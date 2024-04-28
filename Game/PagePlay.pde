@@ -14,6 +14,7 @@ public class PlayPage extends Page {
     super("play", previousPage);
     this.syncDeletesRecord = new JSONArray();
 
+    // Draw out a special area for showing local widgets.
     RectArea localArea = new RectArea("LocalArea",
         gameInfo.getWinWidth(), gameInfo.getMapOffsetY());
     localArea.setDrawBox(true)
@@ -23,6 +24,7 @@ public class PlayPage extends Page {
       .setLayer(-9);
     addLocalItem(localArea);
 
+    // Quit the game before it ends.
     Button backButton = new Button("ButtonBack", 35, 35, "X",
         () -> { trySwitchPage(getPreviousPage()); });
     backButton.setX(10).setY(5);
@@ -37,6 +39,7 @@ public class PlayPage extends Page {
       .setCenterX(gameInfo.getWinWidth() / 2).setCenterY(gameInfo.getWinHeight() / 2).discard();
     addLocalItem(gameOverLabel);
 
+    // Load the map, i.e., all the synchronised items.
     if (!gameInfo.isClientHost()) {
       loadMap(mapPath);
     }
@@ -332,7 +335,7 @@ public class PlayPage extends Page {
   }
   
   private void generateMapBorders() {
-    float borderSize = CHARACTER_SIZE * 2.0;
+    float borderSize = CHARACTER_SIZE * 20.0;
     float verticalBorderHeight = 2.0 * borderSize + gameInfo.getMapHeight();
     float horizonBorderWidth = 2.0 * borderSize + gameInfo.getMapWidth();
     Border leftBorder = new Border("LeftBorder", borderSize, verticalBorderHeight, LEFTWARD);
@@ -356,7 +359,7 @@ public class PlayPage extends Page {
         factoredCoord[2], factoredCoord[3]);
   }
 
-  // Place pacman at the center.
+  // Place pacman at the center, and zoom the map according to view factor.
   public float[] getFactoredCoord(float x, float y, float w, float h) {
     float[] coord = new float[4];
     float factor = 1.0;
@@ -396,6 +399,7 @@ public class PlayPage extends Page {
 }
 
 
+// This page shows up when network problems emerge during playing.
 public class ErrorPage extends Page {
   private String errMsg;
 

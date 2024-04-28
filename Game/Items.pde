@@ -25,6 +25,7 @@ void loadResourcesForItems() {
 }
 
 
+// The border of the map. Invisible. Ensures figures won't go out of the map.
 public class Border extends SynchronizedItem {
   private int forbiddenDirection;
 
@@ -216,6 +217,7 @@ public class Bullet extends MovableItem {
 
 final String itemTypePacmanShelter = "PacmanShelter";
 
+// Starting point and safe house for a pacman.
 public class PacmanShelter extends SynchronizedItem {
   private int owner;
 
@@ -278,6 +280,7 @@ public class PacmanShelter extends SynchronizedItem {
 
 final String itemTypeViewShader = "ViewShader";
 
+// ViewShader is used for online version, where player's view is limited.
 // ViewShader can also be implemented as a LocalItem.
 public class ViewShader extends SynchronizedItem {
   public ViewShader() {
@@ -308,6 +311,9 @@ public class ViewShader extends SynchronizedItem {
 
 final String itemTypeGameState = "GameState";
 
+// GameState is a special class.
+// Used for storing and synchronising overall game status,
+// e.g., whether the game has ended, whether to show the "GameOver" banner, etc.
 public class GameState extends SynchronizedItem {
   private boolean isGameOver;
   private int gameOverWaitingTimeMs;
@@ -333,6 +339,7 @@ public class GameState extends SynchronizedItem {
     this.showGameOverBanner = json.getBoolean("showGameOverBanner");
   }
 
+  // Game over means the game stops and the winner/loser can be decided.
   public boolean isGameOver() { return this.isGameOver; }
   public void gameOver() {
     if (this.isGameOver) { return; }
@@ -340,10 +347,14 @@ public class GameState extends SynchronizedItem {
     this.gameOverWaitingTimeMs = 3000; // 2 second stand-still time.
   }
 
+  // Game finished means the gaming page shall not evolve any more and shall be switched.
+  // It differs from 'game over',
+  // because we set some stand-still time for the gaming page after game over.
   public boolean isGameFinished() {
     return isGameOver() && this.gameOverWaitingTimeMs <= 0;
   }
 
+  // This method shall be called by the page.
   public void step() {
     if (!isGameOver()) { return; }
     if (this.gameOverWaitingTimeMs > 0) {

@@ -20,11 +20,16 @@ static final float defaultPowerUpDurationS = 5.0;
 int nextBuffId = 1;
 private int getNextBuffId() { return nextBuffId++; }
 
+// A buff is a special effect/event triggered directly/indirectly by a power-up.
+// Each buff has a unique id.
+// Pacman has an attribute `buffDesc`, which is a text description showing which buff is in effect.
+// The text description needs to be shown to the players.
+// After the buff with `buffId` expires, `removeBuffDesc` is used to remove its text description.
 private void removeBuffDesc(int buffId, Pacman pacman) {
   String buffIdStr = String.valueOf(buffId);
   String desc = pacman.getBuffDesc();
   if (desc.length() <= buffIdStr.length()) { return; }
-  if (!desc.startsWith(buffIdStr)) { return; }
+  if (!desc.startsWith(buffIdStr)) { return; } // Not to remove other buff's text description.
   char type = desc.charAt(buffIdStr.length());
   if (type != '+' && type != '-') { return; }
   pacman.setBuffDesc("");
@@ -41,6 +46,7 @@ public abstract class PowerUp extends SynchronizedItem {
     super(itemTypePowerUp + itemCountPowerUp++, CHARACTER_SIZE, CHARACTER_SIZE);
   }
 
+  // Replace this power-up with another one after some time.
   public PowerUp replace() {
     discard().delete();
     page.addTimer(new OneOffTimer(powerUpRestoreTimeS, () -> {
@@ -58,6 +64,7 @@ public abstract class PowerUp extends SynchronizedItem {
 }
 
 
+// Control your rival for some time.
 public class OpponentControlPowerUp extends PowerUp {
   public OpponentControlPowerUp() {
     super();
@@ -89,6 +96,7 @@ public class OpponentControlPowerUp extends PowerUp {
 }
 
 
+// Not used currently.
 public class TeleportPowerUp extends PowerUp {
   public TeleportPowerUp() {
     super();
@@ -112,6 +120,7 @@ public class TeleportPowerUp extends PowerUp {
 }
 
 
+// Freeze your rival for some time.
 public class TimeFreezePowerUp extends PowerUp {
   public TimeFreezePowerUp() {
     super();
@@ -164,7 +173,6 @@ public class SizeModificationPowerUp_Pacman extends PowerUp {
 }
 
 
-// if ghost could be stuck in the future version
 public class SizeModificationPowerUp_Ghost extends PowerUp {
   public SizeModificationPowerUp_Ghost() {
     super();
@@ -200,6 +208,7 @@ public class SizeModificationPowerUp_Ghost extends PowerUp {
 }
 
 
+// Generate a trap which slows down opponent/ghost.
 public class TrapPowerUp extends PowerUp {
   public TrapPowerUp() {
     super();
@@ -223,8 +232,8 @@ final String itemTypeTrap = "Trap";
 int itemCountTrap;
 
 public class Trap extends SynchronizedItem {
-  private int owner;
-  private TrapPowerUp generator;
+  private int owner; // Which pacman collected this trap's generator?
+  private TrapPowerUp generator; // Which power-up generated this trap?
 
   public Trap(int owner) {
     super(itemTypeTrap + itemCountTrap++, CHARACTER_SIZE * 1.5, CHARACTER_SIZE * 1.5);
@@ -296,6 +305,7 @@ public class Trap extends SynchronizedItem {
 }
 
 
+// Generate a magnet which attract ghosts.
 public class GhostMagnetPowerUp extends PowerUp {
   public GhostMagnetPowerUp() {
     super();

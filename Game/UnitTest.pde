@@ -1,5 +1,6 @@
+import java.util.concurrent.TimeUnit;
+
 public class Test {
-  
   Pacman pacman_1;
   Pacman pacman_2;
   float init_size = CHARACTER_SIZE * 2.51;
@@ -8,8 +9,6 @@ public class Test {
     gameInfo = new GameInfo();
     pacman_1 = new Pacman(1);
     pacman_2 = new Pacman(2);
-    pacman_1.setSpeed(100);
-    pacman_2.setSpeed(100);
     page = new PlayPage(null);
     page.addSyncItem(pacman_1);
     page.addSyncItem(pacman_2);
@@ -17,6 +16,7 @@ public class Test {
   
   public void test() {
     testPowerUp();
+    testCollisionSolving();
   }
   
   private void testPowerUp() {
@@ -36,17 +36,56 @@ public class Test {
     assert pacman_1.getH() != init_size : "";
     
     TrapPowerUp trapPowerUp = new TrapPowerUp();
-    assert pacman_1.getSpeed() == 100 : "Pacman_1's speed should be 100 at first.";
+    assert pacman_1.getSpeed() == defaultPacmanSpeed : "Pacman_1's speed should be " + defaultPacmanSpeed + " at first.";
     trapPowerUp.onCollisionWith(pacman_2);
 
     Trap trap = (Trap) page.getSyncItem(itemTypeTrap + (itemCountTrap - 1));
     trap.onCollisionWith(pacman_1);
-    assert pacman_1.getSpeed() < 100 : "Unlucky guy pacman_1 steps on the trap, so he slows down.";
+    assert pacman_1.getSpeed() < defaultPacmanSpeed : "Unlucky guy pacman_1 steps on the trap, so he slows down.";
     
     SpeedSurgePowerUp speedUp = new SpeedSurgePowerUp();
-    assert pacman_2.getSpeed() == 100 : "Pacman_2's speed should be 100 at first.";
+    assert pacman_2.getSpeed() == defaultPacmanSpeed : "Pacman_2's speed should be " + defaultPacmanSpeed + " at first.";
     speedUp.onCollisionWith(pacman_2);
-    assert pacman_2.getSpeed() > 100 : "Pacman_2 get the speed surget power up, now he move really fast.";
+    assert pacman_2.getSpeed() > defaultPacmanSpeed : "Pacman_2 get the speed surget power up, now he move really fast.";
   }
-  
+
+  private void testCollisionSolving() {
+    int oldFrameCount = frameCount;
+    frameCount++;
+    gameInfo.update();
+    gameInfo.updateEvolveTime();
+
+    Ghost ghost = new Ghost();
+    ghost.setX(0).setY(0);
+    Coin coin = new Coin();
+    coin.setX(0).setY(0);
+    assert ghost.isOverlapWith(coin) : "Ghost and Coin should overlap.";
+    ghost.tryStepbackFrom(coin); // This step back should not work.
+    assert ghost.isOverlapWith(coin) : "Ghost and Coin should overlap.";
+    ghost.tryPushbackFrom(coin, LEFTWARD);
+    assert !ghost.isOverlapWith(coin) : "Ghost and Coin should not overlap.";
+    assert ghost.getPenetrationDepthOf(coin, LEFTWARD) < 0.1 : "Ghost and Coin should be adjacent.";
+
+    try {
+      TimeUnit.MILLISECONDS.sleep(50);
+    } catch (Exception e) {}
+    frameCount++;
+    gameInfo.update();
+
+    ghost.setX(0).setY(0);
+    ghost.setDirection(RIGHTWARD).setSpeed(100.0 / gameInfo.getLastEvolveIntervalS());
+    ghost.move();
+    coin.setLeftX(ghost.getRightX() - 1.0).setY(ghost.getY());
+    assert ghost.isOverlapWith(coin) : "Ghost and Coin should overlap.";
+    ghost.tryStepbackFrom(coin); // This step back should work.
+    assert !ghost.isOverlapWith(coin) : "Ghost and Coin should not overlap.";
+    assert ghost.getPenetrationDepthOf(coin) < 0.1 : "Ghost and Coin should be adjacent.";
+
+    frameCount = oldFrameCount;
+  }
+}
+
+
+void test() {
+  new Test().test();
 }

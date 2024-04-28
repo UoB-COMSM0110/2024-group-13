@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+// References for java selectors:
 // https://jenkov.com/tutorials/java-nio/selectors.html
 // https://www.baeldung.com/java-nio-selector
 
@@ -26,17 +27,18 @@ static final int singleHostId = 0;
 static final int serverHostId = 1;
 static final int clientHostId = 2;
 
+// TCP port used when communication through network.
 final int port = 2024;
 
 final int bufferSize = 2 * MB;
-final String messageDelim = "[MSGEOF]";
+final String messageDelim = "[MSGEOF]"; // network data from different game frames are separated by `messageDelim`
 
-static final int networkTimeoutMs = 3000;
+static final int networkTimeoutMs = 6000;
 
 
 // A handy struct containing data cache for socket.
 private class Cache {
-  private boolean isSendingCache;
+  private boolean isSendingCache; // Whether used as sending cache or receiving cache.
   public String data;
   public ByteBuffer buffer;
   public long lastActiveTimeMs;
@@ -80,17 +82,20 @@ public class GameInfo {
   private String playerName1;
   private String playerName2;
 
+  // Server side network interfaces.
   private Selector selectorServer;
   private ServerSocketChannel listenerServer;
   private SocketChannel socketServer;
   private Cache sendCacheServer;
   private Cache recvCacheServer;
 
+  // Client side network interfaces.
   private Selector selectorClient;
   private SocketChannel socketClient;
   private Cache sendCacheClient;
   private Cache recvCacheClient;
 
+  // For ssh port forwarding.
   private int nextForwardPort = port;
   private Process sshProcess;
 
@@ -99,6 +104,7 @@ public class GameInfo {
     this.connectedToClient = false;
     this.connectedToServer = false;
 
+    // Window size and game map size.
     this.windowWidth = 800.0;
     this.windowHeight = 720.0;
     this.mapWidth = 800.0;
@@ -184,6 +190,7 @@ public class GameInfo {
     return playerId == 1 ? getPlayerName1() : getPlayerName2();
   }
 
+  // Start waiting on tcp port for incoming client.
   public boolean startSyncAsServer() {
     try {
       this.selectorServer = Selector.open();
@@ -200,6 +207,7 @@ public class GameInfo {
     }
   }
 
+  // Check whether some client has reached to us.
   // Accept only one client.
   private Boolean tryAcceptClient() {
     if (this.connectedToClient) { return Boolean.TRUE; }
@@ -237,6 +245,8 @@ public class GameInfo {
       !this.sendCacheServer.buffer.hasRemaining();
   }
 
+  // Write server data to client.
+  // The data may be stored in cache, rather than directly sent to network.
   public Integer writeSocketServer(String data) {
     if (!isConnectedToClient()) {
       Boolean connected = tryAcceptClient();
@@ -246,6 +256,7 @@ public class GameInfo {
     return writeSocket(this.socketServer, this.sendCacheServer, data);
   }
 
+  // Write all cached server data to client.
   public boolean writeOutSocketServer(long timeoutMs) {
     if (!isConnectedToClient()) { return true; }
     long startMs = System.currentTimeMillis();
@@ -257,6 +268,7 @@ public class GameInfo {
     return isServerSendBufferEmpty();
   }
 
+  // Read data from client.
   public ArrayList<String> readSocketServer() {
     if (!isConnectedToClient()) {
       Boolean connected = tryAcceptClient();
@@ -273,6 +285,7 @@ public class GameInfo {
     return res;
   }
 
+  // Close server side network connection.
   public void stopSyncAsServer() {
     if (this.listenerServer != null) {
       try { this.listenerServer.close(); }
@@ -296,11 +309,12 @@ public class GameInfo {
     page.onConnectionClose();
   }
 
+  // Connect to server at specified ip.
   public boolean startSyncAsClient(String serverIp) {
     try {
       String connectHost = serverIp;
       int connectPort = port;
-      if (true) {
+      if (true) { // If no need for ssh port forwarding, change the if condition to `false`.
         int forwardPort = this.nextForwardPort++;
         ProcessBuilder builder = new ProcessBuilder(
             "/usr/bin/ssh", "-L", forwardPort + ":localhost:" + port, serverIp, "sleep 5");
@@ -320,6 +334,7 @@ public class GameInfo {
     }
   }
 
+  // Check whether connection to server is established.
   private Boolean tryConnectServer() {
     if (this.connectedToServer) { return Boolean.TRUE; }
     if (this.socketClient == null) { return Boolean.FALSE; }
@@ -344,6 +359,7 @@ public class GameInfo {
       !this.sendCacheClient.buffer.hasRemaining();
   }
 
+  // Send client data to server.
   public Integer writeSocketClient(String data) {
     if (!isConnectedToServer()) {
       Boolean connected = tryConnectServer();
@@ -353,6 +369,7 @@ public class GameInfo {
     return writeSocket(this.socketClient, this.sendCacheClient, data);
   }
 
+  // Send all cached client data to server.
   public boolean writeOutSocketClient(long timeoutMs) {
     if (!isConnectedToServer()) { return true; }
     long startMs = System.currentTimeMillis();
@@ -364,6 +381,7 @@ public class GameInfo {
     return isClientSendBufferEmpty();
   }
 
+  // Read data from server.
   public ArrayList<String> readSocketClient() {
     if (!isConnectedToServer()) {
       Boolean connected = tryConnectServer();
@@ -380,6 +398,7 @@ public class GameInfo {
     return res;
   }
 
+  // Stop client side network connection.
   public void stopSyncAsClient() {
     if (this.socketClient != null) {
       try { this.socketClient.close(); }
@@ -398,6 +417,7 @@ public class GameInfo {
     page.onConnectionClose();
   }
 
+  // Move data to cache, then try writing them to socket.
   public Integer writeSocket(SocketChannel socket, Cache cache, String data) {
     Integer writeBytes = new Integer(0);
     if (data != null) {
@@ -420,6 +440,7 @@ public class GameInfo {
     return writeBytes;
   }
 
+  // Read data from socket, and cache partial data frame.
   public ArrayList<String> readSocket(Selector selector, SocketChannel socket, Cache cache) {
     ArrayList<String> res = new ArrayList<String>();
     try {
@@ -476,6 +497,7 @@ public class GameInfo {
 }
 
 
+// This function get the ip address of localhost.
 public static String getIpAddr() {
   List<String> allIps = getAllIpAddr();
   if (allIps == null || allIps.size() <= 0) { return "0.0.0.0"; }

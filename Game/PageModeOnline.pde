@@ -116,7 +116,7 @@ public class OnlineModePage extends Page {
       updateWidgets();
     }
   }
-  void prepareToLeaveGame() {
+  void prepareToLeaveGame() { // Tell the other player that We are going to close the connection.
     this.leavingGame = true;
     if (isSwitchingTo("play")) { stopSwitchingPage(); }
     updateStartButton();
@@ -155,6 +155,8 @@ public class OnlineModePage extends Page {
     }
   }
 
+  // Write out all cached data,
+  // and then close the network connection.
   public void leaveGame() {
     this.leavingGame = false;
     if (gameInfo.isServerHost()) { gameInfo.writeOutSocketServer(2000); }
@@ -185,6 +187,7 @@ public class OnlineModePage extends Page {
     updateWidgets();
   }
 
+  // Adjust the widgets according to connection states and user inputs.
   public void updateWidgets() {
     Button createButton = (Button)getLocalItem("CreateGame");
     Button joinButton = (Button)getLocalItem("JoinGame");

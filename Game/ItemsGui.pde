@@ -3,8 +3,9 @@ final int textColorDisabled = color(100, 100, 100);
 final int textSizeDefault = 20;
 
 
+// A rectangular area which might contain an image.
 public class RectArea extends LocalItem {
-  private boolean drawBox;
+  private boolean drawBox; // whether to draw border box.
   private float boxStrokeWeight;
   private int boxStrokeColor;
   private boolean boxFill;
@@ -51,6 +52,7 @@ public class RectArea extends LocalItem {
 }
   
 
+// A rectangular area which might contains text.
 public class Label extends RectArea {
   private String prefix;
   private String text;
@@ -59,7 +61,7 @@ public class Label extends RectArea {
   private PFont textFont;
   private int textAlignHorizon;
   private int textAlignVertical;
-  private Action updater;
+  private Action updater; // The updater will be called for each frame. Can be used to update text.
 
   public Label(String name, float w, float h, String text) {
     super(name, w, h);
@@ -121,6 +123,7 @@ public class Label extends RectArea {
 }
 
 
+// A label that reacts to user event.
 public abstract class InteractiveWidget extends Label {
   boolean disabled;
 
@@ -149,9 +152,9 @@ public abstract class InteractiveWidget extends Label {
 
 
 public class Button extends InteractiveWidget {
-  private Action action;
+  private Action action; // What to do if clicked?
 
-  private boolean hovering;
+  private boolean hovering; // Whether the cursor is on hovering on this button?
   private float zoomRatio;
 
   public Button(String name, float w, float h, String text) {
@@ -219,10 +222,10 @@ public static interface TextChangeCallback {
 }
 
 public class InputBox extends InteractiveWidget {
-  private String defaultText;
+  private String defaultText; // This `defaultText` feature is currently not used.
   private String promptText;
-  private int maxLen;
-  private TextChangeCallback callback;
+  private int maxLen; // Max characters that the user can enter.
+  private TextChangeCallback callback; // What to do if text changed?
 
   private boolean onFocus;
 

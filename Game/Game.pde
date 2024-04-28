@@ -1,17 +1,18 @@
 import ddf.minim.*;
 
-GameInfo gameInfo;
-EventRecorder eventRecorder;
-
-Page page;
+// Top-level class references.
+GameInfo gameInfo; // Has only one instance
+EventRecorder eventRecorder; // Has only one instance
+Page page; // `page` refers to different pages throughout the game.
 
 AudioPlayer backgroundMusicPlayer;
 
+// Load resouces and create the top-level class objects.
 void setup(){
-  test();
+  // test(); // Uncomment to run unit tests.
+
   size(800, 680); // Needs to be the first line of `setup`.
 
-  // Create the top-level game objects.
   gameInfo = new GameInfo();
   windowResize((int)gameInfo.getWinWidth(), (int)gameInfo.getWinHeight());
   eventRecorder = new EventRecorder();
@@ -109,10 +110,6 @@ void loadResouces() {
 
   minim = new Minim(this);
   backgroundMusicPlayer = minim.loadFile(BackgroundMusic);
-}
-
-void test() {
-  new Test().test();
 }
 
 

@@ -32,7 +32,7 @@ public class KeyboardEvent extends Event {
 
   public KeyboardEvent(int key, int keyCode) {
     super();
-    this.key = key;
+    this.key = key; // which key is signaling
     this.keyCode = keyCode;
   }
 
@@ -92,7 +92,7 @@ public class MouseEvent extends Event {
 
 
 public class MouseClickedEvent extends MouseEvent {
-  int button;
+  int button; // which button is clicked
 
   public MouseClickedEvent(float x, float y, int button) {
     super(x, y);

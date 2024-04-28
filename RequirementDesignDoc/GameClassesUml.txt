@@ -1,18 +1,23 @@
 @startuml
 
-class Game {
- +updatePage()
- +drawPage()
+class TheGame {
+ --The processing top-level class--
+ gameInfo: GameInfo
+ eventRecorder: EventRecorder
+ page: Page
+ setup()
+ draw()
 }
 
 class GameInfo {
- --Game settings/configurations--
+ --Cross-page data, settings, components--
+ +update()
 }
 
 class EventRecorder {
  -events : ArrayList<Event>
- +getEvents()
- +clearEvents()
+ +fetchEvents()
+ +dropEvents()
 }
 EventRecorder "1" o-- "0..*" Event
 
@@ -27,20 +32,21 @@ class KeyboardEvent {}
 Event <|-- KeyboardEvent
 
 class Page {
+ -name: String
  -syncItems : HashMap<String, SynchronizedItem>
  -localItems : HashMap<String, LocalItem>
- +update()
  +isObsolete()
- +getNextPage()
- +evolveSyncItems()
+ +fetchNextPage()
+ +update()
  +dispatchEventsToLocalItems()
+ +evolveSyncItems()
  +updateItems()
  +draw()
 }
 
-Game "1" *-- "1" GameInfo
-Game "1" *-- "1" Page
-Game "1" *-- "1" EventRecorder
+TheGame "1" *-- "1" GameInfo
+TheGame "1" *-- "1" Page
+TheGame "1" *-- "1" EventRecorder
 
 class Item {
  --Base class for everything in the game--

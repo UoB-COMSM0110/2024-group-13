@@ -16,6 +16,7 @@ public class CollisionEngine {
 public class SimpleCollisionEngine {
   // Solve all collisions between items.
   public void solveCollisions(Condition stopCond) {
+    // Collisions never happen between immovable items.
     ArrayList<SynchronizedItem> checked = new ArrayList<SynchronizedItem>();
     ArrayList<MovableItem> unchecked = new ArrayList<MovableItem>();
     for (SynchronizedItem item : page.getSyncItems()) {

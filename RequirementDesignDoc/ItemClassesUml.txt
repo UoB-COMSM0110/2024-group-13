@@ -1,45 +1,79 @@
 @startuml
 left to right direction
 
-class Item {
+abstract Item {
  -name : String
  -x : float
  -y : float
  -w : float
  -h : float
- -facing
  -layer : int
- +onEvents()
+ -discarded : boolean
+ +getStateJson()
+ +setStateJson()
  +update()
  +draw()
 }
 note "This game adopts an item-oritented design.\n\
-Every thing in the game, e.g., figures, brick, bullet, etc., will be an subclass of item.\n\
+Every thing in the game, e.g., figures, bricks, bullets, etc., will be an subclass of item.\n\
 Game logic is interpreted as updates of and interactions between items.\n\
 The top-level architecture is a framework for handling updates and interactions." as NItem
 Item ... NItem
 
-class LocalItem {
- +evolve()
- +onCollisionWith()
- +serialize()
- +draw()
+abstract LocalItem {
+ +onEvent()
 }
 note right of LocalItem : LocalItem doesn't need to be synchronized between two players.
 Item <|-- LocalItem
 
-class SynchronizedItem {
+LocalItem <|-- RectArea
+RectArea <|-- Label
+abstract InteractiveWidget
+Label <|-- InteractiveWidget
+InteractiveWidget <|-- Button
+InteractiveWidget <|-- InputBox
+
+abstract SynchronizedItem {
+ +onKeyboardEvent()
+ +evolve()
+ +onCollisionWith()
 }
 note right of SynchronizedItem : SynchronizedItem needs to be synchronized between two players.
 Item <|-- SynchronizedItem
 
-class MovableItem {
+abstract MovableItem {
  -speed : float
- -direction
+ -direction : int
  -moving : boolean
- +startMoving()
- +stopMoving()
+ +move()
 }
 SynchronizedItem <|-- MovableItem
+
+SynchronizedItem <|-- Border
+abstract Wall
+SynchronizedItem <|-- Wall
+Wall <|-- BreakableWall
+Wall <|-- IndestructableWall
+SynchronizedItem <|-- Coin
+MovableItem <|-- Bullet
+SynchronizedItem <|-- PacmanShelter
+SynchronizedItem <|-- ViewShader
+
+abstract PowerUp
+SynchronizedItem <|-- PowerUp
+PowerUp <|-- OpponentControlPowerUp
+PowerUp <|-- TimeFreezePowerUp
+PowerUp <|-- SizeModificationPowerUp_Pacman
+PowerUp <|-- SizeModificationPowerUp_Ghost
+PowerUp <|-- TrapPowerUp
+SynchronizedItem <|-- Trap
+PowerUp <|-- GhostMagnetPowerUp
+SynchronizedItem <|-- Magnet
+PowerUp <|-- SpeedSurgePowerUp
+
+abstract Figure
+MovableItem <|-- Figure
+Figure <|-- Ghost
+Figure <|-- Pacman
 
 @enduml

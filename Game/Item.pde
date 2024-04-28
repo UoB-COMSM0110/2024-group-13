@@ -15,7 +15,7 @@ public abstract class Item {
   private float w, h; // Item size.
   private float x, y; // Position of item top-left corner.
   private int layer; // Item layer decides its drawing order.
-  private boolean discarded;
+  private boolean discarded; // Discarded items won't be drawn.
 
   private String storedStateStr;
 
@@ -26,6 +26,7 @@ public abstract class Item {
     this.storedStateStr = "";
   }
 
+  // Pack item state into a json object, which will be serialised and sent to network.
   public JSONObject getStateJson() {
     JSONObject json = new JSONObject();
     json.setString("class", getClass().getSimpleName());
@@ -38,6 +39,7 @@ public abstract class Item {
     json.setBoolean("discarded", isDiscarded());
     return json;
   }
+  // Modify item state according to json object, which is deserialised from network message.
   public void setStateJson(JSONObject json) {
     this.name = json.getString("name");
     setW(json.getFloat("w"));
@@ -95,7 +97,7 @@ public abstract class Item {
   // This method can interact with other items.
   public void update() {}
 
-  public abstract void delete();
+  public abstract void delete(); // Delete this item from current page.
 
   public PImage getImage() { return null; }
 
@@ -153,21 +155,18 @@ public abstract class LocalItem extends Item {
 
 // Synchronized items need synchronize between two players.
 // For example: figures, bricks, bullets, etc.
+//
+// The position of synchronized items is express in map coordinates, not local coordinates.
 public abstract class SynchronizedItem extends Item {
   public SynchronizedItem(String name, float w, float h) { super(name, w, h); }
 
   public void onKeyboardEvent(KeyboardEvent e) {}
 
-  // Whether the mouse cursor is over the item when the event happened.
-  public boolean isMouseEventRelated(MouseEvent e) {
-    return getLeftX() < e.getX() && e.getX() < getRightX()
-      && getTopY() < e.getY() && e.getY() < getBottomY();
-  }
-
   // Additional method for sync items to update status.
   // Mainly update status which affects game logic, e.g., movement of figures.
   public void evolve() {}
 
+  // Whether this item participates in collision check.
   public boolean noCollisionCheck() { return isDiscarded(); }
 
   // Called when two sync items collide with each other.
@@ -178,6 +177,7 @@ public abstract class SynchronizedItem extends Item {
       getTopY() < target.getBottomY() && target.getTopY() < getBottomY();
   }
 
+  // Get the relative direction of two items.
   // Adapted from Chao's previous code in ItemsFigures.pde
   public int getDirectionOf(SynchronizedItem target) {
     float dx = target.getCenterX() - getCenterX();
@@ -191,6 +191,7 @@ public abstract class SynchronizedItem extends Item {
     }
   }
 
+  // Discard this item for some time, and then restore it.
   public SynchronizedItem discardFor(float intervalS) {
     discard();
     page.addTimer(new OneOffTimer(intervalS, () -> { restore(); }));
@@ -202,6 +203,7 @@ public abstract class SynchronizedItem extends Item {
 
   // Sync items use sync coordiantes.
   // Need to transform sync coordinates into local coordinates before drawing.
+  // The transform is performed by the current page.
   @Override
   public void draw(float x, float y, float w, float h) {
     float[] localCoord = page.getLocalCoord(x, y, w, h);
@@ -216,6 +218,7 @@ public abstract class MovableItem extends SynchronizedItem {
   private int direction;
   private boolean moving; // Whether the item is moving between two frames.
   
+  // Store the starting position at the beginning of each frame.
   private float refX;
   private float refY;
   
@@ -298,7 +301,7 @@ public abstract class MovableItem extends SynchronizedItem {
   // If `this` overlaps with `target`,
   // then push `this` in the opposite of `direction`.
   //
-  // This method is useful for implementing hard boundaries.
+  // This method is useful for implementing hard boundaries, i.e., ensures no overlap.
   // But it may cause problems, and may violate the presumption of `tryStepbackFrom`.
   public boolean tryPushbackFrom(Item target, int direction) {
     float backMovement = getPenetrationDepthOf(target, direction);
@@ -311,10 +314,11 @@ public abstract class MovableItem extends SynchronizedItem {
 
   public void onStepback(Item target) {}
 
-  private float getPenetrationDepthOf(Item target) {
+  // How deep has this item run into the target?
+  public float getPenetrationDepthOf(Item target) {
     return getPenetrationDepthOf(target, getDirection());
   }
-  private float getPenetrationDepthOf(Item target, int direction) {
+  public float getPenetrationDepthOf(Item target, int direction) {
     switch (direction) {
       case UPWARD: return target.getBottomY() - getTopY();
       case RIGHTWARD: return -(target.getLeftX() - getRightX());
@@ -324,6 +328,7 @@ public abstract class MovableItem extends SynchronizedItem {
     return 0.0;
   }
 
+  // How far has this item gone from its starting point of the current frame?
   private float getMovementFromRefPoint() {
     switch (getDirection()) {
       case UPWARD: return -(getY() - this.refY);
