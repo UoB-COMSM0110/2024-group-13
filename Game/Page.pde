@@ -5,14 +5,16 @@ import java.util.List;
 // Page is somewhat to the player the window of the game.
 // Page holds all the items in the window,
 // and is responsible for updating and drawing them.
+//
+// The current page is in charge of switch to the next page.
 public abstract class Page {
   private String name;
   private HashMap<String, SynchronizedItem> syncItems;
   private HashMap<String, LocalItem> localItems;
-  private ArrayList<Timer> localTimers;
-  private ArrayList<Timer> timers;
+  private ArrayList<Timer> localTimers; // Local times shall only update local items.
+  private ArrayList<Timer> timers; // Synchronised times shall only update synchronised items.
   private Page previousPage; // With this attribute, we can form a page stack.
-  private Page nextPage;
+  private Page nextPage; // If this is not null, it means we are going to switch page.
 
   public Page(String name, Page previousPage) {
     this.name = name;
@@ -97,6 +99,8 @@ public abstract class Page {
     }
   }
 
+  // This method behaves different on single-host(local) mode,
+  // online server side, online client side.
   public void evolveSyncItems(ArrayList<KeyboardEvent> events) {
     if (gameInfo.isServerHost()) {
       evolveSyncItemsServerSide(events);
@@ -107,6 +111,8 @@ public abstract class Page {
     }
   }
 
+  // Server receives client-side user events, do all the calculations to the synchronised items,
+  // then sends back updated states of the items.
   public void evolveSyncItemsServerSide(ArrayList<KeyboardEvent> events) {
     ArrayList<String> clientMessages = null;
     clientMessages = gameInfo.readSocketServer();
@@ -134,6 +140,7 @@ public abstract class Page {
     if (isSwitching()) { gameInfo.writeOutSocketServer(2000); }
   }
 
+  // Server pack the changes of items into a message, which will be sent to client.
   public JSONObject getMsgJsonToClient() {
     JSONObject msgJsonToClient = new JSONObject();
     msgJsonToClient.setJSONObject("info", getSyncInfo());
@@ -145,6 +152,7 @@ public abstract class Page {
     return new JSONArray();
   }
 
+  // Client sends user events to server, and receives state updates of synchronised items.
   public void evolveSyncItemsClientSide(ArrayList<KeyboardEvent> events) {
     String msgToServer = null;
     JSONObject msgJsonToServer = getMsgJsonToServer(events);
@@ -168,6 +176,7 @@ public abstract class Page {
     }
   }
 
+  // Client packs user events into a message, which will be sent to server.
   public JSONObject getMsgJsonToServer(ArrayList<KeyboardEvent> events) {
     JSONObject msgJsonToServer = new JSONObject();
     msgJsonToServer.setJSONObject("info", getSyncInfo());
@@ -179,6 +188,7 @@ public abstract class Page {
     return new JSONArray();
   }
 
+  // Client update items according to the data received from server.
   public void applyChangesFromJson(JSONArray changesJson) {
     for (int i = 0; i < changesJson.size(); ++i) {
       JSONObject json = changesJson.getJSONObject(i);
@@ -200,6 +210,7 @@ public abstract class Page {
     }
   }
 
+  // Actually update all the items. Won't be called on client side.
   // This method is in fact only used by `PlayPage`.
   public void doEvolve(ArrayList<KeyboardEvent> events) {
     runTimers();
@@ -220,6 +231,10 @@ public abstract class Page {
 
   public void solveCollisions() {}
 
+  // Besides item states and user events,
+  // server and client also need to synchronising some information about their
+  // current page and some overall status.
+  // These synchronised information is called "info" inside the json messages.
   public JSONObject getSyncInfo() {
     JSONObject json = new JSONObject();
     json.setString("page", getName());
@@ -228,11 +243,12 @@ public abstract class Page {
     json.setString("nextPage", nextPageName);
     json.setString("player1", gameInfo.getPlayerName1());
     json.setString("player2", gameInfo.getPlayerName2());
-    json.setBoolean("leaving", isLeavingGame());
+    json.setBoolean("leaving", isLeavingGame()); // Whether the client/server is going to close connection?
     return json;
   }
   public boolean isLeavingGame() { return false; }
 
+  // Deals with received sync "info".
   public boolean dispatchSyncInfo(JSONObject json) {
     if (json.getBoolean("leaving")) {
       onCounterpartLeave();
@@ -296,6 +312,7 @@ public abstract class Page {
     }
   }
 
+  // This method transforms the coordinates of synchronised items into local coordinates.
   public float[] getLocalCoord(float x, float y, float w, float h) {
     float[] coord = new float[4];
     coord[0] = gameInfo.getMapOffsetX() + x * gameInfo.getMapScaleX();

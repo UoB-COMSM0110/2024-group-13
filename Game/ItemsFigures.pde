@@ -35,6 +35,8 @@ void loadResourcesForFigures() {
 }
 
 
+// If figures lose all its HP, it will lose one life,
+// and will refresh its HP to `maxHp` if it has remaining lives.
 public abstract class Figure extends MovableItem {
   private int lives;
   private int maxHp;
@@ -72,7 +74,7 @@ public abstract class Figure extends MovableItem {
   public Figure incLives(int inc) { return setLives(getLives() + inc); }
 
   public Figure decLives(int dec) { return decLives(dec, null); }
-  public Figure decLives(int dec, Object cause) {
+  public Figure decLives(int dec, Object cause) { // `cause`: what has caused the figure to lose live?
     setLives(getLives() - dec);
     if (getLives() <= 0) {
       onLostAllLives(cause);
@@ -109,7 +111,7 @@ public abstract class Figure extends MovableItem {
   public Figure incHp(int inc) { return setHp(getHp() + inc); }
 
   public Figure decHp(int dec) { return decHp(dec, null); }
-  public Figure decHp(int dec, Object cause) {
+  public Figure decHp(int dec, Object cause) { // `cause`: what has caused the figure to lose hp?
     setHp(getHp() - dec);
     if (getHp() <= 0) {
       decLives(1, cause);
@@ -153,6 +155,7 @@ public class Ghost extends Figure {
 
   @Override
   public void evolve() {
+    // Ghost goes randomly, except that if the magnet exists, it will be attracted to the magnet.
     if (this.changeDirectionTimer == null) { randomizeDirection(); }
     this.attracted = false;
     Magnet magnet = (Magnet)page.getSyncItem(itemTypeMagnet);
@@ -199,6 +202,8 @@ public class Ghost extends Figure {
   
   @Override
   public PImage getImage() {
+    // If ghost is attracted to the magnet,
+    // it won't change its facing(image) according to moving direction.
     if (this.attracted) { return this.img; }
     if (this.getDirection() == UPWARD || this.getDirection() == RIGHTWARD) {
       this.img = imageGhost_R;
@@ -231,6 +236,8 @@ public class Pacman extends Figure {
     super(itemTypePacman + playerId, 2.51 * CHARACTER_SIZE, 2.51 * CHARACTER_SIZE);
     this.playerId = playerId;
     enableFire();
+    // For online version, players only has a view of 40%x40% of the whole map.
+    // And even this portion will be further limited by ViewShader.
     setViewFactor(0.4);
     setLayer(1);
     setSpeed(defaultPacmanSpeed);
@@ -317,6 +324,7 @@ public class Pacman extends Figure {
   public void incBullet(int inc) { this.numBullets += inc; }
   public void decBullet(int dec) { this.numBullets -= dec; }
 
+  // Generate a bullet.
   public void fire() {
     if (!isAbleToFire()) { return; }
     if (getNumberOfBullets() <= 0) { return; }
@@ -380,6 +388,8 @@ public class Pacman extends Figure {
     else { return  getPlayerId() == 2; }
   }
 
+  // For online version, pacman 1 is controlled by key events from server host.
+  // pacman 2 is controlled by key events from client host.
   public boolean acceptKeyboardEvent(KeyboardEvent e) {
     if (gameInfo.isSingleHost()) { return true; }
     if (isControlledByOpponent()) { return e.getHostId() != getPlayerId(); }
@@ -437,7 +447,7 @@ public class Pacman extends Figure {
   }
 
   @Override
-  public void update() {
+  public void update() { // Update corresponding local widgets according to the state of this pacman.
     Label scoreLabel = (Label)page.getLocalItem("Score" + getPlayerId());
     if (scoreLabel != null) { scoreLabel.setText(String.valueOf(getScore())); }
 

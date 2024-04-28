@@ -9,6 +9,11 @@ Three top-level classes are `Page`, `GameInfo`, and `EventRecorder`.
 - A `Page` is what is displayed at the window.
 The game has different pages, e.g., home page, play page, game over page, etc.
 Each page comprises of various `Item`s.
+The current page is in charge of what will be the next page,
+and when to switch to that page.
+Besides, in the implementation, every page (except for the home page) holds
+a reference to its previous page,
+so that we actually have a page stack.
 
 - `GameInfo` holds information that exists across different pages.
 

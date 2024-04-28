@@ -7,12 +7,14 @@ public class EventRecorder {
     this.events = new ArrayList<Event>();
   }
   
+  // Clear all stored events, and return them to caller.
   public ArrayList<Event> fetchEvents() {
     ArrayList<Event> current_events = this.events;
     this.events = new ArrayList<Event>();
     return current_events;
   }
 
+  // Discard all stored events.
   public void dropEvents() { this.events = new ArrayList<Event>(); }
 
   public void recordKeyPressed() {
