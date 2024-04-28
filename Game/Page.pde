@@ -220,7 +220,7 @@ public abstract class Page {
         item.onKeyboardEvent(e);
       }
     }
-    items.forEach((item) -> { item.evolve(); });
+    getSyncItems().forEach((item) -> { item.evolve(); });
     // Currently the game only ends during collision solving.
     // So `PlayPage` passes a stop condition to the collision engine.
     // If the game can end during other stages, e.g., during timer running,
