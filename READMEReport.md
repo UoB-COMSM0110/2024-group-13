@@ -235,75 +235,78 @@ Text
 
 
 ## Evaluation
+We carried out evaluations at different points of the development process in order to have constant feedback and help navigate the final product design. This section will discuss the results.
 
 ### Qualitative Evalutations
-We first did three types of qualitative evaluations at different points of the development process in order to have constant feedback and help navigate the final product design. This section will highlight the main results from the think aloud evaluation, heuristic evaluation and focus group.
+After implementing initial features, such as the different pages and item initialisation, we performed our first qualitative assessment. We conducted a heuristic test with an external but well-informed third party. Importantly this was prior to the full implementation of the Collision Engine and meant that the user was severely restricted in their ability to fully assess the game.
 
-#### Think Aloud Evaluation 11/03/2024
+Regardless, the assessment returned a number of helpful insights (summarised below). We identified critical issues related to a delay in player control and the inability to move through certain regions of space on the map. Furthermore, the lack of a prominent display of the current score meant that more comprehensive documentation was required.
 
-#### Heuristic Evaluation {DATE}
+<img src="resources/HeuristicEvaluation_240311.jpeg"
+alt="ClassDiagram" width="50%">
 
-#### Focus Group 09/05/2024
-Based off additional research, we found that hosting a focus group would provide further feedback. In this 40 minute session we asked the following quetions:
+*Heuristic evaluation.*
 
->*How did you find playing the game?*
->> P1 - Pretty good.
->>
->> P2 - I liked the traditional game play of Pac-Man but it was good to have the competition between players.
->>
->> P3 - Really cool, I really liked it.
->
->*What is the twist on the game?*
->> P2 - Playing multiplayer.
->>
->> P3 - That you can shoot through the walls and it’s underground.
->
->*Was there anything you expected to find that was not there?*
->> P4 - I think having a list of power ups would be good.
->>
->> P1 - Sound effects would make it more engaging.
->>
->> P5 - No I don’t think so, maybe more help information on controls
->
->*What was difficult or strange about the game?*
->> P1 - Seeing the fps, I have no idea what that was. Also it was not difficult enough.
->>
->> P5 - I thought it was difficult working out what the green things do.
->>
->> P2 - Getting movement stuck, is this because of powerups?
->>
->> P4 - Ghosts can get away by going through walls and the ghosts are a lot smaller than the path which makes it easier to escape them.
->>
->> P3 - I agree, but I guess that could be the twist.
->
->*What did you like about the game?*
->> P2 - Everything.
->>
->> P3 - All worked pretty well, reappearing coins was good, the competitive version was good, and looked pretty professional.
->>
->> P5 - It’s fun to play, I like this version of Pac-Man
->
->*Visually, was there anything that did not look the way you expected?*
->> P1 - Ghosts moving randomly through the walls, have mining features but more bright colours.
->>
->> P2 - I would change the font on the help page, I liked it for the titles and labels but it was difficult to read the help instructions.
->
->*What is one thing you would change about the game?*
->> P1 - Choice of avatar colour. Also to get more points if you kill a ghost or the other player.
->>
->> P3 - I agree, or maybe even making them different colours so you don’t get mixed up between them
->>
->> P4 - I agree, also possibly a way to pause the game.
->>
->> P5 - I think it would be good to have the help instructions when you press ‘start game’ so you are forced to read it.
+After some more time had passed and the game could be better assessed, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40 minute session we asked five different participants the following questions.
 
-The feedback from the focus group was valuable in showing personal user experience. It also highlighted that our twist to the traditional Pac-Man was evident, however, gave us useful changes we could make to further improve our game.
+![FocusGroup](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/f83fe200-81da-4613-bd72-e882805ea2f1)
 
+*Focus group question and answers.*
+
+The feedback from the focus group was valuable in showing personal user experience. It also highlighted that our twist to the traditional Pac-Man was evident, however, thematic analysis described below led to a number of features that we were able to implement:
+1. Enhance Gameplay Experience
+   - Increase the player experience by maintaining the aesthetic of the game.
+   - Implement participant suggestions by adding diverse power-ups, enriching sound effects, and providing clearer help instructions.
+
+2. Refine Game Mechanics and Features
+   - Address technical issues such as improving frame rate visibility, resolving movement glitches associated with power-ups, and clarifying the functions of specific game elements like green items (powerups).
+   - Enhance player understanding and interaction by detailing the list of power-ups and offering more intuitive in-game help resources.
+
+3. Improve Visual and Aesthetic Aspects
+   - Align visual expectations with reality by adjusting ghost movements and optimizing the game’s color scheme for better player reception.
+   - Make visual improvements by enhancing font readability on help pages.
+
+4. Optimize Player Interaction and Control
+   - Simplify control mechanics to facilitate a smoother gameplay experience and improve player comprehension of game functionalities.
+   - Increase interface accessibility by adding comprehensive help instructions at game start and incorporating a pause feature to enhance user interaction.
+
+5. Strengthen Competitive Elements
+   - Augment the competitive nature of the game by modifying scoring algorithms to reward ghost elimination and player-versus-player engagements more significantly.
+   - Improve player differentiation and identification by having visual distinctions between characters.
 
 ### Quantitative Evaluations
+We then assessed the workload level between our two game modes. A simple raw aggregate TLX was calculated between both of the game modes where individual scores were recorded from participants by means of a Google Forms survey. 
 
+| Participant | Mental Demand | Physical Demand | Temporal Demand | Performance | Effort | Frustration | Aggregate Score |
+|-------------|---------------|-----------------|-----------------|-------------|--------|--------------|-----------------|
+| 1     | 30            | 0               | 60              | 30          | 55     | 55           | 38              |
+| 2     | 45            | 0               | 25              | 30          | 40     | 0            | 23              |
+| 3     | 75            | 5               | 15              | 0           | 30     | 0            | 21              |
+| 4     | 70            | 15              | 45              | 30          | 70     | 35           | 44              |
+| 5     | 40            | 0               | 40              | 20          | 40     | 15           | 26              |
+| 6     | 40            | 15              | 55              | 60          | 75     | 10           | 43              |
+| 7     | 65            | 15              | 45              | 85          | 55     | 15           | 47              |
+
+*Raw NASA TLX results for local multiplayer*
+
+| Participant | Mental Demand | Physical Demand | Temporal Demand | Performance | Effort | Frustration | Aggregate Score |
+|-------------|---------------|-----------------|-----------------|-------------|--------|--------------|-----------------|
+| 1     | 55            | 5               | 55              | 35          | 45     | 70           | 44              |
+| 2     | 85            | 20              | 10              | 45          | 20     | 20           | 33              |
+| 3     | 30            | 0               | 40              | 15          | 10     | 0            | 16              |
+| 4     | 60            | 15              | 70              | 25          | 55     | 70           | 49              |
+| 5     | 60            | 0               | 60              | 20          | 60     | 20           | 37              |
+| 6     | 65            | 55              | 70              | 40          | 80     | 15           | 54              |
+| 7     | 85            | 25              | 65              | 85          | 70     | 10           | 57              |
+
+*Raw NASA TLX results for online multiplayer*
+
+To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2 and hence was significant at a p-value of 5%. This means that we are 95% certain that this is a real difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
 
 ### How our code was tested
+To ensure the robustness of our game code, we conducted unit tests on key functionalities. Given the complexity of the game system, we focused our testing efforts on collision solving and the PowerUp features. The collision solving tests check whether collisions are detected and solved correctly. The PowerUp tests check whether various PowerUps, once acquired by Pacman, alter its state and behaviour as expected. For instance, we tested the Opponent Control, Time Freeze, and Speed Surge PowerUps to verify if they correctly change critical attributes such as Pacman's speed and control key set. Additionally, we tested the Size Modification and Trap PowerUps to ensure that these items effectively impact both Pacman and Ghosts, although our tests primarily focused on Pacman. By employing assertions, we confirmed that when Pacman_1 acquires a Trap PowerUp and sets a trap, any Pacman_2 or Ghost triggering the trap should decelerate. These tests validate the functionality and applicability of the PowerUp items, thereby enhancing the consistency and predictability of the gaming experience.
+
+We also conducted black box tests. After each merge, the game would be tested to check whether it conforms to the requirements and designs. For example, in a test we found that the Pac-Man could not fire while moving, which was not the desired behaviour. After checking the code, it was found that the Pacman collided with its own bullet and the bullet was then deleted. This bug was solved by identifying the owner of the bullet before deleting it.
 
 
 ## Process
