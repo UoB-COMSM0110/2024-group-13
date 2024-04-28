@@ -43,8 +43,10 @@ As the name indicates, Pac-Miner uses the classic Pac-Man style map with ghosts 
 
 One of our favourite aspects of playing games is competing against friends, as detailed in our user stories. Hence, we decided that the game would be exclusively multiplayer and we aimed to implement both local and online versions of the game. The game strategy differs depending on which the user chooses. In the local version, the players are able to see the entire map including their opponent, however in the online version a smaller area of the map is visible so the opponent and ghosts are not always visible.
 
-![LocalPlayer](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/396e7307-93bf-43ba-ab0a-8656f299146a)
-
+<div style="display:flex;">
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/396e7307-93bf-43ba-ab0a-8656f299146a" alt="LocalPlayer" width="400"/>
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/0de2e83f-415b-442c-ab7f-e757d862ea54" alt="OnlinePlayer" width="400"/>
+</div>
 
 *Implementation of local (left) and online (right) multiplayer*
 
