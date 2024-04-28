@@ -193,7 +193,19 @@ alt="Item Classes" width="70%">
 
 ## Implementation
 ### Challenge 1: Collision Engine
-Text
+The collision engine is responsible for detecting and solving collisions between objects. For each step of evolvement, the solveCollisions method of the `CollisionEngine` class is called. It checks for each pair of items whether they overlap. However, this check won’t be taken between a pair of immovable items.
+
+If the items do overlap, it’s considered a collision. Then the `onCollisionWith` method of each of the two items will be called.
+
+Inside of the `onCollisionWith` method of a `MovableItem`, if the collision needs to be solved, the item’s `tryStepbackFrom` method or `tryPushbackFrom` method can be called. These two methods will correct the position of the item, eliminating the overlapping with the other item.
+
+The `tryStepbackFrom` does the correction only if the collision is induced by the movement of the item during the evolution step. Also the correction won't be larger than the movement. So this method can’t handle collisions induced by resizement and overlapping induced by creation of new items. However, this method can handle collisions of multiple items consistently.
+
+On the other hand, `tryPushbackFrom` corrects the position unconditionally if overlapping occurs. It is used for hard boundaries such as map border or Pac-Man shelter.
+
+[INSERT GIF OF DIFFERENT COLLISION INSTANCES]
+
+*Here we can see the collision of a Pac-Man and ghost results in the Pac-Man loosing a life.*
 
 ### Challenge 2: User Interface Design
 This section outlines the design philosophy and approach our team adopted to create a user-friendly and intuitive user interface for our game. The great degree of complexity in the game greatly enhanced the difficulty of explaining to the user in a simple way how the game was to be played. 
@@ -232,7 +244,29 @@ Finally we also enriched the tutorial pages by means of including the character 
 
 
 ### Challenge 3: Online Multiplayer
-Text
+During online play, server and client handle their own local items respectively. But only the server is responsible for evolving synchronised items and synchronises them with the client. Each evolution step of synchronised items is achieved through the following processes:
+- The user events from the client side are serialised and sent to the server side
+- The server carries out all calculations for synchronised items
+- The changes of the items are serialised by the server, sent to the client, and applied by client
+
+[GIF OF SIDE BY SIDE ONLINE PLAY]
+
+*Here we can see the two screens are synchronised in the online mode.*
+
+There are three main difficulties:
+1. *The serialisation protocol* -  we chose json string. It is simple but consumes a lot of network bandwidth. We also need to write a serialisation method for each of those event and item classes.
+```
+@Override
+  public JSONObject getStateJson() {
+    JSONObject json = super.getStateJson();
+    json.setInt("strength", getStrength());
+    return json;
+  }
+```
+
+2. *Network programming* - we learned and used java nio selectable channel API. Besides, we added a cache layer to avoid frame locking between server and client. We have to employ SSH port forwarding to bypass the firewall of the lab machines.
+  
+3. *Consistent handling of page switches* - the server and the client may be on different pages before and after the game, but need to start and end the game simultaneously. So we handled a lot of different cases.
 
 
 ## Evaluation
