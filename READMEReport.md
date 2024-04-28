@@ -143,7 +143,7 @@ alt="CommunicationDiagram" width="70%">
 ### Sequence Diagram
 The following sequence diagram illustrates the method calls which take place during our game.
 
-<img src="./OverallArchitectureSequenceDiagram.png"
+<img src="./RequirementDesignDoc/OverallArchitectureSequenceDiagram.png"
 alt="Overall Game Sequence" width="70%">
 
 *Final sequence diagram before implementation*
@@ -168,7 +168,7 @@ a reference to its previous page, so that we actually have a page stack.
 
 - `EventRecorder` stores user input events: keyboard events and mouse events.
 
-<img src="./GameClassesDiagram.png"
+<img src="./RequirementDesignDoc/GameClassesDiagram.png"
 alt="Top-level Classes" width="70%">
 
 *Class diagram illustrating top three classes.*
@@ -184,7 +184,7 @@ Items are extend from either:
 *SychronizedItem Class* - Implements items which are synchronised to both client and server computers during game play. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
 
 
-<img src="./ItemClassesDiagram.png"
+<img src="./RequirementDesignDoc/ItemClassesDiagram.png"
 alt="Item Classes" width="70%">
 
 *Class diagram illustrating Item inheritance*
