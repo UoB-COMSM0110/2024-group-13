@@ -125,7 +125,7 @@ At the beginning of this project, we allocated most of our time to designing the
 The following sections briefly discuss the diagrams we created before code implementation before summarising the overall architecture of the final product.
 
 ### Class Diagram
-As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we have the classes: localItems and synchronisedItems which both extended Items. LocalItems would be used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
+As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we have the classes: localItems and synchronisedItems which both extend Items. LocalItems would be used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
 
 <img src="resources/PacClassDiagram.jpg"
 alt="ClassDiagram" width="70%">
@@ -140,15 +140,97 @@ alt="CommunicationDiagram" width="70%">
 
 *Final communication diagram before implementation.*
 
-### System Archietecture Summary
-Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. Below we have detailed the classes in the final version of the game, these are encompassed by Page, GameInfo, Item and Collision Engine.
+### Sequence Diagram
+The following sequence diagram illustrates the method calls which take place during our game.
+
+<img src="./OverallArchitectureSequenceDiagram.png"
+alt="Overall Game Sequence" width="70%">
+
+*Final sequence diagram before implementation*
+
+### System Architecture Summary
+Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. We have three top-level classes: Page, GameInfo and EventRecorder.
+
+- A `Page` is what is displayed at the window. The game has different pages, e.g., home page, play page, game over page, etc. Each page comprises of various `Item`s. The current page is in charge of what will be the next page,
+and when to switch to that page. Besides, in the implementation, every page (except for the home page) holds
+a reference to its previous page, so that we actually have a page stack.
+
+> *HomePage Class* - The first page of the game, users have the option to goto tutorial pages or proceed to start gameplay.
+> 
+> *HelpPage Classes* - Several help pages are used to alternate between visual instructions on how to play the game.
+> *ModesPage Classes* - Local and online versions have different start pages as they require different information, such as choosing a single host of LAN online.
+> 
+> *PlayPage Class* - When the game is underway, this page ensures all items are behaving appropriately and the game state is synchronised for online game play.
+> 
+> *GameOverPage Class* - This page displays the leaderboard and which user won the game.
+
+- `GameInfo` holds information that exists across different pages. For example, it holds the settings for window size and frame rate. This class is also necessary to provide pages for network interface.
+
+- `EventRecorder` stores user input events: keyboard events and mouse events.
+
+<img src="./GameClassesDiagram.png"
+alt="Top-level Classes" width="70%">
+
+*Class diagram illustrating top three classes.*
+
+### Item classes
+
+Items are drawn onto a page. They also react to user events and implement game logic.
+
+Game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deals with these updates and interactions.
+
+Items are extend from either:
+*LocalItem Class* - Implements items which are only needed on the local computer. For example the classes 'Button' and 'InputBox'.
+*SychronizedItem Class* - Implements items which are synchronised to both client and server computers during game play. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
 
 
-/
-/ add in class descriptions
-/
+<img src="./ItemClassesDiagram.png"
+alt="Item Classes" width="70%">
+
+*Class diagram illustrating Item inheritance*
+
 
 ## Implementation
+### Challenge 1: Collision Engine
+Text
+
+### Challenge 2: User Interface Design
+This section outlines the design philosophy and approach our team adopted to create a user-friendly and intuitive user interface for our game. The great degree of complexity in the game greatly enhanced the difficulty of explaining to the user in a simple way how the game was to be played. 
+
+We tackled this by iteratively improving the way in which the game instructions and layout were presented to the user by means of heuristic and think aloud assessments as described previously. Originally we had an extremely simple and quickly outdated view of the control instructions for the user as shown below. However, we noted that the inconsistent style of the background (intended to make the text easier to read actually created confusion with players thinking something had gone wrong with the programme). Additionally, the text that was used, while fun and reminiscent of arcade games, proved difficult to read. 
+
+[First image]
+
+*First implementation of help page: single page instruction.*
+
+We then decided to change the simple single page screen of instructions to an extended version of this with scrollable instructions and a background consistent with that of the other options menus, as shown. 
+
+[Second image]
+
+*Next implementation of help page: scrollable screen.*
+
+However this in itself introduced a number of other problems, namely that the scroll bar mechanic was not something  found elsewhere in the interface and thus proved to feel strange or complicated. We decided to remedy this by creating a mockup of a page based tutorial screen as follows:
+
+[Third image]
+
+*Next implementation of help page: alternating pages.*
+
+Following this we realised that neat division of controls for movement as shown, would be improved by a further explanation and inclusion prior to starting of a game changing the interface as shown:
+
+[Forth image]
+
+*Including user instructions before starting the game.*
+
+Furthermore the complexities of the multiplayer setup were simplified through minimalist design by (a) creating consistency between the the local and online pages (b) drawing attention to fields requiring user interaction through the use of bright white colours (c) colour delineated options inline with those used experienced in-game
+
+[Fifth image]
+
+*Clear display of information for online multiplayer setup.*
+
+Finally we also enriched the tutorial pages by means of including the character icons which were being described. Ultimately this led to an easily understood user interface that was praised in further evaluation prior to the game day demo. 
+
+
+### Challenge 3: Online Multiplayer
 Text
 
 
