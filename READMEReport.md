@@ -8,7 +8,8 @@
 - [Design](#design)
   - [Class Diagram](#class-diagram)
   - [Communication Diagram](#communication-diagram)
-  - [Design Summary](#design-summary)
+  - [Sequence Diagram](#sequence-diagram)
+  - [Design Summary](#system-architecture-summary)
 - [Implementation](#implementation)
 - [Evaluation](#evaluation)
   - [Qualitative Evaluations](#qualitative-evaluations)
@@ -173,7 +174,7 @@ alt="Top-level Classes" width="70%">
 
 *Class diagram illustrating top three classes.*
 
-### Item classes
+**Item classes**
 
 Items are drawn onto a page. They also react to user events and implement game logic.
 
