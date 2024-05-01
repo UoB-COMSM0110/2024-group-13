@@ -267,7 +267,7 @@ There are three main difficulties:
 
 
 ## Evaluation
-We carried out evaluations at different points of the development process in order to have constant feedback and help navigate the final product design. This section will discuss the results.
+We carried out evaluations at different points of the development process to have constant feedback and help navigate the final product design. This section will discuss the results.
 
 ### Qualitative Evalutations
 After implementing initial features, such as the different pages and item initialisation, we performed our first qualitative assessment. We conducted a heuristic test with an external but well-informed third party. Importantly this was prior to the full implementation of the Collision Engine and meant that the user was severely restricted in their ability to fully assess the game.
@@ -279,7 +279,7 @@ alt="ClassDiagram" width="50%">
 
 *Heuristic evaluation.*
 
-After some more time had passed and the game could be better assessed, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40 minute session we asked five different participants the following questions.
+After further development, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40 minute session we asked five participants the following questions.
 
 ![FocusGroup](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/f83fe200-81da-4613-bd72-e882805ea2f1)
 
@@ -288,17 +288,17 @@ After some more time had passed and the game could be better assessed, we carrie
 The feedback from the focus group was valuable in showing personal user experience. It also highlighted that our twist to the traditional Pac-Man was evident, however, thematic analysis described below led to a number of features that we were able to implement:
 1. Enhance Gameplay Experience
    - Increase the player experience by maintaining the aesthetic of the game.
-   - Implement participant suggestions by adding diverse power-ups, enriching sound effects, and providing clearer help instructions.
+   - Implement participant suggestions by adding more power-ups, making sound effects, and providing clearer help instructions.
 
 2. Refine Game Mechanics and Features
-   - Address technical issues such as improving frame rate visibility, resolving movement glitches associated with power-ups, and clarifying the functions of specific game elements like green items (powerups).
+   - Address technical issues such as improving frame rate visibility, resolving movement glitches associated with power-ups, and clarifying the functions of specific game elements like green items (power-ups).
    - Enhance player understanding and interaction by detailing the list of power-ups and offering more intuitive in-game help resources.
 
 3. Improve Visual and Aesthetic Aspects
-   - Align visual expectations with reality by adjusting ghost movements and optimizing the game’s color scheme for better player reception.
-   - Make visual improvements by enhancing font readability on help pages.
+   - Align visual expectations with reality by adjusting ghost movements and optimising the game’s colour scheme for better player reception.
+   - Increase font readability on help pages.
 
-4. Optimize Player Interaction and Control
+4. Optimise Player Interaction and Control
    - Simplify control mechanics to facilitate a smoother gameplay experience and improve player comprehension of game functionalities.
    - Increase interface accessibility by adding comprehensive help instructions at game start and incorporating a pause feature to enhance user interaction.
 
@@ -307,7 +307,7 @@ The feedback from the focus group was valuable in showing personal user experien
    - Improve player differentiation and identification by having visual distinctions between characters.
 
 ### Quantitative Evaluations
-We then assessed the workload level between our two game modes. A simple raw aggregate TLX was calculated between both of the game modes where individual scores were recorded from participants by means of a Google Forms survey. 
+We then assessed the workload level between our two game modes. A raw aggregate NASA TLX was calculated between the two game modes. Individual scores were recorded from participants by means of a Google Forms survey. 
 
 | Participant | Mental Demand | Physical Demand | Temporal Demand | Performance | Effort | Frustration | Aggregate Score |
 |-------------|---------------|-----------------|-----------------|-------------|--------|--------------|-----------------|
@@ -333,12 +333,30 @@ We then assessed the workload level between our two game modes. A simple raw agg
 
 *Raw NASA TLX results for online multiplayer*
 
-To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2 and hence was significant at a p-value of 5%. This means that we are 95% certain that this is a real difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
+To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2 and hence was significant at a p-value of 5%. This means that we are 95% certain that there is a real statistical difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
 
 ### How our code was tested
-To ensure the robustness of our game code, we conducted unit tests on key functionalities. Given the complexity of the game system, we focused our testing efforts on collision solving and the PowerUp features. The collision solving tests check whether collisions are detected and solved correctly. The PowerUp tests check whether various PowerUps, once acquired by Pacman, alter its state and behaviour as expected. For instance, we tested the Opponent Control, Time Freeze, and Speed Surge PowerUps to verify if they correctly change critical attributes such as Pacman's speed and control key set. Additionally, we tested the Size Modification and Trap PowerUps to ensure that these items effectively impact both Pacman and Ghosts, although our tests primarily focused on Pacman. By employing assertions, we confirmed that when Pacman_1 acquires a Trap PowerUp and sets a trap, any Pacman_2 or Ghost triggering the trap should decelerate. These tests validate the functionality and applicability of the PowerUp items, thereby enhancing the consistency and predictability of the gaming experience.
+To ensure the robustness of our code, we conducted unit tests on key functionalities. Given the complexity of the game system, we focused our testing efforts on collision solving and the PowerUp features. The collision solving tests check whether collisions are detected and solved correctly. The PowerUp tests check whether various PowerUps, once acquired by Pac-Man, alter its state and behaviour as expected. For instance, we tested the Opponent Control, Time Freeze, and Speed Surge PowerUps to verify if they correctly change critical attributes such as Pac-Man's speed and control key set. Additionally, we tested the Size Modification and Trap PowerUps to ensure that these items effectively impact both Pac-Man and Ghosts, although our tests primarily focused on Pac-Man. By employing assertions, we confirmed that when Pacman_1 acquires a Trap PowerUp and sets a trap, any Pacman_2 or Ghost triggering the trap should decelerate. These tests validate the functionality and applicability of the PowerUp items, thereby enhancing the consistency and predictability of the gaming experience.
 
-We also conducted black box tests. After each merge, the game would be tested to check whether it conforms to the requirements and designs. For example, in a test we found that the Pac-Man could not fire while moving, which was not the desired behaviour. After checking the code, it was found that the Pacman collided with its own bullet and the bullet was then deleted. This bug was solved by identifying the owner of the bullet before deleting it.
+Some example PowerUp tests:
+```
+    OpponentControlPowerUp opponentControl = new OpponentControlPowerUp();
+    assert pacman_1.usingKeySetA() : "Pacman 1 should use KeySet A at first.";
+    opponentControl.onCollisionWith(pacman_2);
+    assert !pacman_1.usingKeySetA() : "Pacman 1 should not use KeySet A when opponent get Opponent Control PowerUp.";
+    
+    TimeFreezePowerUp frozen = new TimeFreezePowerUp();
+    assert pacman_1.getFrozen() == 0 : "Pacman 1 should not be frozen at first.";
+    frozen.onCollisionWith(pacman_2);
+    assert pacman_1.getFrozen() != 0 : "Pacman 1 now should be frozen.";
+    
+    SizeModificationPowerUp_Pacman sizeModification = new SizeModificationPowerUp_Pacman();
+    assert pacman_1.getH() == init_size && pacman_1.getW() == init_size : "The width and the height of Pacman_1 should be " + init_size + " .";
+    sizeModification.onCollisionWith(pacman_1);
+    assert pacman_1.getH() != init_size : "";
+```
+
+We also conducted black box tests. After each merge, the game was tested to check whether it conforms to the requirements and designs. For example, in a test we found that the Pac-Man could not fire while moving, which was not the desired behaviour. After checking the code, it was found that the Pac-Man collided with its own bullet and the bullet was then deleted. This bug was solved by identifying the owner of the bullet before deleting it.
 
 
 ## Process
