@@ -230,13 +230,13 @@ However this in itself introduced a number of other problems, namely that the sc
 
 Following this we realised that neat division of controls for movement as shown, would be improved by a further explanation and inclusion prior to starting of a game changing the interface as shown:
 
-[Forth image]
+![FourthImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/4724f500-9237-4e20-bff4-fb3998c243fe)
 
-*Including user instructions before starting the game.*
+*Including user instructions before starting the game (local version).*
 
 Furthermore the complexities of the multiplayer setup were simplified through minimalist design by (a) creating consistency between the the local and online pages (b) drawing attention to fields requiring user interaction through the use of bright white colours (c) colour delineated options inline with those used experienced in-game
 
-[Fifth image]
+![FifthImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/cd41613e-b0d8-44d1-a9a0-121bf7560f0a)
 
 *Clear display of information for online multiplayer setup.*
 
