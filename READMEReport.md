@@ -58,7 +58,7 @@ Both players compete against each other by collecting the coins generated throug
 ### Ideation
 We brainstormed a list of arcade style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to: Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game.
 
-Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that might enable us to combine these into a single game. We decided on a version of Pac-Man with the ability to modify the map by means of explosive projectiles as shown in the paper prototype below.
+Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that we could combine into a single game. We decided on a version of Pac-Man with the ability to modify the map by means of explosive projectiles as shown in the paper prototype below.
 
 [<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
 width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
