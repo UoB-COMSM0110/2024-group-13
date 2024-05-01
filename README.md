@@ -1,4 +1,4 @@
-<img width="802" alt="Asset 75" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/d6ce0a4c-cc0d-4ce8-8c3e-d79d08a3a39b">
+<img width="802" alt="pac-miner" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/d6ce0a4c-cc0d-4ce8-8c3e-d79d08a3a39b">
 
 *[Click here to see our video!](https://youtu.be/8dpKZVgkW6E?si=zrGKmFKIk0mFDNey)*
 
@@ -26,6 +26,7 @@
   - [Testing](#how-our-code-was-tested)
 - [Process](#process)
 - [Conclusion](#conclusion)
+- [Acknowledgements](#acknowledgements)
 
 
 ## Members
@@ -35,7 +36,7 @@ Yunpeng Yang,
 Chao Gao,
 Haolan Zhao
 
-<img width="1511" alt="Screenshot 2024-05-01 at 13 51 00" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/ca2ac289-1f73-46da-9f50-01cb94d8302b">
+<img width="1511" alt="Members" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/ca2ac289-1f73-46da-9f50-01cb94d8302b">
 
 
 ## Introduction
@@ -419,6 +420,11 @@ Throughout the project, we learned invaluable lessons in task allocation and com
 One notable challenge we encountered during evaluations revolved around making succinct help instructions for our intricate game mechanics. Given the complexity of the gameplay dynamics, ensuring the presence of essential guidance in a clear and concise format proved to be a challenge. This highlighted the importance of user-centric design principles and effective help and documentation as one of Nielson’s 10 Heuristics.
 
 Looking towards the future, there are many potential enhancements and features that we have discussed to further add to the gaming experience. For instance, integrating pause buttons would allow players greater control and convenience during sessions. We could also develop a web-based and mobile version of Pac-Miner so we could gain a wider audience. We understand the evolving nature of software engineering projects and would aim to meet the expectations and requirements of the end users.
+
+# Acknowledgements
+
+For the background music, we used **Minim**,
+which can be installed from the processing library manager.
 
 ## Individual Contribution Table
 | Name           | Role               | Individual Weight |
