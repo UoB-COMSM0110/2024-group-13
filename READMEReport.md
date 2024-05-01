@@ -66,10 +66,6 @@ width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 
 *Pac-Miner paper prototype.*
 
-We then built a narrative involving our Pac-Man character fleeing underground from ghosts in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. With additional potential for altering the game play mechanics through the effect of darkness underground and different types of wall materials. Throughout this process, we used Adobe Illustrator to create accurate mockups of the interface.
-
-[side by side images of adobe illustrator mockups]
-
 #### Stakeholder Analysis
 We applied the Onion Model when discussing the parties involved in building, using and assessing the quality of our game:
 1. Developers (Core Layer): We were responsible for designing, coding, and testing the game
@@ -80,11 +76,11 @@ We applied the Onion Model when discussing the parties involved in building, usi
 
 #### Development of User Stories
 Considering these stakeholders we created functional requirements in the form of User Stories: 
-1. As a player, I want to play against someone else so that I can spend time with my friend.
-2. As a player, I want to achieve the highest score so that I can win the game.
-3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
-4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
-5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
+>1. As a player, I want to play against someone else so that I can spend time with my friend.
+>2. As a player, I want to achieve the highest score so that I can win the game.
+>3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
+>4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
+>5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
 
 Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them; including the user story stating that:
 
@@ -101,16 +97,19 @@ As such, from the start we had a tutorial page included. Reflecting on the feedb
 #### Multiplayer Use Case Specification and Diagram
 We decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends.
 
-1. The first player (Player 1) opens the game and selects the option to create a new multiplayer game, which generates a unique room number.
-2. Player 1 shares this room number with their friend (Player 2) via a chosen communication method.
-3. Player 2 enters the room number in the designated field on their device to join the game.
-4. The game establishes a connection between the two players' devices over the internet.
-5. Player 1 selects the desired game mode and presses the 'Start' button to commence the game.
-6. Both players now participate in the game concurrently, with their actions and movements synchronised in real-time.
-7. The game interface updates continuously to reflect the players' scores, collected power-ups, and other relevant game statistics.
-8. When Player 1's character is defeated, the game transitions their character to a 'ghost' state, allowing limited interaction with the game environment.
-9. Similarly, when Player 2's character is defeated, the game concludes the current session and displays the final scores on a leaderboard.
-10. Players are presented with an option to initiate a new game session.
+| Step | Action |
+|------|--------|
+| 1    | The first player (Player 1) opens the game and selects the option to create a new multiplayer game, which generates a unique room number. |
+| 2    | Player 1 shares this room number with their friend (Player 2) via a chosen communication method. |
+| 3    | Player 2 enters the room number in the designated field on their device to join the game. |
+| 4    | The game establishes a connection between the two players' devices over the internet. |
+| 5    | Player 1 selects the desired game mode and presses the 'Start' button to commence the game. |
+| 6    | Both players now participate in the game concurrently, with their actions and movements synchronised in real-time. |
+| 7    | The game interface updates continuously to reflect the players' scores, collected power-ups, and other relevant game statistics. |
+| 8    | When Player 1's character is defeated, the game transitions their character to a 'ghost' state, allowing limited interaction with the game environment. |
+| 9    | Similarly, when Player 2's character is defeated, the game concludes the current session and displays the final scores on a leaderboard. |
+| 10   | Players are presented with an option to initiate a new game session. |
+
 
 We transformed the identified use-cases into a use case diagram to visually illustrate requirements and interactions within the game system.
 
