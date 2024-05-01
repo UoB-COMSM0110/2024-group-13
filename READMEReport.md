@@ -1,5 +1,4 @@
-<img width="812" alt="Screenshot 2024-05-01 at 23 44 17" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/27d21725-bcfe-400e-b5db-e743cead1863">
-
+<img width="980" alt="Asset 73" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/74dacf16-11de-48cb-a06d-9ae6a0e4a453">
 
 *[Click here to see our video!](https://youtu.be/8dpKZVgkW6E?si=zrGKmFKIk0mFDNey)*
 
