@@ -156,7 +156,7 @@ alt="Overall Game Sequence" width="70%">
 *Final sequence diagram before implementation*
 
 ### System Architecture Summary
-Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. We have three top-level classes: Page, GameInfo and EventRecorder.
+Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. In the final design, we had three top-level classes: Page, GameInfo and EventRecorder.
 
 - A `Page` is what is displayed at the window. The game has different pages, e.g., home page, play page, game over page, etc. Each page comprises of various `Item`s. The current page is in charge of what will be the next page,
 and when to switch to that page. Besides, in the implementation, every page (except for the home page) holds
