@@ -1,7 +1,7 @@
 <img width="802" alt="pac-miner" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/d6ce0a4c-cc0d-4ce8-8c3e-d79d08a3a39b">
 
-<p align="center">
-***[Click here to see our video!](https://youtu.be/8dpKZVgkW6E?si=zrGKmFKIk0mFDNey)***
+<p align="center" style="font-weight: bold; font-style: italic;">
+<a href="https://youtu.be/8dpKZVgkW6E?si=zrGKmFKIk0mFDNey">Click here to see our video!</a>
 </p>
 
 ---
