@@ -26,8 +26,8 @@ Daniel Parschau,
 Yunpeng Yang,
 Chao Gao
 
-<img src="resources/group13-members-photo.jpg"
-alt="Group Members" width="70%">
+<img width="1511" alt="Screenshot 2024-05-01 at 13 51 00" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/ca2ac289-1f73-46da-9f50-01cb94d8302b">
+
 
 ## Project Kanban Board
 
