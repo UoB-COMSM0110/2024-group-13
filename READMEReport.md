@@ -1,4 +1,4 @@
-<img width="980" alt="Asset 73" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/8a3ea716-92cd-4d70-993c-63e1ec33a871">
+<img width="910" alt="Asset 74" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/9aebe63b-d1e0-4742-8d8a-8ba8896bb921">
 
 *[Click here to see our video!](https://youtu.be/8dpKZVgkW6E?si=zrGKmFKIk0mFDNey)*
 
