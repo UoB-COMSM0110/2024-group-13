@@ -178,10 +178,8 @@ alt="Top-level Classes" width="70%">
 Ths `Item`s class is vital in instantiating all objects drawn onto the page. They react to user events and implement game logic, for example the Pac-Man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deal with these updates and interactions.
 
 All individual items extend from either:
-
-*LocalItem Class* - Implements items which are only needed on the local computer. For example the classes 'Button' and 'InputBox'.
-
-*SychronizedItem Class* - Implements items which are synchronised to both client and server computers during game play. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
+- *LocalItem Class* - Implements items which are only needed on the local computer. For example the classes 'Button' and 'InputBox'.
+- *SychronizedItem Class* - Implements items which are synchronised to both client and server computers during game play. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
 
 
 <img src="./RequirementDesignDoc/ItemClassesDiagram.png"
