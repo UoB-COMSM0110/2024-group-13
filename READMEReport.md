@@ -79,10 +79,15 @@ We applied the Onion Model when discussing the parties involved in building, usi
 
 #### Development of User Stories
 Considering these stakeholders we created functional requirements in the form of User Stories: 
+
 *1. As a player, I want to play against someone else so that I can spend time with my friend.*
+
 *2. As a player, I want to achieve the highest score so that I can win the game.*
+
 *3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.*
+
 *4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.*
+
 *5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.*
 
 Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them; including the user story stating that:
