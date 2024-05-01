@@ -1,5 +1,4 @@
-
-<img width="1054" alt="Screenshot 2024-05-01 at 23 44 50" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/fd935ea8-d9b8-47a1-b639-378b849d35a8">
+<img width="812" alt="Screenshot 2024-05-01 at 23 44 17" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/27d21725-bcfe-400e-b5db-e743cead1863">
 
 ## Table of Contents
 - [Members](#members)
