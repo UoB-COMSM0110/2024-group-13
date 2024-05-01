@@ -161,9 +161,10 @@ Even though we spent time designing this architecture, we still made some change
 - A `Page` is what is displayed in the window. The game has different pages, including: home page, play page, game over page. Each page comprises various `Item`s, for example buttons or game elements. In the implementation, every page (except for the home page) holds
 a reference to its previous page, so that we have a page stack.
 
-> *HomePage Class* - The first page of the game, users have the option to goto tutorial pages or proceed to start gameplay.
+> *HomePage Class* - The first page of the game, users have the option to go to tutorial pages or proceed to start gameplay.
 > 
 > *HelpPage Classes* - Several help pages are used to alternate between visual instructions on how to play the game.
+> 
 > *ModesPage Classes* - Local and online versions have different start pages as they require different information, such as choosing a single host of LAN online.
 > 
 > *PlayPage Class* - When the game is underway, this page ensures all items are behaving appropriately and the game state is synchronised for online game play.
