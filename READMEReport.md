@@ -181,11 +181,7 @@ alt="Top-level Classes" width="70%">
 
 *Class diagram illustrating top three classes.*
 
-**Item classes**
-
-Items are drawn onto a page. They also react to user events and implement game logic.
-
-Game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deals with these updates and interactions.
+Ths `Item`s class is vital in initiating all objects drawn onto the page. They react to user events and implement game logic, for example the Pac-man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deals with these updates and interactions.
 
 Items are extend from either:
 *LocalItem Class* - Implements items which are only needed on the local computer. For example the classes 'Button' and 'InputBox'.
@@ -199,6 +195,8 @@ alt="Item Classes" width="70%">
 
 
 ## Implementation
+In this section we detail our three challenges: collision engine, user interface design and online multiplayer.
+
 ### Challenge 1: Collision Engine
 The collision engine is responsible for detecting and solving collisions between objects. For each step of evolvement, the solveCollisions method of the `CollisionEngine` class is called. It checks for each pair of items whether they overlap. However, this check won’t be taken between a pair of immovable items.
 
