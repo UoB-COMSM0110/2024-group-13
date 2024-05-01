@@ -1,4 +1,4 @@
-![PacMinerBanner](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/01267c16-32d5-4446-8abb-08719795436f)
+<img width="1512" alt="Screenshot 2024-05-01 at 13 51 25" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/8647cf80-2ee0-489b-844a-01dce7a411ae">
 
 ## Table of Contents
 - [Members](#members)
