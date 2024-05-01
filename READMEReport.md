@@ -288,7 +288,7 @@ Regardless, the assessment returned a number of helpful insights (summarised bel
 <img src="resources/HeuristicEvaluation_240311.jpeg"
 alt="ClassDiagram" width="50%">
 
-*Heuristic evaluation.*
+*Heuristic evaluation results.*
 
 After further development, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40 minute session we asked five participants the following questions.
 
