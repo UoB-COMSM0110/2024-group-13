@@ -51,14 +51,12 @@ One of our favourite aspects of playing games is competing against friends, as d
 
 *Implementation of local (left) and online (right) multiplayer*
 
-Both players compete against each other by collecting the coins generated throughout the map. Each player starts with 3 lives and aims to avoid ghosts while trying to outscore their opponent. Scattered in the map are uranium blocks which cause special events that temporarily improve the players’ character or negatively affect their opponent. The game ends when one player loses all three of their lives. Players could target one another to score more points by killing their opponent or work peacefully and focus on collecting points instead.
+Both players compete against each other by collecting the coins generated throughout the map. Each player starts with 3 lives and aims to avoid ghosts while trying to outscore their opponent. Scattered in the map are uranium blocks which cause special events that temporarily improve the players’ character or negatively affect their opponent. The game ends when one player loses all three of their lives. Players can target one another to score more points or work peacefully and focus on collecting coins instead.
 
 
 ## Requirements
 ### Ideation
-We brainstormed a list of arcade style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to: Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game.
-
-Following these sessions we realised that while both concepts were individually engaging there were a number of overlapping dimensions that we could combine into a single game. We decided on a version of Pac-Man with the ability to modify the map by means of explosive projectiles as shown in the paper prototype below.
+We brainstormed a list of arcade style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to: Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game. We realised that while both concepts were individually engaging there were a number of overlapping dimensions that we could combine into a single game. We decided on a version of Pac-Man with the ability to modify the map by means of explosive projectiles as shown in the paper prototype below.
 
 [<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
 width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
@@ -66,7 +64,7 @@ width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 
 *Pac-Miner paper prototype.*
 
-#### Stakeholder Analysis
+### Stakeholder Analysis
 We applied the Onion Model when discussing the parties involved in building, using and assessing the quality of our game:
 | Layer           | Stakeholder             | Description |
 |-----------------|-------------------------|-------------|
@@ -77,7 +75,7 @@ We applied the Onion Model when discussing the parties involved in building, usi
 | Outer Layer     | University as a negative stakeholder | The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g., the online multiplayer gaming distracting students from work). |
 
 
-#### Development of User Stories
+### Development of User Stories
 Considering these stakeholders we created functional requirements in the form of User Stories: 
 
 - As a player, I want to play against someone else so that I can spend time with my friend.
@@ -92,14 +90,14 @@ Consulting these later in the process allowed us to identify missing functional 
 
 Which led us to discuss how we could increase competition. Driven by this motivation, we implemented a leaderboard that persisted in memory allowing a player to enjoy their achievement as desired.
 
-Additionally, the following user requirement:
+We also implemented the following user requirement:
 
 >As a player, I want to have directions on the game so I know how to play.
 
-As such, from the start we had a tutorial page included. Reflecting on the feedback received during evaluation, we improved the way in which instructions were presented by making them more visual. This feedback also led to the inclusion of text-based descriptions of the different special events that occur when the player collects uranium.
+As such, from the start we had a tutorial page included. Reflecting on the feedback received during evaluation, we improved the way in which instructions were presented by making them more visual. This feedback also led to the inclusion of text descriptions of the different special events that occur when the player collects uranium.
 
-#### Multiplayer Use Case Specification and Diagram
-We decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends.
+### Multiplayer Use Case Specification and Diagram
+We decided to develop a more in-depth use-case specification on how to share the gameplay experience with friends.
 
 | Step | Action |
 |------|--------|
@@ -124,17 +122,17 @@ Interestingly, as the project evolved we noticed that some of the functionalitie
 
 
 ## Design
-At the beginning of this project, we allocated most of our time to designing the system architecture. This decision was made so that we could consider how we would implement the online multiplayer version without requiring a major code refactoring further into the project. This process was complicated and resulted in a long time deliberating and discussing the options before starting the minimum viable product (MVP), however, this approach has allowed our coding to be very structured and align with our three implementation challenges. A part of this initial design was creating the class and communication diagrams shown below.
+At the beginning of this project, we allocated most of our time to designing the system architecture. This decision was made to consider how to implement the online multiplayer version without requiring a major code refactoring further into the project. This process was complicated and resulted in a long time deliberating and discussing the options before starting the minimum viable product (MVP), however, this approach allowed our coding to be very structured and align with our three implementation challenges.
 
-The following sections briefly discuss the diagrams we created before code implementation before summarising the overall architecture of the final product.
+The following sections briefly discuss the diagrams we created before code implementation before summarising the overall architecture of the final game.
 
 ### Class Diagram
-As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we have the classes: localItems and synchronisedItems which both extend Items. LocalItems would be used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
+As mentioned, this structure evolves around implementing the online multiplayer aspect of the game. Therefore, we have the classes: localItems and synchronisedItems which both extend Items. LocalItems were used to implement objects which were only updated and displayed to the local computer, for example, buttons and labels. Conversely, SynchronisedItems were used to make objects which required updating on both server and client machines, for example, player icons, ghosts, walls and coins. 
 
 <img src="resources/PacClassDiagram.jpg"
 alt="ClassDiagram" width="70%">
 
-*Final class diagram before implementation.*
+*Class diagram before implementation.*
 
 ### Communication Diagram
 Our challenge to create an online multiplayer mode, meant that it was difficult to visualise the complex structure of the game. Therefore, we created a communication diagram to model the behaviour of our code; displaying the flow of data between the classes whilst the online multiplayer game mode is activated. This diagram focussed on how the two players connected over online multiplayer to interact with objects and how this is updated through the GameInfo class to synchronise with the other player.
@@ -142,18 +140,18 @@ Our challenge to create an online multiplayer mode, meant that it was difficult 
 <img src="resources/PacCommunicationDiagram.jpg"
 alt="CommunicationDiagram" width="70%">
 
-*Final communication diagram before implementation.*
+*Communication diagram before implementation.*
 
 ### Sequence Diagram
-The following sequence diagram illustrates the method calls which take place during our game.
+The sequence diagram illustrates the method calls which take place during our game. This shows how the `Page` class is constantly updated and the items are drawn to the screen.
 
 <img src="./RequirementDesignDoc/OverallArchitectureSequenceDiagram.png"
 alt="Overall Game Sequence" width="70%">
 
-*Final sequence diagram before implementation*
+*Sequence diagram before implementation.*
 
 ### System Architecture Summary
-Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. In the final design, we had three top-level classes: Page, GameInfo and EventRecorder.
+Even though we dedicated a lot of time on this architecture, we still made minor changes during development. This is a natural consequence of the coding process. One such change was the implementation of different pages: start page, game page, end page. In the final design, we had three top-level classes: Page, GameInfo and EventRecorder.
 
 - A `Page` is what is displayed in the window. The game has different pages, including: home page, play page, game over page. Each page comprises various `Item`s, for example buttons or game elements. In the implementation, every page (except for the home page) holds
 a reference to its previous page, so that we have a page stack.
@@ -162,7 +160,7 @@ a reference to its previous page, so that we have a page stack.
 > 
 > *HelpPage Classes* - Several help pages are used to alternate between visual instructions on how to play the game.
 > 
-> *ModesPage Classes* - Local and online versions have different start pages as they require different information, such as choosing a single host of LAN online.
+> *ModesPage Classes* - Local and online versions have different start pages as they require different information, such as choosing a single host or LAN online.
 > 
 > *PlayPage Class* - When the game is underway, this page ensures all items are behaving appropriately and the game state is synchronised for online game play.
 > 
@@ -177,17 +175,19 @@ alt="Top-level Classes" width="70%">
 
 *Class diagram illustrating top three classes.*
 
-Ths `Item`s class is vital in initiating all objects drawn onto the page. They react to user events and implement game logic, for example the Pac-man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deals with these updates and interactions.
+Ths `Item`s class is vital in instantiating all objects drawn onto the page. They react to user events and implement game logic, for example the Pac-Man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are in fact just a framework that deal with these updates and interactions.
 
-Items are extend from either:
+All individual items extend from either:
+
 *LocalItem Class* - Implements items which are only needed on the local computer. For example the classes 'Button' and 'InputBox'.
+
 *SychronizedItem Class* - Implements items which are synchronised to both client and server computers during game play. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
 
 
 <img src="./RequirementDesignDoc/ItemClassesDiagram.png"
 alt="Item Classes" width="70%">
 
-*Class diagram illustrating Item inheritance*
+*Class diagram illustrating Item inheritance.*
 
 
 ## Implementation
