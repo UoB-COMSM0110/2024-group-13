@@ -372,7 +372,7 @@ Our discussions also extended to GitHub, particularly within pull requests. We a
 We initially implemented a Kanban board to break down and allocate tasks. However, its use varied; at times, it was bypassed due to the efficiency of in-person or instantaneous text-based discussions. Despite this fluctuation in utilisation, the Kanban board served as an excellent visual tool for tracking progress when employed.
 During one of the holiday periods, when in-person meetings were not feasible, we coordinated over video calls. We encountered challenges with both Zoom and Teams during this time and ultimately found success with an impromptu WhatsApp video call, which catered perfectly to our needs.
 
-[Kanban board]
+![KanbanBoard](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/53c00776-d3a1-4c3f-872f-2325b489a1ac)
 
 *The Kanban board we used during implementation*
 
