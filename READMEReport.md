@@ -378,7 +378,7 @@ During one of the holiday periods, when in-person meetings were not feasible, we
 
 Our work on the game was consistent throughout the project timeframe. However, there were notable spikes in the additions to the codebase, primarily during two main sprints. The first spike occurred prior to workshops on different testing methods, and the second was close to the Easter break, when more time was available for development. These periods of intense activity are clearly reflected in the frequency graphs, illustrating our project's dynamic nature and our team's ability to intensify efforts when necessary.
 
-[Additions and Deletions grap]
+![Sprints](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/64d84861-bb61-497a-9daf-2a3e94b89b47)
 
 *Graph depicting our three sprints.*
 
