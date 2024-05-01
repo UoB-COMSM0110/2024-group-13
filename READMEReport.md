@@ -1,22 +1,28 @@
 <img width="1109" alt="Screenshot 2024-05-01 at 14 16 41" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/0b70e408-0541-4b1f-871b-8b5f1a33df79">
 
 ## Table of Contents
-- [Members](#members)
-- [Kanban Board](#project-kanban-board)
-- [Introduction](#introduction)
-- [Requirements](#requirements)
-- [Design](#design)
+1. [Members](#members)
+2. [Introduction](#introduction)
+3. [Requirements](#requirements)
+  - [Ideation](#ideation)
+  - [Stakeholder Analysis](#stakeholder-analysis)
+  - [User Stories](#development-of-user-stories)
+  - [Use Case Specification](#multiplayer-use-case-specification-and-diagram)
+4. [Design](#design)
   - [Class Diagram](#class-diagram)
   - [Communication Diagram](#communication-diagram)
   - [Sequence Diagram](#sequence-diagram)
   - [Design Summary](#system-architecture-summary)
-- [Implementation](#implementation)
-- [Evaluation](#evaluation)
+5. [Implementation](#implementation)
+  - [Challenge 1: Collision Engine](#challenge-1-collision-engine) 
+  - [Challenge 2: User Interface Design](#challenge-2-user-interface-design)
+  - [Challenge 3: Online Multiplayer](#challenge-3-online-multiplayer)
+6. [Evaluation](#evaluation)
   - [Qualitative Evaluations](#qualitative-evaluations)
   - [Quantitative Evaluations](#quantitative-evaluations)
   - [Testing](#how-our-code-was-tested)
-- [Process](#process)
-- [Conclusion](#conclusion)
+7. [Process](#process)
+8. [Conclusion](#conclusion)
 
 
 ## Members
