@@ -26,11 +26,11 @@
 
 
 ## Members
-Finn Lawton,
-Haolan Zhao,
 Daniel Parschau,
+Finn Lawton,
 Yunpeng Yang,
-Chao Gao
+Chao Gao,
+Haolan Zhao
 
 <img width="1511" alt="Screenshot 2024-05-01 at 13 51 00" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/ca2ac289-1f73-46da-9f50-01cb94d8302b">
 
@@ -55,7 +55,7 @@ One of our favourite aspects of playing games is competing against friends, as d
     <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/5791b668-cdaa-4720-86a3-10b6216ce062" alt="OnlinePlayer" width="400"/>
 </div>
 
-*Implementation of local (left) and online (right) multiplayer*
+*Implementation of local (left) and online (right) multiplayer.*
 
 Both players compete against each other by collecting the coins generated throughout the map. Each player starts with 3 lives and aims to avoid ghosts while trying to outscore their opponent. Scattered in the map are uranium blocks which cause special events that temporarily improve the players’ character or negatively affect their opponent. The game ends when one player loses all three of their lives. Players can target one another to score more points or work peacefully and focus on collecting coins instead.
 
