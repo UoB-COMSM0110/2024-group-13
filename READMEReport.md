@@ -246,13 +246,12 @@ During online play, the server and client handle their own local items respectiv
 - The server carries out all calculations for synchronised items
 - The changes of the items are serialised by the server, sent to the client, and applied by the client
 
-<div>
-    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/3447be63-5ce7-4a01-855f-1196b93ae41a" alt="First GIF" style="float: left; width: 50%;">
-    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/4569144c-d10e-48a9-90a2-a1745e9abc02" alt="Second GIF" style="float: left; width: 50%;">
-    <div style="clear: both;"></div>
+<div style="display:flex;">
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/3447be63-5ce7-4a01-855f-1196b93ae41a" alt="CreateGame" width="400"/>
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/4569144c-d10e-48a9-90a2-a1745e9abc02" alt="JoinGame" width="400"/>
 </div>
 
-*Here we can see the two screens are synchronised in the online mode.*
+*The left video shows Player 1 creating the online game and the right video shows Player 2 joining the online game.*
 
 There are three main difficulties:
 1. *The serialisation protocol* -  we chose json string (the code shown creates a json object). It is simple but consumes a lot of network bandwidth. We also wrote serialisation methods for each event and item class.
