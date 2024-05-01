@@ -71,7 +71,7 @@ We then built a narrative involving our Pac-Man character fleeing underground fr
 [side by side images of adobe illustrator mockups]
 
 #### Stakeholder Analysis
-We applied the the Onion Model when thinking about the people that would be involved in building, using and assessing the quality of our game:
+We applied the Onion Model when discussing the parties involved in building, using and assessing the quality of our game:
 1. Developers (Core Layer): We were responsible for designing, coding, and testing the game
 2. Lecturers/Markers (Inner Layer): Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would
 3. Players (Middle Layer): The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal
