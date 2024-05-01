@@ -40,7 +40,7 @@ This document outlines our software engineering journey while building a new arc
 
 ![output](https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/1763dca1-c571-443c-856b-04d964f0d0bf)
 
-*[The story of Pac-Miner](https://youtu.be/WARdJTjv5Eg)*
+*[Click for the story of Pac-Miner.](https://youtu.be/WARdJTjv5Eg)*
 
 As the name indicates, Pac-Miner uses the classic Pac-Man style map with ghosts and powerups. However, Pac-Man has escaped their original habitat to retreat underground. Along the journey Pac-Man has gained the ability to release explosives which can kill ghosts and destroy walls, enabling the players to escape imminent death and create a route of their own choosing.
 
@@ -123,6 +123,8 @@ We transformed the identified use-cases into a use case diagram to visually illu
 
 <img src="resources/GameUseCaseDiagram.png"
 alt="Use case diagram" width="70%">
+
+*Use Case Diagram for multiplayer.*
 
 Interestingly, as the project evolved we noticed that some of the functionalities did not contribute to the user experience as expected. This was true of the mechanism by which we had intended for players who died to turn into ghosts after they had lost all their lives.
 
@@ -292,7 +294,7 @@ After further development, we carried out another qualitative evaluation. Based 
 
 ![FocusGroup](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/f83fe200-81da-4613-bd72-e882805ea2f1)
 
-*Focus group question and answers.*
+*Focus group questions and answers.*
 
 The feedback from the focus group was valuable in showing personal user experience. It also highlighted that our twist to the traditional Pac-Man was evident, however, thematic analysis described below led to a number of features that we were able to implement:
 1. Enhance Gameplay Experience
@@ -328,7 +330,7 @@ We then assessed the workload level between our two game modes. A raw aggregate 
 | 6     | 40            | 15              | 55              | 60          | 75     | 10           | 43              |
 | 7     | 65            | 15              | 45              | 85          | 55     | 15           | 47              |
 
-*Raw NASA TLX results for local multiplayer*
+*Raw NASA TLX results for local multiplayer.*
 
 | Participant | Mental Demand | Physical Demand | Temporal Demand | Performance | Effort | Frustration | Aggregate Score |
 |-------------|---------------|-----------------|-----------------|-------------|--------|--------------|-----------------|
@@ -340,7 +342,7 @@ We then assessed the workload level between our two game modes. A raw aggregate 
 | 6     | 65            | 55              | 70              | 40          | 80     | 15           | 54              |
 | 7     | 85            | 25              | 65              | 85          | 70     | 10           | 57              |
 
-*Raw NASA TLX results for online multiplayer*
+*Raw NASA TLX results for online multiplayer.*
 
 To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2 and hence was significant at a p-value of 5%. This means that we are 95% certain that there is a real statistical difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
 
@@ -397,7 +399,7 @@ We initially implemented a Kanban board to break down and allocate tasks. Howeve
 
 ![KanbanBoard](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/53c00776-d3a1-4c3f-872f-2325b489a1ac)
 
-*The Kanban board we used during implementation*
+*The Kanban board we used during implementation.*
 
 During one of the holiday periods, when in-person meetings were not feasible, we coordinated over video calls. We encountered challenges with both Zoom and Teams during this time and ultimately found success with an impromptu WhatsApp video call, which catered perfectly to our needs. By maintaining flexible communication channels and a versatile approach to project management, we were able to navigate through various challenges, including the holiday period, effectively. This adaptability was pivotal to our project's success, ensuring continuous progress and collaboration.
 
