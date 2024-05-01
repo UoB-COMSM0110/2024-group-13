@@ -68,19 +68,22 @@ width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 
 #### Stakeholder Analysis
 We applied the Onion Model when discussing the parties involved in building, using and assessing the quality of our game:
-1. Developers (Core Layer): We were responsible for designing, coding, and testing the game
-2. Lecturers/Markers (Inner Layer): Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would
-3. Players (Middle Layer): The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal
-4. Customers (Outer Layer): In the event that the game is released beyond university
-5. University as a negative stakeholder (Outer Layer): The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g. the online multiplayer gaming distracting students from work).
+| Layer           | Stakeholder             | Description |
+|-----------------|-------------------------|-------------|
+| Core Layer      | Developers              | We were responsible for designing, coding, and testing the game |
+| Inner Layer     | Lecturers/Markers       | Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would |
+| Middle Layer    | Players                 | The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal |
+| Outer Layer     | Customers               | In the event that the game is released beyond university |
+| Outer Layer     | University as a negative stakeholder | The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g., the online multiplayer gaming distracting students from work). |
+
 
 #### Development of User Stories
 Considering these stakeholders we created functional requirements in the form of User Stories: 
->1. As a player, I want to play against someone else so that I can spend time with my friend.
->2. As a player, I want to achieve the highest score so that I can win the game.
->3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
->4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.
->5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.
+*1. As a player, I want to play against someone else so that I can spend time with my friend.*
+*2. As a player, I want to achieve the highest score so that I can win the game.*
+*3. As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.*
+*4. As a developer, I want to know how to collaborate effectively with a team so that we can efficiently develop the game together.*
+*5. As a lecturer, I want to be able to learn and play the game within five minutes so that I have a thorough understanding of the game mechanics.*
 
 Consulting these later in the process allowed us to identify missing functional elements that users had indicated would be important to them; including the user story stating that:
 
