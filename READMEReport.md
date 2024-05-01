@@ -92,11 +92,11 @@ Consulting these later in the process allowed us to identify missing functional 
 
 Which led us to discuss how we could increase competition. Driven by this motivation, we implemented a leaderboard that persisted in memory allowing a player to enjoy their achievement as desired.
 
-Additionally, the following user requirement (relating to being able to easily understand how to play the game), was something we consistently tried to keep in mind and had feedback on in the later stages of the development process.
+Additionally, the following user requirement:
 
 >As a player, I want to have directions on the game so I know how to play.
 
-As such, from the start we had a tutorial page included. Reflecting reflecting on to the feedback received during evaluation, we improved the way in which instructions were presented by making them more visual. This feedback also led to the inclusion of text-based descriptions of the different special events that occur when the player collects uranium.
+As such, from the start we had a tutorial page included. Reflecting on the feedback received during evaluation, we improved the way in which instructions were presented by making them more visual. This feedback also led to the inclusion of text-based descriptions of the different special events that occur when the player collects uranium.
 
 #### Multiplayer Use Case Specification and Diagram
 We decided to develop a more in-depth use-case specification for the need to be able to share the gameplay experience with friends.
