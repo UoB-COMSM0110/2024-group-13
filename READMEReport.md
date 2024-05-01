@@ -1,28 +1,28 @@
 <img width="1109" alt="Screenshot 2024-05-01 at 14 16 41" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/0b70e408-0541-4b1f-871b-8b5f1a33df79">
 
 ## Table of Contents
-1. [Members](#members)
-2. [Introduction](#introduction)
-3. [Requirements](#requirements)
+- [Members](#members)
+- [Introduction](#introduction)
+- [Requirements](#requirements)
   - [Ideation](#ideation)
   - [Stakeholder Analysis](#stakeholder-analysis)
   - [User Stories](#development-of-user-stories)
   - [Use Case Specification](#multiplayer-use-case-specification-and-diagram)
-4. [Design](#design)
+- [Design](#design)
   - [Class Diagram](#class-diagram)
   - [Communication Diagram](#communication-diagram)
   - [Sequence Diagram](#sequence-diagram)
   - [Design Summary](#system-architecture-summary)
-5. [Implementation](#implementation)
+- [Implementation](#implementation)
   - [Challenge 1: Collision Engine](#challenge-1-collision-engine) 
   - [Challenge 2: User Interface Design](#challenge-2-user-interface-design)
   - [Challenge 3: Online Multiplayer](#challenge-3-online-multiplayer)
-6. [Evaluation](#evaluation)
+- [Evaluation](#evaluation)
   - [Qualitative Evaluations](#qualitative-evaluations)
   - [Quantitative Evaluations](#quantitative-evaluations)
   - [Testing](#how-our-code-was-tested)
-7. [Process](#process)
-8. [Conclusion](#conclusion)
+- [Process](#process)
+- [Conclusion](#conclusion)
 
 
 ## Members
@@ -278,7 +278,7 @@ There are three main difficulties:
 ## Evaluation
 We carried out evaluations at different points of the development process to have constant feedback and help navigate the final product design. This section will discuss the results.
 
-### Qualitative Evalutations
+### Qualitative Evaluations
 After implementing initial features, such as the different pages and item initialisation, we performed our first qualitative assessment. We conducted a heuristic test with an external but well-informed third party. Importantly this was prior to the full implementation of the Collision Engine and meant that the user was severely restricted in their ability to fully assess the game.
 
 Regardless, the assessment returned a number of helpful insights (summarised below). We identified critical issues related to a delay in player control and the inability to move through certain regions of space on the map. Furthermore, the lack of a prominent display of the current score meant that more comprehensive documentation was required.
