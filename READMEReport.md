@@ -1,4 +1,4 @@
-<img width="1107" alt="Screenshot 2024-05-01 at 14 06 37" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/e451e721-68d9-4be3-9086-f74c28ca1394">
+<img width="1109" alt="Screenshot 2024-05-01 at 14 16 41" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/0b70e408-0541-4b1f-871b-8b5f1a33df79">
 
 ## Table of Contents
 - [Members](#members)
@@ -158,7 +158,7 @@ alt="Overall Game Sequence" width="70%">
 ### System Architecture Summary
 Even though we spent time designing this architecture, we still made some changes during development. This is a natural consequence of the coding process, as evident in the paper by [LINK TO PAPER]. One such change was the implementation of different pages: start page, game page, end page. In the final design, we had three top-level classes: Page, GameInfo and EventRecorder.
 
-- A `Page` is what is displayed in the window. The game has different pages, e.g., home page, play page, game over page, etc. Each page comprises of various `Item`s, for example buttons or game elements. In the implementation, every page (except for the home page) holds
+- A `Page` is what is displayed in the window. The game has different pages, e.g., home page, play page, game over page, etc. Each page comprises various `Item`s, for example buttons or game elements. In the implementation, every page (except for the home page) holds
 a reference to its previous page, so that we actually have a page stack.
 
 > *HomePage Class* - The first page of the game, users have the option to goto tutorial pages or proceed to start gameplay.
