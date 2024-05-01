@@ -66,12 +66,12 @@ width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
 
 *Pac-Miner paper prototype.*
 
-We then built a narrative involving our Pac-Man character fleeing underground from ghosts in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. With additional potential for altering the game play mechanics through the effect of darkness underground and different types of mine wall materials. Throughout this process, we used Adobe Illustrator to create accurate mockups of the interface we would be building towards in the future.
+We then built a narrative involving our Pac-Man character fleeing underground from ghosts in arcade machines. Special events could be attributed nicely to the mutations and unexpected occurrences arising from the effects of uranium found underground. With additional potential for altering the game play mechanics through the effect of darkness underground and different types of wall materials. Throughout this process, we used Adobe Illustrator to create accurate mockups of the interface.
 
 [side by side images of adobe illustrator mockups]
 
 #### Stakeholder Analysis
-We were ready to start more actively thinking about the people that would be involved in using, building, maintaining and assessing the quality of our game by using the Onion Model:
+We applied the the Onion Model when thinking about the people that would be involved in building, using and assessing the quality of our game:
 1. Developers (Core Layer): We were responsible for designing, coding, and testing the game
 2. Lecturers/Markers (Inner Layer): Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would
 3. Players (Middle Layer): The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal
