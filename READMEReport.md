@@ -189,64 +189,62 @@ alt="Item Classes" width="70%">
 
 
 ## Implementation
-In this section we detail our three challenges: collision engine, user interface design and online multiplayer.
+In this section we detail our three challenges: the collision engine, user interface design and online multiplayer.
 
 ### Challenge 1: Collision Engine
-The collision engine is responsible for detecting and solving collisions between objects. For each step of evolvement, the solveCollisions method of the `CollisionEngine` class is called. It checks for each pair of items whether they overlap. However, this check won’t be taken between a pair of immovable items.
+The collision engine is responsible for detecting and solving collisions between objects. For each step of evolvement, the solveCollisions method of the `CollisionEngine` class is called. It checks whether each pair of items overlap.
 
-If the items do overlap, it’s considered a collision. Then the `onCollisionWith` method of each of the two items will be called.
+If the items do overlap, it is considered a collision. Then the `onCollisionWith` method of each of the two items will be called. Inside of the `onCollisionWith` method of a `MovableItem`, if the collision needs to be solved, the item’s `tryStepbackFrom` method or `tryPushbackFrom` method can be called. These two methods will correct the position of the item, eliminating the overlapping with the other item. For example when Pac-Miner collides with a coin, the score increases by one and the coin disappears.
 
-Inside of the `onCollisionWith` method of a `MovableItem`, if the collision needs to be solved, the item’s `tryStepbackFrom` method or `tryPushbackFrom` method can be called. These two methods will correct the position of the item, eliminating the overlapping with the other item.
+The `tryStepbackFrom` does the correction only if the collision is induced by the movement of the item during the evolution step. Also the correction will not be larger than the movement. So this method can’t handle collisions induced by resizement (due to the uranium blocks) and overlapping induced by creation of new items. However, this method can handle collisions of multiple items consistently.
 
-The `tryStepbackFrom` does the correction only if the collision is induced by the movement of the item during the evolution step. Also the correction won't be larger than the movement. So this method can’t handle collisions induced by resizement and overlapping induced by creation of new items. However, this method can handle collisions of multiple items consistently.
-
-On the other hand, `tryPushbackFrom` corrects the position unconditionally if overlapping occurs. It is used for hard boundaries such as map border or Pac-Man shelter.
+On the other hand, `tryPushbackFrom` corrects the position unconditionally if overlapping occurs. It is used for hard boundaries such as the map border.
 
 [INSERT GIF OF DIFFERENT COLLISION INSTANCES]
 
-*Here we can see the collision of a Pac-Man and ghost results in the Pac-Man loosing a life.*
+*Pac-Man colliding with multiple items (coins, walls, ghosts).*
 
 ### Challenge 2: User Interface Design
-This section outlines the design philosophy and approach our team adopted to create a user-friendly and intuitive user interface for our game. The great degree of complexity in the game greatly enhanced the difficulty of explaining to the user in a simple way how the game was to be played. 
+This section outlines the design philosophy and approach our team adopted to create a user-friendly and intuitive user interface. The great degree of complexity in the game enhanced the difficulty of explaining to the user how the game is played. 
 
-We tackled this by iteratively improving the way in which the game instructions and layout were presented to the user by means of heuristic and think aloud assessments as described previously. Originally we had an extremely simple and quickly outdated view of the control instructions for the user as shown below. However, we noted that the inconsistent style of the background (intended to make the text easier to read actually created confusion with players thinking something had gone wrong with the programme). Additionally, the text that was used, while fun and reminiscent of arcade games, proved difficult to read. 
+We tackled this by iteratively improving the way in which the game instructions and layout were presented to the user by means of heuristic and think aloud assessments. Originally we had a simple and quickly outdated view of the control instructions for the user as shown below. However, we noted that the inconsistent style of the background created confusion with players thinking something had gone wrong. Additionally, the text that was used, while fun and reminiscent of arcade games, proved difficult to read. 
 
 <img width="625" alt="OriginalInstructions" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/fad08157-660d-45ac-a003-db6913d48685">
 
 *First implementation of help page: single page instruction.*
 
-We then decided to change the simple single page screen of instructions to an extended version of this with scrollable instructions and a background consistent with that of the other options menus, as shown. 
+We then decided to change the simple single page screen of instructions to an extended version with scrollable instructions and a background consistent with that of the other options menus: 
 
 <img width="621" alt="ScrollInstructions" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/20a13d47-e9dc-40d8-afbc-78c88fa4d68a">
 
 *Next implementation of help page: scrollable screen.*
 
-However this in itself introduced a number of other problems, namely that the scroll bar mechanic was not something  found elsewhere in the interface and thus proved to feel strange or complicated. We decided to remedy this by creating a mockup of a page based tutorial screen as follows:
+However this in itself introduced a number of other problems, namely that the scroll bar mechanic was not found elsewhere in the interface and proved to feel strange or complicated. We decided to remedy this by creating a mockup of a page based tutorial screen as follows:
 
 <img width="945" alt="ControlsUI" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/a08bbf63-73d6-4448-9cbe-706caa1915db">
 
 *Next implementation of help page: alternating pages.*
 
-Following this we realised that neat division of controls for movement as shown, would be improved by a further explanation and inclusion prior to starting of a game changing the interface as shown:
+Following this we realised that neat division of controls for movement, would be improved by a further explanation and inclusion prior to starting a game:
 
 ![FourthImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/4724f500-9237-4e20-bff4-fb3998c243fe)
 
 *Including user instructions before starting the game (local version).*
 
-Furthermore the complexities of the multiplayer setup were simplified through minimalist design by (a) creating consistency between the the local and online pages (b) drawing attention to fields requiring user interaction through the use of bright white colours (c) colour delineated options inline with those used experienced in-game
+Furthermore the complexities of the multiplayer setup were simplified through minimalist design by (a) creating consistency between the the local and online pages (b) drawing attention to fields requiring user interaction through the use of bright white colours (c) colour delineated options inline with those used in-game:
 
 ![FifthImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/cd41613e-b0d8-44d1-a9a0-121bf7560f0a)
 
 *Clear display of information for online multiplayer setup.*
 
-Finally we also enriched the tutorial pages by means of including the character icons which were being described. Ultimately this led to an easily understood user interface that was praised in further evaluation prior to the game day demo. 
+Ultimately this led to an easily understood user interface that was praised in further evaluation prior to the game day demo. 
 
 
 ### Challenge 3: Online Multiplayer
-During online play, server and client handle their own local items respectively. But only the server is responsible for evolving synchronised items and synchronises them with the client. Each evolution step of synchronised items is achieved through the following processes:
+During online play, the server and client handle their own local items respectively. But only the server is responsible for evolving synchronised items and synchronises them with the client. Each evolution step of synchronised items is achieved through the following processes:
 - The user events from the client side are serialised and sent to the server side
 - The server carries out all calculations for synchronised items
-- The changes of the items are serialised by the server, sent to the client, and applied by client
+- The changes of the items are serialised by the server, sent to the client, and applied by the client
 
 [GIF OF SIDE BY SIDE ONLINE PLAY]
 
@@ -263,9 +261,9 @@ There are three main difficulties:
   }
 ```
 
-2. *Network programming* - we learned and used java nio selectable channel API. Besides, we added a cache layer to avoid frame locking between server and client. We have to employ SSH port forwarding to bypass the firewall of the lab machines.
+2. *Network programming* - we used java nio selectable channel API. We also added a cache layer to avoid frame locking between server and client. We have to employ SSH port forwarding to bypass the firewall of the lab machines.
   
-3. *Consistent handling of page switches* - the server and the client may be on different pages before and after the game, but need to start and end the game simultaneously. So we handled a lot of different cases.
+3. *Consistent handling of page switches* - the server and the client may be on different pages before and after the game, but need to start and end the game simultaneously.
 
 
 ## Evaluation
