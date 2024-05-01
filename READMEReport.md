@@ -200,7 +200,7 @@ The `tryStepbackFrom` does the correction only if the collision is induced by th
 
 On the other hand, `tryPushbackFrom` corrects the position unconditionally if overlapping occurs. It is used for hard boundaries such as the map border.
 
-[INSERT GIF OF DIFFERENT COLLISION INSTANCES]
+![CollisionEngine-ezgif com-video-to-gif-converter](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/ebc2ba8e-4689-498c-a7a1-c9d91e5a9e1e)
 
 *Pac-Man colliding with multiple items (coins, walls, ghosts).*
 
