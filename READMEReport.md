@@ -38,7 +38,7 @@ This document seeks to outline our software engineering journey while building a
 
 ![output](https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/1763dca1-c571-443c-856b-04d964f0d0bf)
 
-*The story of Pac-Miner.*
+*[The story of Pac-Miner](https://youtu.be/WARdJTjv5Eg)*
 
 As the name indicates, Pac-Miner uses the classic Pac-Man style map with ghosts and powerups. However, Pac-Man has escaped their original habitat to retreat underground. Along the journey Pac-Man has gained the ability to release explosives which can kill ghosts and destroy walls, enabling the players to escape imminent death and create a route of their own choosing.
 
