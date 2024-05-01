@@ -362,46 +362,41 @@ We also conducted black box tests. After each merge, the game was tested to chec
 ## Process
 In developing our game, our goal was to create not only an enjoyable and engaging experience for players but also to thoroughly understand and apply the principles of good software engineering. To achieve this, our team embraced the Agile methodology and integrated its key principles into our workflow.
 
-Our team consisted of 5 members and we worked effectively and directed our focus on whatever was most helpful in the moment. However, despite this flexibility we also held fairly consistent responsibilities as per the following breakdown
+Our team consisted of 5 members. We directed our focus on whatever was most helpful in the moment. However, despite this flexibility we also held fairly consistent responsibilities as per the following breakdown:
 
-> Yunpeng Yang, Lead Developer
->
-> Finn Lawton, Front End Developer
->
-> Haolan Zhao, Backend Developer
->
-> Daniel Parschau, Front End Developer
->
-> Chao Gao, Backend Developer
+| Name           | Role               |
+|----------------|--------------------|
+| Yunpeng Yang   | Lead Developer     |
+| Finn Lawton    | Front-end Developer|
+| Daniel Parschau| Front-end Developer|
+| Haolan Zhao    | Back-end Developer  |
+| Chao Gao       | Back-end Developer  |
 
-
-Our Agile approach involved dividing the project into three life cycles, representing different phases or major milestones. Each life cycle included sprints where we iteratively developed features, fixed bugs, and made improvements. These cycles can largely be categorised as follows: Framework Creation, MVP Development, Improvements & Finalisation.
-
-We did not hold daily stand-up meetings but stayed in constant communication through platforms like WhatsApp and Microsoft Teams. This allowed us to address obstacles swiftly, support each other, and share progress updates.
-Our team also engaged in pair programming sessions to enhance code quality and knowledge sharing. This was particularly useful in the first cycle as we were familiarising ourselves with the OOP paradigm and learning to use Processing in particular.
-
-Early in the project, we established a WhatsApp group for swift and informal discussions. This decision came after initially trying out Microsoft Teams and finding it didn't meet everyone's preference for quick communication. The WhatsApp group proved to be an invaluable tool for rapid exchanges and coordinating small tasks.
-
-Our discussions also extended to GitHub, particularly within pull requests. We adopted the trunk-based branching model, and carried out code review for each pull request. This platform allowed for more structured and in-depth conversations around code changes and potential issues. For substantial matters or broader discussions that required more in-depth conversation and brainstorming, we convened weekly meetings at the Merchant Ventures Building.
-
-We initially implemented a Kanban board to break down and allocate tasks. However, its use varied; at times, it was bypassed due to the efficiency of in-person or instantaneous text-based discussions. Despite this fluctuation in utilisation, the Kanban board served as an excellent visual tool for tracking progress when employed.
-During one of the holiday periods, when in-person meetings were not feasible, we coordinated over video calls. We encountered challenges with both Zoom and Teams during this time and ultimately found success with an impromptu WhatsApp video call, which catered perfectly to our needs.
-
-![KanbanBoard](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/53c00776-d3a1-4c3f-872f-2325b489a1ac)
-
-*The Kanban board we used during implementation*
-
-Our work on the game was consistent throughout the project timeframe. However, there were notable spikes in the additions to the codebase, primarily during two main sprints. The first spike occurred prior to workshops on different testing methods, and the second was close to the Easter break, when more time was available for development. These periods of intense activity are clearly reflected in the frequency graphs, illustrating our project's dynamic nature and our team's ability to intensify efforts when necessary.
+Our Agile approach involved dividing the project into three life cycles, representing different phases or major milestones. Each life cycle included sprints where we iteratively developed features, fixed bugs, and made improvements. These cycles can largely be categorised as follows: Framework Creation, MVP Development, Improvements & Finalisation. There were notable spikes in the additions to the codebase during the three sprints. These periods of intense activity are clearly reflected in the frequency graphs, illustrating our project's dynamic nature and our team's ability to intensify efforts when necessary.
 
 ![Sprints](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/64d84861-bb61-497a-9daf-2a3e94b89b47)
 
 *Graph depicting our three sprints.*
 
-By maintaining flexible communication channels and a versatile approach to project management, we were able to navigate through various challenges, including the holiday period, effectively. This adaptability was pivotal to our project's success, ensuring continuous progress and collaboration.
+We did not hold daily stand-up meetings but arranged a weekly meeting on Thursdays at 10am. During the week we stayed in constant communication through platforms like WhatsApp and Microsoft Teams. The WhatsApp group was established early in the project, to address obstacles swiftly, support each other, and share progress updates. This decision came after initially trying out Microsoft Teams and finding it did not meet everyone's preference for quick communication. The WhatsApp group proved to be an invaluable tool for rapid exchanges and coordinating small tasks.
+
+Our team also engaged in pair programming sessions to enhance code quality and knowledge sharing. This was particularly useful in the first cycle as we were familiarising ourselves with the OOP paradigm and learning to use Processing in particular. This method also proved to be beneficial when we were getting used to the system architecture and the correct transfer of information which needed to be drawn to the screen.
+
+Our discussions also extended to GitHub, particularly within pull requests. We adopted the trunk-based branching model, and carried out code review for each pull request. This platform allowed for more structured and in-depth conversations around code changes and potential issues. For substantial matters or broader discussions that required more in-depth conversation and brainstorming, we convened during our weekly meetings at the Merchant Ventures Building.
+
+We initially implemented a Kanban board to break down and allocate tasks. However, its use varied; at times, it was bypassed due to the efficiency of in-person or online discussions. Despite this fluctuation in utilisation, the Kanban board served as an excellent visual tool for tracking progress when employed.
+
+![KanbanBoard](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/53c00776-d3a1-4c3f-872f-2325b489a1ac)
+
+*The Kanban board we used during implementation*
+
+During one of the holiday periods, when in-person meetings were not feasible, we coordinated over video calls. We encountered challenges with both Zoom and Teams during this time and ultimately found success with an impromptu WhatsApp video call, which catered perfectly to our needs. By maintaining flexible communication channels and a versatile approach to project management, we were able to navigate through various challenges, including the holiday period, effectively. This adaptability was pivotal to our project's success, ensuring continuous progress and collaboration.
+
+Due to the long nature of this project, we had several coursework pieces due during the time frame. Therefore it was vital that we were in constant communication and arranged our individually set deadlines accordingly, for example, arranging our MVP sprint over the Easter holidays. This worked well for our group and we would implement this in any future software engineering projects.
 
 
 ## Conclusion
-In conclusion, we have created a fully functional adaptation of the well known Pac-Man game. The novel features of multiplayer, destructible walls and power ups, allows for an engaging and competitive game. Our system architecture was carefully designed using GameInfo, Page and EventRecorder classes to allow for the implementation of the online multiplayer game mode. This project has not only produced an entertaining game to play but also provided valuable insights and reflections on the software engineering process.
+In conclusion, we have created a fully functional adaptation of the well known Pac-Man game. The novel features of multiplayer, destructible walls and power-ups, allows for an engaging and competitive game. Our system architecture was carefully designed using GameInfo, Page and EventRecorder classes to allow for the implementation of the online multiplayer game mode. This project has not only produced an entertaining game to play but also provided valuable insights and reflections on the software engineering process.
 
 As discussed in this report, central to our development approach was the decision to prioritise the implementation of the online multiplayer challenge and design the system architecture accordingly. This facilitated efficient development workflows and minimised the need for extensive code refactoring later in the process. However, this also caused potential constraints, limiting the flexibility of the code composition and sometimes adding an extra challenge when adapting to evolving requirements. This illustrates the delicate balance between planning for future scalability and maintaining agility in development.
 
@@ -409,7 +404,7 @@ Throughout the project, we learned invaluable lessons in task allocation and com
 
 One notable challenge we encountered during evaluations revolved around making succinct help instructions for our intricate game mechanics. Given the complexity of the gameplay dynamics, ensuring the presence of essential guidance in a clear and concise format proved to be a challenge. This highlighted the importance of user-centric design principles and effective help and documentation as one of Nielson’s 10 Heuristics.
 
-Looking towards the future, there are many potential enhancements and features that we have discussed to further add to the gaming experience. For instance, integrating pause buttons would allow players greater control and convenience during sessions. We could also introduce a ghost transformation mechanism, where when the first player dies they turn into a ghost which can target the surviving opponent, allowing for more competition. We understand the evolving nature of software engineering projects, and would aim to meet the expectations and requirements of the end users.
+Looking towards the future, there are many potential enhancements and features that we have discussed to further add to the gaming experience. For instance, integrating pause buttons would allow players greater control and convenience during sessions. We could also develop a web-based and mobile version of Pac-Miner so we could gain a wider audience. We understand the evolving nature of software engineering projects, and would aim to meet the expectations and requirements of the end users.
 
 ## Individual Contribution Table
 | Name           | Role               | Individual Weight |
