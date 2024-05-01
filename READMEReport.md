@@ -217,19 +217,19 @@ This section outlines the design philosophy and approach our team adopted to cre
 
 We tackled this by iteratively improving the way in which the game instructions and layout were presented to the user by means of heuristic and think aloud assessments as described previously. Originally we had an extremely simple and quickly outdated view of the control instructions for the user as shown below. However, we noted that the inconsistent style of the background (intended to make the text easier to read actually created confusion with players thinking something had gone wrong with the programme). Additionally, the text that was used, while fun and reminiscent of arcade games, proved difficult to read. 
 
-[First image]
+<img width="625" alt="OriginalInstructions" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/fad08157-660d-45ac-a003-db6913d48685">
 
 *First implementation of help page: single page instruction.*
 
 We then decided to change the simple single page screen of instructions to an extended version of this with scrollable instructions and a background consistent with that of the other options menus, as shown. 
 
-[Second image]
+<img width="621" alt="ScrollInstructions" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/20a13d47-e9dc-40d8-afbc-78c88fa4d68a">
 
 *Next implementation of help page: scrollable screen.*
 
 However this in itself introduced a number of other problems, namely that the scroll bar mechanic was not something  found elsewhere in the interface and thus proved to feel strange or complicated. We decided to remedy this by creating a mockup of a page based tutorial screen as follows:
 
-[Third image]
+<img width="945" alt="ControlsUI" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/a08bbf63-73d6-4448-9cbe-706caa1915db">
 
 *Next implementation of help page: alternating pages.*
 
