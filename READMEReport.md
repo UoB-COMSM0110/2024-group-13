@@ -246,7 +246,10 @@ During online play, the server and client handle their own local items respectiv
 - The server carries out all calculations for synchronised items
 - The changes of the items are serialised by the server, sent to the client, and applied by the client
 
-[GIF OF SIDE BY SIDE ONLINE PLAY]
+<div style="display:flex;">
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/396e7307-93bf-43ba-ab0a-8656f299146a" alt="LocalPlayer" width="400"/>
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/0de2e83f-415b-442c-ab7f-e757d862ea54" alt="OnlinePlayer" width="400"/>
+</div>
 
 *Here we can see the two screens are synchronised in the online mode.*
 
