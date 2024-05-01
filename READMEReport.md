@@ -251,7 +251,7 @@ During online play, the server and client handle their own local items respectiv
 *Here we can see the two screens are synchronised in the online mode.*
 
 There are three main difficulties:
-1. *The serialisation protocol* -  we chose json string. It is simple but consumes a lot of network bandwidth. We also need to write a serialisation method for each of those event and item classes.
+1. *The serialisation protocol* -  we chose json string (the code shown creates a json object). It is simple but consumes a lot of network bandwidth. We also wrote serialisation methods for each event and item class.
 ```
 @Override
   public JSONObject getStateJson() {
