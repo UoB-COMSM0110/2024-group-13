@@ -52,7 +52,7 @@ One of our favourite aspects of playing games is competing against friends, as d
 
 <div style="display:flex;">
     <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/396e7307-93bf-43ba-ab0a-8656f299146a" alt="LocalPlayer" width="400"/>
-    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/0de2e83f-415b-442c-ab7f-e757d862ea54" alt="OnlinePlayer" width="400"/>
+    <img src="https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/5791b668-cdaa-4720-86a3-10b6216ce062" alt="OnlinePlayer" width="400"/>
 </div>
 
 *Implementation of local (left) and online (right) multiplayer*
