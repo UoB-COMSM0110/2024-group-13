@@ -72,7 +72,7 @@ Both players compete against each other by collecting the coins generated throug
 
 ## Requirements
 ### Ideation
-We brainstormed a list of arcade-style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game. We realised that while both concepts were individually engaging there were many overlapping dimensions that we could combine well into a single game. We decided on a version of Pac-Man with the ability to modify the map using explosive projectiles as shown in the paper prototype below.
+We brainstormed a list of arcade-style games and then discussed potential adaptations to create a novel concept. In this session, we described the basic premise of each game and narrowed our choices to Tank and Pac-Man. To decide between the two, we discussed the technical challenges of each and created paper prototypes to envision the functionality of each game. We realised that while both concepts were individually engaging there were many overlapping dimensions that we could combine into a single game. We decided on a version of Pac-Man with the ability to modify the map using explosive projectiles as shown in the paper prototype below.
 
 [<img src="https://i.ytimg.com/vi/RZP7WlMi2Jo/hqdefault.jpg"
 width="70%">](https://www.youtube.com/watch?v=RZP7WlMi2Jo
@@ -88,7 +88,7 @@ We applied the Onion Model when discussing the parties involved in building, usi
 | Inner Layer     | Lecturers/Markers       | Critical in guiding the process and responsible for assessing the quality of the software that we produce, as a client would |
 | Middle Layer    | Players                 | The users who play the game during evaluation stages, providing valuable feedback on the game’s functionality and appeal |
 | Outer Layer     | Customers               | In the event that the game is released beyond the university |
-| Outer Layer     | University as a negative stakeholder | The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g., the online multiplayer gaming distracting students from work). |
+| Outer Layer     | University as a negative stakeholder | The school or university could be considered a negative stakeholder in the event of any issues that arise from the game which have an impact on the school’s reputation or resources (e.g., gaming distracting students from work) |
 
 
 ### Development of User Stories
@@ -108,7 +108,7 @@ Which led us to discuss how we could increase competition. Driven by this motiva
 
 We also implemented the following user-requirement:
 
->As a player, I want to have directions on the game so I know how to play.
+>As a player, I want to have clear directions on how to play the game so that I can understand the rules and controls.
 
 As such, from the start, we had a tutorial page included. Reflecting on the feedback received during the evaluation, we improved how instructions were presented by making them more visual. This feedback also led to the inclusion of text descriptions of the different special events that occur when the player collects uranium.
 
@@ -129,14 +129,14 @@ We decided to develop a more in-depth use-case specification on how to share the
 | 10   | Players are presented with an option to initiate a new game session. |
 
 
-We transformed the identified use-cases into a use-case diagram to visually illustrate requirements and interactions within the game system.
+We transformed the identified use-case into a use-case diagram to visually illustrate requirements and interactions within the game system.
 
 <img src="resources/GameUseCaseDiagram.png"
 alt="Use-case diagram" width="70%">
 
 *Use-Case Diagram for multiplayer.*
 
-Interestingly, as the project evolved we noticed that some of the functionalities did not contribute to the user experience as expected. This was true of the mechanism by which we had intended for players who died to turn into ghosts after they had lost all their lives.
+Interestingly, as the project evolved we noticed that some of the functionalities did not contribute to the user experience as expected. This was true of the mechanism for the player who died first to turn into a ghost and continue hunting their opponent.
 
 
 ## Design
@@ -153,7 +153,7 @@ alt="ClassDiagram" width="70%">
 *Class diagram before implementation.*
 
 ### Communication Diagram
-Our challenge to create an online multiplayer mode meant that it was difficult to visualise the complex structure of the game. Therefore, we created a communication diagram to model the behaviour of our code; displaying the flow of data between the classes whilst the online multiplayer game mode is activated. This diagram focussed on how the two players connected over online multiplayer to interact with objects and how this is updated through the GameInfo class to synchronise with the other player.
+Our challenge to create an online multiplayer mode meant that it was difficult to visualise the complex structure of the game. Therefore, we created a communication diagram to model the behaviour of our code; displaying the flow of data between the classes whilst the online multiplayer game mode is activated. This diagram highlights how the two players connect over online multiplayer to interact with objects and how game state is updated through the GameInfo class to synchronise with the other player.
 
 <img src="resources/PacCommunicationDiagram.jpg"
 alt="CommunicationDiagram" width="70%">
@@ -193,11 +193,12 @@ alt="Top-level Classes" width="70%">
 
 *Class diagram illustrating the top three classes.*
 
-This `Item`s class is vital in instantiating all objects drawn onto the page. They react to user events and implement game logic, for example, the Pac-Man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are just a framework that deals with these updates and interactions.
+The `Item`s class is vital in instantiating all objects drawn onto the page. They react to user events and implement game logic, for example, the Pac-Man character moving on the screen. The game logic is represented by the updates of items and the interactions between items. The top-level classes are just a framework that deals with these updates and interactions.
 
 All individual items extend from either:
-- *LocalItem Class* - Implements items which are only needed on the local computer. For example, the classes 'Button' and 'InputBox'.
-- *SychronizedItem Class* - Implements items which are synchronised to both client and server computers during gameplay. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
+> *LocalItem Class* - Implements items which are only needed on the local computer. For example, the classes 'Button' and 'InputBox'.
+>
+> *SychronizedItem Class* - Implements items which are synchronised to both client and server computers during gameplay. Some classes include 'Pacman', 'Wall', 'Coin' and 'PowerUp'.
 
 
 <img src="./RequirementDesignDoc/ItemClassesDiagram.png"
@@ -237,13 +238,13 @@ We then decided to change the simple single page screen of instructions to an ex
 
 *Next implementation of help page: scrollable screen.*
 
-However this in itself introduced several other problems, namely that the scroll bar mechanic was not found elsewhere in the interface and proved to feel strange or complicated. We decided to remedy this by creating a mockup of a page-based tutorial screen as follows:
+However this in itself introduced several other problems, namely that the scroll bar mechanic was not found elsewhere in the interface and proved to feel strange or complicated. We decided to remedy this by creating a a page-based tutorial screen as follows:
 
-<img width="945" alt="ControlsUI" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/a08bbf63-73d6-4448-9cbe-706caa1915db">
+![ThirdImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/6d1eab80-9d27-4a9d-8c58-952129ed3e74)
 
 *Next implementation of help page: alternating pages.*
 
-Following this we realised that a neat division of controls for movement would be improved by a further explanation and inclusion before starting a game:
+Following this we realised that a neat division of controls for movement would be improved by further explanation and inclusion before starting a game:
 
 ![FourthImageImplementation](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/4724f500-9237-4e20-bff4-fb3998c243fe)
 
@@ -300,7 +301,7 @@ alt="ClassDiagram" width="50%">
 
 *Heuristic evaluation results.*
 
-After further development, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40-minute session, we asked five participants the following questions:
+After further development, we carried out another qualitative evaluation. Based on additional research, we found that hosting a focus group would be suitable. In this 40-minute session, five participants played the game and then were asked the following questions:
 
 ![FocusGroup](https://github.com/UoB-COMSM0110/2024-group-13/assets/145793563/f83fe200-81da-4613-bd72-e882805ea2f1)
 
@@ -328,7 +329,7 @@ The feedback from the focus group was valuable in showing personal user experien
    - Improve player differentiation and identification by having visual distinctions between characters.
 
 ### Quantitative Evaluations
-We then assessed the workload level between our two game modes. A raw aggregate NASA TLX was calculated between the two game modes. Individual scores were recorded from participants by means of a Google Forms survey. 
+We then assessed the workload level between our two game modes by calculating a raw aggregate NASA TLX. Individual scores were recorded from participants by means of a Google Forms survey. 
 
 | Participant | Mental Demand | Physical Demand | Temporal Demand | Performance | Effort | Frustration | Aggregate Score |
 |-------------|---------------|-----------------|-----------------|-------------|--------|--------------|-----------------|
@@ -354,7 +355,7 @@ We then assessed the workload level between our two game modes. A raw aggregate 
 
 *Raw NASA TLX results for online multiplayer.*
 
-To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2 and hence was significant at a p-value of 5%. This means that we are 95% certain that there is a real statistical difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
+To validate whether there was a difference in perceived workload/difficulty we made use of the Wilcoxon Signed Rank test, which requires no assumptions regarding the distribution of the underlying scores. We found a W test statistic of 1.5 for a sample size of n=7. This was below the threshold of 2, hence our result was significant at a p-value of 5%. This means that we are 95% certain that there is a real statistical difference rather than due to randomness. Therefore, we concluded that the online version required a higher workload than the local mode. We discussed that the inability to see the entire map in the online mode as well as the darkened screen surrounding the character resulted in a more challenging experience.
 
 ### How our code was tested
 To ensure the robustness of our code, we conducted unit tests on key functionalities. Given the complexity of the game system, we focused our testing efforts on collision solving and the PowerUp features. The collision-solving tests check whether collisions are detected and solved correctly. The PowerUp tests check whether various PowerUps, once acquired by Pac-Man, alter their state and behaviour as expected. For instance, we tested the Opponent Control, Time Freeze, and Speed Surge PowerUps to verify if they correctly changed critical attributes such as Pac-Man's speed and control key set. Additionally, we tested the Size Modification and Trap PowerUps to ensure that these items effectively impact both Pac-Man and Ghosts, although our tests primarily focused on Pac-Man. By employing assertions, we confirmed that when Pacman_1 acquires a Trap PowerUp and sets a trap, any Pacman_2 or Ghost triggering the trap should decelerate. These tests validate the functionality and applicability of the PowerUp items, thereby enhancing the consistency and predictability of the gaming experience.
@@ -399,7 +400,7 @@ Our Agile approach involved dividing the project into three life cycles, represe
 
 *Graph depicting our three sprints.*
 
-We did not hold daily stand-up meetings but arranged a weekly meeting on Thursdays at 10 am. During the week we stayed in constant communication through platforms like WhatsApp and Microsoft Teams. The WhatsApp group was established early in the project, to address obstacles swiftly, support each other, and share progress updates. This decision came after initially trying out Microsoft Teams and finding it did not meet everyone's preference for quick communication. The WhatsApp group proved to be an invaluable tool for rapid exchanges and coordinating small tasks.
+We did not hold daily stand-up meetings but arranged a weekly meeting on Thursdays at 10 am. During the week we stayed in constant communication through platforms like WhatsApp and Microsoft Teams. The WhatsApp group was established early in the project to address obstacles swiftly, support each other, and share progress updates. This decision came after initially trying out Microsoft Teams and finding it did not meet everyone's preference for quick communication. The WhatsApp group proved to be an invaluable tool for rapid exchanges and coordinating small tasks.
 
 Our team also engaged in pair programming sessions to enhance code quality and knowledge sharing. This was particularly useful in the first cycle as we were familiarising ourselves with the OOP paradigm and learning to use Processing in particular. This method also proved to be beneficial when we were getting used to the system architecture and the correct transfer of information which needed to be drawn to the screen.
 
@@ -427,7 +428,7 @@ One notable challenge we encountered during evaluations revolved around making s
 
 Looking towards the future, there are many potential enhancements and features that we have discussed to further add to the gaming experience. For instance, integrating pause buttons would allow players greater control and convenience during sessions. We could also develop a web-based and mobile version of Pac-Miner so we could gain a wider audience. We understand the evolving nature of software engineering projects and would aim to meet the expectations and requirements of the end users.
 
-# Acknowledgements
+## Acknowledgements
 
 For the background music, we used **Minim**,
 which can be installed from the processing library manager.
