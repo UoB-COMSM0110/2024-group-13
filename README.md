@@ -1,4 +1,4 @@
-<p>
+<p align="center">
   <img width="802" alt="pac-miner" src="https://github.com/UoB-COMSM0110/2024-group-13/assets/53036683/d6ce0a4c-cc0d-4ce8-8c3e-d79d08a3a39b">
 </p>
 
