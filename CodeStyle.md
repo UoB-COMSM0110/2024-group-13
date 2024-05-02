@@ -1,6 +1,6 @@
 # Code Style
 
-We applied the code style used in Java lecture.
+We applied the code style used in Java lectures.
 
 ```
 public class Character {
